@@ -1,0 +1,140 @@
+// SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+// SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
+// SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'datom'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=datom"
+                ],
+                "filter": {
+                    "name": "datom",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'peer_server'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=peer_server",
+                    "--package=datom"
+                ],
+                "filter": {
+                    "name": "peer_server",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'peer_server'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=peer_server",
+                    "--package=datom"
+                ],
+                "filter": {
+                    "name": "peer_server",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'transactor'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=transactor",
+                    "--package=datom"
+                ],
+                "filter": {
+                    "name": "transactor",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'transactor'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=transactor",
+                    "--package=datom"
+                ],
+                "filter": {
+                    "name": "transactor",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'sled_test'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=sled_test",
+                    "--package=datom"
+                ],
+                "filter": {
+                    "name": "sled_test",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug benchmark 'serial'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bench=serial",
+                    "--package=datom"
+                ],
+                "filter": {
+                    "name": "serial",
+                    "kind": "bench"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
