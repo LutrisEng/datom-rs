@@ -8,7 +8,7 @@ use datom::sled::*;
 
 #[test]
 fn entity_api() -> Result<(), Box<dyn std::error::Error>> {
-    let conn = SledConnection::connect_temp("testdbs/entity_api")?;
+    let conn = SledConnection::connect_temp()?;
     let username_attr = ID::new();
     let bio_attr = ID::new();
     let mut both_attrs = vec![username_attr, bio_attr];

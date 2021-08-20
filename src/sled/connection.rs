@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::convert::TryInto;
+use std::{convert::TryInto, env::temp_dir};
 
 use sled::Config;
+use uuid::Uuid;
 
 use crate::{
     builtin_idents, serial::serialize, Connection, ConnectionError, Database, Datom, Entity, Index,
@@ -57,8 +58,11 @@ impl SledConnection {
     [SledConnection] is dropped, the temporary database will be
     removed from the disk. This is useful for tests.
     */
-    pub fn connect_temp(uri: &str) -> Result<Self, ConnectionError> {
-        let cfg = Config::new().path(uri).temporary(true);
+    pub fn connect_temp() -> Result<Self, ConnectionError> {
+        let mut path = temp_dir();
+        path.push(Uuid::new_v4().to_string());
+        path.set_extension("db");
+        let cfg = Config::new().path(path).temporary(true);
         let db = cfg.open()?;
         Ok(Self { db })
     }
