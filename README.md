@@ -19,14 +19,14 @@
     <img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FLutrisEng%2Fdatom-rs.svg?type=shield"
         alt="FOSSA Status">
 </a>
-<span>
+<a href="https://blueoakcouncil.org/license/1.0.0">
     <img src="https://img.shields.io/badge/license-BlueOak%2FBSD-blue.svg" alt="License" />
-</span>
+</a>
 <a href="https://matrix.to/#/#datom-rs:lutris.engineering">
     <img src="https://img.shields.io/badge/chat-%23datom--rs%3Alutris.engineering-informational"
         alt="Matrix: #datom-rs:lutris.engineering" />
 </a>
-<a href="irc://irc.libera.chat:+6697/##datom-rs">
+<a href="https://web.libera.chat/?channel=##datom-rs">
     <img src="https://img.shields.io/badge/libera.chat-%23%23datom--rs-informational"
         alt="IRC: ##datom.rs on libera.chat" />
 </a>
