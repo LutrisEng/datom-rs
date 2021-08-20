@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::{convert::TryInto, ops::Range};
+use std::ops::Range;
 
 use crate::{Datom, DatomType, Index, Value, ID};
 
