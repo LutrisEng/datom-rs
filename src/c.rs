@@ -4,7 +4,10 @@
 
 use std::{cell::RefCell, ffi::CStr, os::raw::c_char};
 
-use crate::{sled::SledConnection, Connection, DatomConnectionError, Transaction, Value, EID, ID};
+use crate::{
+    sled::{SledConnection, SledDatabase},
+    Connection, DatomConnectionError, DatomTransactionResult, Transaction, Value, EID, ID,
+};
 
 thread_local! {
     static LAST_CONNECTION_ERROR: RefCell<Option<DatomConnectionError>> = RefCell::new(None);
@@ -178,6 +181,43 @@ transaction must be a valid, non-null [Transaction] created by
 #[no_mangle]
 pub unsafe extern "C" fn datom_transaction_destroy(transaction: *mut Transaction) {
     Box::from_raw(transaction);
+}
+
+/**
+Run a transaction on a sled-backed database. Consumes transaction.
+
+# Safety
+
+conn must be a valid, non-null [SledConnection] created by
+[datom_sled_connect]. transaction must be a valid, non-null
+[Transaction] created by [datom_transaction_create]. You must destroy
+the return value (if non-NULL) after you are done.
+*/
+#[no_mangle]
+pub extern "C" fn datom_sled_transact(
+    conn: &SledConnection,
+    transaction: Box<Transaction>,
+) -> Option<Box<DatomTransactionResult<'_, SledConnection, SledDatabase<'_>>>> {
+    let res = conn.transact(*transaction);
+    match res {
+        Ok(result) => Some(Box::new(result.into())),
+        Err(_) => None,
+    }
+}
+
+/**
+Destroy a transaction result
+
+# Safety
+
+res must be a valid, non-null [DatomTransactionResult] created by
+[datom_sled_transact].
+*/
+#[no_mangle]
+pub unsafe extern "C" fn datom_sled_transaction_result_destroy<'c>(
+    res: *mut DatomTransactionResult<'c, SledConnection, SledDatabase<'c>>,
+) {
+    Box::from_raw(res);
 }
 
 /**
