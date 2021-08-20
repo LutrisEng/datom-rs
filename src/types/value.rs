@@ -4,7 +4,7 @@
 
 use std::{collections::HashSet, convert::TryInto, hash::Hash, str::FromStr};
 
-use bigdecimal::BigDecimal;
+use datom_bigdecimal::BigDecimal;
 use num_bigint::BigInt;
 
 use crate::ID;
