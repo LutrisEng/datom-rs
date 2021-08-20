@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-#![feature(generic_associated_types, map_first_last)]
+#![feature(generic_associated_types)]
 #![deny(missing_docs)]
 #![warn(clippy::nursery, clippy::cargo)]
 #![doc(
