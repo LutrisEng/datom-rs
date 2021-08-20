@@ -23,10 +23,13 @@ default = ["sled"]
 
 [dependencies]
 uuid = { version = "0.8", features = ["v4"] }
-num-bigint = "0.3"
-bigdecimal = "0.2"
+num-bigint = "0.4"
 
 sled = { version = "0.34", optional = true }
+
+[dependencies.bigdecimal]
+git = "https://github.com/piperswe/bigdecimal-rs"
+branch = "update-dependencies"
 
 [dev-dependencies]
 criterion = "0.3"
