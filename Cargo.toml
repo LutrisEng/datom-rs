@@ -17,6 +17,9 @@ categories = ["database-implementations", "database"]
 [profile.release]
 lto = true
 
+[lib]
+crate-type = ["lib", "cdylib", "staticlib"]
+
 [features]
 default = ["sled"]
 
@@ -30,11 +33,13 @@ sled = { version = "0.34", optional = true }
 [dev-dependencies]
 criterion = "0.3"
 
+[build-dependencies]
+cbindgen = "0.20"
+
 [dev-dependencies.cargo-husky]
 version = "1"
 default-features = false
 features = ["user-hooks"]
-
 
 [[bench]]
 name = "serial"
