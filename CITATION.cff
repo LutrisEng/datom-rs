@@ -18,4 +18,6 @@ version: 0.1.1-pre2
 date-released: 2021-08-20
 url: "https://os.lutris.engineering/datom-rs"
 repository-code: "https://github.com/LutrisEng/datom-rs"
-license: "BlueOak-1.0.0 OR BSD-2-Clause-Patent"
+license: 
+- BlueOak-1.0.0
+- BSD-2-Clause-Patent
