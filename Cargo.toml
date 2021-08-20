@@ -2,11 +2,13 @@
 # SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 # SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
+cargo-features = ["edition2021"]
+
 [package]
 name = "datom"
 version = "0.1.1-pre2"
 authors = ["Lutris Engineering, Inc <contact@lutris.engineering>"]
-edition = "2018"
+edition = "2021"
 description = "datom-rs: an open-source database inspired by Datomic"
 homepage = "https://os.lutris.engineering/datom-rs/"
 repository = "https://github.com/LutrisEng/datom-rs"

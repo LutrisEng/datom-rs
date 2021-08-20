@@ -58,10 +58,7 @@ Currently, datom-rs requires Rust nightly. We use the following unstable feature
 
  - `edition2021`: The [Rust 2021 edition](https://blog.rust-lang.org/2021/05/11/edition-2021.html), which should be stable in Rust 1.56.
  - `generic_associated_types`: Generic Associated Types, or GATs, allow implementors of `Connection` to specify their `Database` as being generic on a lifetime. GATs are on track for stability ([rust-lang/rust#44365](https://github.com/rust-lang/rust/issues/44265)), and there seems to only be one remaining unresolved question ([rust-lang/rust#87479](https://github.com/rust-lang/rust/issues/87479)).
-
-```rust
-#![feature(generic_associated_types, map_first_last)]
-```
+ - `map_first_last`: Adds additional useful functions to `BTreeMap`/`BTreeSet`. On track for stability ([rust-lang/rust#62924](https://github.com/rust-lang/rust/issues/62924)).
 
 ## Sponsors
 
