@@ -58,6 +58,10 @@
             width: 100%;
             overflow-x: auto;
         }
+
+        .full-page * {
+            min-width: 100%;
+        }
     </style>
 </head>
 
@@ -89,8 +93,12 @@
                         <img src="https://img.shields.io/badge/license-BlueOak%2FBSD-blue.svg" alt="License" />
                     </span>
                     <a href="https://matrix.to/#/#datom-rs:lutris.engineering">
-                        <img src="https://img.shields.io/badge/chat-%23datom--rs%3Alutris.engineering-success"
-                            alt="Matrix" />
+                        <img src="https://img.shields.io/badge/chat-%23datom--rs%3Alutris.engineering-informational"
+                            alt="Matrix: #datom-rs:lutris.engineering" />
+                    </a>
+                    <a href="irc://irc.libera.chat:+6697/##datom-rs">
+                        <img src="https://img.shields.io/badge/libera.chat-%23%23datom--rs-informational"
+                            alt="IRC: ##datom.rs on libera.chat" />
                     </a>
                     <a href="https://github.com/sponsors/LutrisEng">
                         <img src="https://img.shields.io/github/sponsors/LutrisEng" alt="GitHub Sponsors" />
@@ -109,7 +117,7 @@
     Transaction, ID, Value,
 };
 
-let conn = SledConnection::connect_temp()?;
+let conn = SledConnection::connect_temp("my_database")?;
 
 let username = ID::new();
 let user = ID::new();
@@ -159,9 +167,35 @@ if let Some(Value::String(u)) = db.entity(user.into())?.get(username.into())? {
                     </table>
                 </div>
             </section>
+            <section id="sponsors">
+                <h2>Sponsors</h2>
+                <div class="full-page">
+                    <table class="pure-table pure-table-horizontal">
+                        <thead>
+                            <tr>
+                                <th>Sponsor</th>
+                                <th>Contribution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <a href="https://lutris.engineering/?utm_source=lutrisengineering&utm_medium=github&utm_campaign=datom-rs"
+                                        title="Lutris Engineering, Inc">
+                                        <img alt="Lutris Engineering"
+                                            src="https://user-images.githubusercontent.com/1830959/129986000-d00e9309-a657-40a0-8cf4-518a5cd7dfae.png"
+                                            width="400" />
+                                    </a>
+                                </td>
+                                <td>Lutris Engineering runs the datom-rs project.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
             <section id="license">
-                <pre><code class="lang-rust">// SPDX-FileCopyrightText: 2021 <a href="https://lutris.engineering">Lutris Engineering, Inc</a>
-// SPDX-License-Identifier: <a href="https://github.com/LutrisEng/datom-rs/blob/main/LICENSES/BlueOak-1.0.0.txt">BlueOak-1.0.0</a> OR <a href="https://github.com/LutrisEng/datom-rs/blob/main/LICENSES/BSD-2-Clause-Patent.txt">BSD-2-Clause-Patent</a></code></pre>
+                <pre><code class="lang-rust hljs language-rust"><span class="hljs-comment">// SPDX-FileCopyrightText: 2021 <a href="https://lutris.engineering">Lutris Engineering, Inc</a></span>
+<span>// SPDX-License-Identifier: <a href="https://github.com/LutrisEng/datom-rs/blob/main/LICENSES/BlueOak-1.0.0.txt">BlueOak-1.0.0</a> OR <a href="https://github.com/LutrisEng/datom-rs/blob/main/LICENSES/BSD-2-Clause-Patent.txt">BSD-2-Clause-Patent</a></span></code></pre>
             </section>
         </main>
         <div class="pure-u-1 pure-u-lg-1-5 pure-u-xl-1-4"></div>

@@ -3,14 +3,41 @@
 <!-- SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering> -->
 
 # datom-rs
-[![CI status](https://img.shields.io/github/workflow/status/LutrisEng/datom-rs/CI)](https://github.com/LutrisEng/datom-rs/actions)
-[![Version](https://img.shields.io/crates/v/datom)](https://crates.io/crates/datom)
-[![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/cargo/datom)](https://libraries.io/cargo/datom)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FLutrisEng%2Fdatom-rs.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FLutrisEng%2Fdatom-rs?ref=badge_shield)
-![License](https://img.shields.io/badge/license-BlueOak%2FBSD-blue)
-[![Matrix](https://img.shields.io/badge/chat-%23datom--rs%3Alutris.engineering-success)](https://matrix.to/#/#datom-rs:lutris.engineering)
-[![GitHub Sponsors](https://img.shields.io/github/sponsors/LutrisEng)](https://github.com/sponsors/LutrisEng)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](.github/CODE_OF_CONDUCT.md)
+
+<a href="https://github.com/LutrisEng/datom-rs/actions">
+    <img src="https://img.shields.io/github/workflow/status/LutrisEng/datom-rs/CI"
+        alt="CI status" />
+</a>
+<a href="https://crates.io/crates/datom">
+    <img src="https://img.shields.io/crates/v/datom" alt="Version" />
+</a>
+<a href="https://libraries.io/cargo/datom">
+    <img src="https://img.shields.io/librariesio/release/cargo/datom"
+        alt="Libraries.io dependency status for latest release" />
+</a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2FLutrisEng%2Fdatom-rs?ref=badge_shield">
+    <img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FLutrisEng%2Fdatom-rs.svg?type=shield"
+        alt="FOSSA Status">
+</a>
+<span>
+    <img src="https://img.shields.io/badge/license-BlueOak%2FBSD-blue.svg" alt="License" />
+</span>
+<a href="https://matrix.to/#/#datom-rs:lutris.engineering">
+    <img src="https://img.shields.io/badge/chat-%23datom--rs%3Alutris.engineering-informational"
+        alt="Matrix: #datom-rs:lutris.engineering" />
+</a>
+<a href="irc://irc.libera.chat:+6697/##datom-rs">
+    <img src="https://img.shields.io/badge/libera.chat-%23%23datom--rs-informational"
+        alt="IRC: ##datom.rs on libera.chat" />
+</a>
+<a href="https://github.com/sponsors/LutrisEng">
+    <img src="https://img.shields.io/github/sponsors/LutrisEng" alt="GitHub Sponsors" />
+</a>
+<a href="https://github.com/LutrisEng/datom-rs/blob/main/CODE_OF_CONDUCT.md">
+    <img src="https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg"
+        alt="Contributor Covenant" />
+</a>
+
 ## An open-source database inspired by Datomic
 
 [Documentation](https://os.lutris.engineering/datom-rs/datom)
@@ -27,6 +54,25 @@ datom = "0.1"
 
 ## Sponsors
 
-| Sponsor                                                                                                                                                                                                                          | Contribution                                  |
-|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
-| <a href="https://lutris.engineering/?utm_source=lutrisengineering&utm_medium=github&utm_campaign=datom-rs" title="Lutris Engineering, Inc"><img alt="Lutris Engineering" src="https://user-images.githubusercontent.com/1830959/129986000-d00e9309-a657-40a0-8cf4-518a5cd7dfae.png" width="400" /></a> | Lutris Engineering runs the datom-rs project. |
+<table class="pure-table pure-table-horizontal">
+    <thead>
+        <tr>
+            <th>Sponsor</th>
+            <th>Contribution</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <a href="https://lutris.engineering/?utm_source=lutrisengineering&utm_medium=github&utm_campaign=datom-rs"
+                    title="Lutris Engineering, Inc">
+                    <img alt="Lutris Engineering"
+                        src="https://user-images.githubusercontent.com/1830959/129986000-d00e9309-a657-40a0-8cf4-518a5cd7dfae.png"
+                        width="400" />
+                </a>
+            </td>
+            <td>Lutris Engineering runs the datom-rs project.</td>
+        </tr>
+    </tbody>
+</table>
+
