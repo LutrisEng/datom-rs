@@ -6,3 +6,8 @@ mod connection;
 mod database;
 pub use connection::*;
 pub use database::*;
+
+/// C bindings
+pub mod c {
+    pub use super::connection::c::*;
+}
