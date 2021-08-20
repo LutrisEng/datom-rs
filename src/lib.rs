@@ -35,7 +35,7 @@ use datom::{
 };
 
 // Create a temporary database
-let conn = SledConnection::connect_temp("my_database")?;
+let conn = SledConnection::connect_temp()?;
 
 // Create an ID to use for the username attribute
 let username = ID::new();
