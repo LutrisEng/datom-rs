@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software in your research, please cite it as below."
+authors:
+- family-names: "McCorkle"
+  given-names: "Piper"
+  affiliation: "Lutris Engineering, Inc"
+  city: "Brenham"
+  region: "TX"
+  post-code: 77833
+  country: "USA"
+  email: "piper@lutris.engineering"
+  orcid: "https://orcid.org/0000-0002-1041-5539"
+title: "datom-rs"
+version: 0.1.1-pre2
+date-released: 2021-08-20
+url: "https://os.lutris.engineering/datom-rs"
+repository-code: "https://github.com/LutrisEng/datom-rs"
+license: "BlueOak-1.0.0 OR BSD-2-Clause-Patent"
