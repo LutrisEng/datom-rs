@@ -4,7 +4,7 @@
 
 [package]
 name = "datom"
-version = "0.1.1-pre"
+version = "0.1.1-pre2"
 authors = ["Lutris Engineering, Inc <contact@lutris.engineering>"]
 edition = "2018"
 description = "datom-rs: an open-source database inspired by Datomic"
