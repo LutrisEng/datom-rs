@@ -52,6 +52,14 @@ Add the following to the `[dependencies]` section of your `Cargo.toml`:
 datom = "0.1"
 ```
 
+## MSRV
+
+Currently, datom-rs requires Rust nightly. We use the following unstable features, though we're open to refactoring them out.
+
+```rust
+#![feature(generic_associated_types, map_first_last)]
+```
+
 ## Sponsors
 
 <table class="pure-table pure-table-horizontal">
