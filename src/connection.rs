@@ -13,10 +13,8 @@ pub trait Connection: Sized {
     fn connect(uri: &str) -> Result<Self, ConnectionError>;
     /// Fetch the t-value for the latest transaction
     fn latest_t(&self) -> Result<u64, ConnectionError>;
-    /**
-    Get a [database](crate::database::Database) for the current
-    point in time
-    */
+    /// Get a [database](crate::database::Database) for the current
+    /// point in time
     fn db(&self) -> Result<Self::Database<'_>, ConnectionError>;
     /// Get a [database](crate::database::Database) for a specific point
     /// in time

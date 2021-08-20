@@ -10,4 +10,5 @@ pub use database::*;
 /// C bindings
 pub mod c {
     pub use super::connection::c::*;
+    pub use super::database::c::*;
 }

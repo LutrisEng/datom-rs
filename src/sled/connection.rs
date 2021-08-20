@@ -215,4 +215,30 @@ pub mod c {
             Err(_) => None,
         }
     }
+
+    /// Get a [database](SledDatabase) for the current point in time
+    #[no_mangle]
+    pub extern "C" fn datom_sled_db(conn: &SledConnection) -> Option<Box<SledDatabase>> {
+        let res = conn.db();
+        match res {
+            Ok(db) => Some(Box::new(db)),
+            Err(e) => {
+                update_last_connection_error(e.into());
+                None
+            }
+        }
+    }
+
+    /// Get a [database](SledDatabase) for a specific point in time
+    #[no_mangle]
+    pub extern "C" fn datom_sled_as_of(conn: &SledConnection, t: u64) -> Option<Box<SledDatabase>> {
+        let res = conn.as_of(t);
+        match res {
+            Ok(db) => Some(Box::new(db)),
+            Err(e) => {
+                update_last_connection_error(e.into());
+                None
+            }
+        }
+    }
 }
