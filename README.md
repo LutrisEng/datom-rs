@@ -3,7 +3,7 @@
 <!-- SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering> -->
 
 # datom-rs
-![CI status](https://github.com/LutrisEng/datom-rs/actions/workflows/ci.yml/badge.svg)
+[![CI status](https://img.shields.io/github/workflow/status/LutrisEng/datom-rs/CI)](https://github.com/LutrisEng/datom-rs/actions)
 [![Version](https://img.shields.io/crates/v/datom)](https://crates.io/crates/datom)
 [![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/cargo/datom)](https://libraries.io/cargo/datom)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FLutrisEng%2Fdatom-rs.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FLutrisEng%2Fdatom-rs?ref=badge_shield)
