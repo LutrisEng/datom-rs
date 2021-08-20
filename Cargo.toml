@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 # SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
+cargo-features = ["edition2021"]
+
 [package]
 name = "datom"
 version = "0.1.1-pre2"
