@@ -86,6 +86,16 @@ jobs:
     - uses: actions/setup-python@v2
     - run: pip install reuse
     - run: reuse lint
+  
+  validate_citation:
+    name: Validate CITATION.cff
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+    - run: pip install ruamel.yaml jsonschema
+    - run: wget https://raw.githubusercontent.com/citation-file-format/citation-file-format/main/{examples/validator.py,schema.json}
+    - run: python validator.py -s schema.json -d CITATION.cff
           
   docs:
     name: Build Docs
