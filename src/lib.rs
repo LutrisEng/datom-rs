@@ -77,6 +77,9 @@ pub use merge_iters::*;
 #[cfg(feature = "sled")]
 pub mod sled;
 
+/// C bindings
+pub mod c;
+
 /// The main traits which should be in scope when using datom-rs
 pub mod prelude {
     pub use crate::{Connection, Database, Entity};

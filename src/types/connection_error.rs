@@ -34,3 +34,33 @@ impl From<sled::Error> for ConnectionError {
         Self::Miscellaneous(Box::new(e))
     }
 }
+
+/// Network/disk errors for C bindings
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub enum DatomConnectionError {
+    /// No error
+    None,
+    /// There was invalid data in the data store
+    InvalidData,
+    /// There was an IO error
+    IOError,
+    /// There was an other error, possibly in the underlying data store
+    Miscellaneous,
+}
+
+impl From<&ConnectionError> for DatomConnectionError {
+    fn from(ce: &ConnectionError) -> Self {
+        match ce {
+            ConnectionError::InvalidData => Self::InvalidData,
+            ConnectionError::IO(_) => Self::IOError,
+            ConnectionError::Miscellaneous(_) => Self::Miscellaneous,
+        }
+    }
+}
+
+impl From<ConnectionError> for DatomConnectionError {
+    fn from(ce: ConnectionError) -> Self {
+        Self::from(&ce)
+    }
+}
