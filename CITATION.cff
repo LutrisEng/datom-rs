@@ -10,7 +10,7 @@ authors:
   city: "Brenham"
   region: "TX"
   post-code: 77833
-  country: "USA"
+  country: "US"
   email: "contact@lutris.engineering"
   website: "https://lutris.engineering"
 title: "datom-rs"
