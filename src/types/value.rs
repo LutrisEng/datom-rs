@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::{collections::HashSet, convert::TryInto, hash::Hash, str::FromStr};
+use std::{collections::HashSet, convert::TryFrom, convert::TryInto, hash::Hash, str::FromStr};
 
-use datom_bigdecimal::BigDecimal;
+use datom_bigdecimal::{BigDecimal, ParseBigDecimalError};
 use num_bigint::BigInt;
 
 use crate::ID;
@@ -195,11 +195,12 @@ impl From<&BigInt> for Value {
 
 macro_rules! impl_value_from_float {
     ($T:ty) => {
-        impl From<$T> for Value {
+        impl TryFrom<$T> for Value {
+            type Error = ParseBigDecimalError;
             #[inline]
-            fn from(n: $T) -> Self {
+            fn try_from(n: $T) -> Result<Self, Self::Error> {
                 let str = n.to_string();
-                Self::Decimal(BigDecimal::from_str(&str).unwrap())
+                Ok(Self::Decimal(BigDecimal::from_str(&str)?))
             }
         }
     };
