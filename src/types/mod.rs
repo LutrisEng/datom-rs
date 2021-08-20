@@ -37,3 +37,10 @@ pub use self::transaction::*;
 
 mod value;
 pub use self::value::*;
+
+pub mod c {
+    pub use super::connection_error::c::*;
+    pub use super::eid::c::*;
+    pub use super::transaction::c::*;
+    pub use super::transaction_result::c::*;
+}
