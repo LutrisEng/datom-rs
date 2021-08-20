@@ -8,7 +8,6 @@ version = "0.1.1-pre"
 authors = ["Lutris Engineering, Inc <contact@lutris.engineering>"]
 edition = "2018"
 description = "datom-rs: an open-source database inspired by Datomic"
-documentation = "https://os.lutris.engineering/datom-rs/datom/"
 homepage = "https://os.lutris.engineering/datom-rs/"
 repository = "https://github.com/LutrisEng/datom-rs"
 license = "BlueOak-1.0.0 OR BSD-2-Clause-Patent"
