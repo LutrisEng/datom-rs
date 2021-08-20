@@ -34,18 +34,25 @@ use datom::{
     Transaction, ID, Value,
 };
 
+// Create a temporary database
 let conn = SledConnection::connect_temp()?;
 
+// Create an ID to use for the username attribute
 let username = ID::new();
+// Create an ID to use for the user's entity
 let user = ID::new();
 
+// Create a transaction setting the username attribute on the user entity to "pmc"
 let mut tx = Transaction::new();
 tx.add(user.into(), username.into(), "pmc".into());
+// Execute the transaction using the connection
 conn.transact(tx)?;
 
+// Get a view of the database in the current point in time
 let db = conn.db()?;
+// Get the value of the username attribute on the user entity
 if let Some(Value::String(u)) = db.entity(user.into())?.get(username.into())? {
-    println!("pmc's username is {}.", u);
+    println!("The user's username is {}.", u);
 }
 # assert_eq!(db.entity(user.into())?.get(username.into())?, Some("pmc".into()));
 # Ok::<(), Box<dyn std::error::Error>>(())
