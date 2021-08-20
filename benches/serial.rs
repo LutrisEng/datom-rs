@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
+use std::convert::TryInto;
+
 use criterion::{
     black_box, criterion_group, criterion_main, Bencher, BenchmarkId, Criterion, Throughput,
 };
@@ -38,7 +40,7 @@ pub fn criterion_benchmark(c: &mut Criterion) {
     let decimal_datom = Datom {
         entity: ID::null(),
         attribute: ID::null(),
-        value: 123_456_789.101112.into(),
+        value: 123_456_789.101112.try_into().unwrap(),
         t: 0,
         datom_type: DatomType::Retraction,
     };

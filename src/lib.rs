@@ -34,7 +34,7 @@ use datom::{
     Transaction, ID, Value,
 };
 
-let conn = SledConnection::connect_temp("my_database")?;
+let conn = SledConnection::connect_temp()?;
 
 let username = ID::new();
 let user = ID::new();
