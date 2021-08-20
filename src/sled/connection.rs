@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::{convert::TryInto, env::temp_dir};
+use std::env::temp_dir;
 
 use sled::Config;
 use uuid::Uuid;
