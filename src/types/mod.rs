@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
+// For clarity's sake, this is in alphabetical order.
+
 mod attribute_schema;
 pub use self::attribute_schema::*;
 
@@ -16,6 +18,9 @@ pub use self::datom::*;
 
 mod eid;
 pub use self::eid::*;
+
+mod entity_result;
+pub use self::entity_result::*;
 
 mod fact;
 pub use self::fact::*;
