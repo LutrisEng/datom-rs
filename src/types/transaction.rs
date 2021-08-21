@@ -82,6 +82,7 @@ impl Transactable for Transaction {
 }
 
 /// C bindings
+#[cfg(feature = "c")]
 pub mod c {
     use crate::{Transaction, Value, EID};
 

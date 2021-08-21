@@ -88,6 +88,7 @@ impl From<&'static str> for EID {
 }
 
 /// C bindings
+#[cfg(feature = "c")]
 pub mod c {
     use std::{ffi::CStr, os::raw::c_char};
 

@@ -8,6 +8,7 @@ pub use connection::*;
 pub use database::*;
 
 /// C bindings
+#[cfg(feature = "c")]
 pub mod c {
     pub use super::connection::c::*;
     pub use super::database::c::*;

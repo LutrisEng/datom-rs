@@ -5,8 +5,8 @@
 
 set -euxo pipefail
 
-cargo test
-cargo check
-cargo clippy -- -D warnings
-cargo fmt -- --check
+cargo test --all --doc
+cargo check --all
+cargo clippy --all
+cargo fmt --all -- --check
 python -m reuse lint

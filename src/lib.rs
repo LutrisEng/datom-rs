@@ -85,6 +85,7 @@ pub use merge_iters::*;
 pub mod sled;
 
 /// C bindings
+#[cfg(feature = "c")]
 pub mod c;
 
 /// The main traits which should be in scope when using datom-rs
