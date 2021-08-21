@@ -33,9 +33,6 @@ datom-bigdecimal = "0.3.0"
 
 sled = { version = "0.34", optional = true }
 
-[dev-dependencies]
-criterion = "0.3"
-
 [build-dependencies]
 cbindgen = { version = "0.20", optional = true }
 
@@ -43,7 +40,3 @@ cbindgen = { version = "0.20", optional = true }
 version = "1"
 default-features = false
 features = ["user-hooks"]
-
-[[bench]]
-name = "serial"
-harness = false
