@@ -271,6 +271,12 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
                 .ident("user/first-name".to_string())
                 .value_type(AttributeType::String),
         );
+        schema_tx.append(
+            AttributeSchema::new()
+                .ident("user/friends".to_string())
+                .value_type(AttributeType::Ref)
+                .many(),
+        );
         conn.transact(schema_tx)?;
     }
 
@@ -310,6 +316,19 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
         assert_eq!(
             first_name_attribute.get("db/value-type".into())?,
             builtin_idents::type_string(),
+        );
+        let friends_attribute = db.entity("user/friends".into())?;
+        assert_eq!(
+            friends_attribute.get("db/ident".into())?,
+            EntityResult::Value("user/friends".into()),
+        );
+        assert_eq!(
+            friends_attribute.get("db/value-type".into())?,
+            builtin_idents::type_ref(),
+        );
+        assert_eq!(
+            friends_attribute.get("db/cardinality".into())?,
+            builtin_idents::cardinality_many(),
         );
     }
 
@@ -367,6 +386,51 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
             user.get("user/first-name".into())?,
             EntityResult::Value("Piper".into())
         );
+    }
+
+    {
+        let db = conn.db()?;
+        let user = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
+        let mut friend_tx = Transaction::new();
+        friend_tx.add_many(
+            ID::new().into(),
+            [
+                ("user/username".into(), "friend".into()),
+                ("user/friends".into(), user.id().into()),
+            ]
+            .into(),
+        );
+        conn.transact(friend_tx)?;
+    }
+
+    {
+        let db = conn.db()?;
+        let user = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
+        let friend = db.entity(EID::Unique(
+            Box::new("user/username".into()),
+            "friend".into(),
+        ))?;
+        assert_eq!(
+            user.get("user/username".into())?,
+            EntityResult::Value("pmc".into()),
+        );
+        assert_eq!(user.get("user/admin?".into())?, EntityResult::NotFound);
+        assert_eq!(
+            user.get("user/first-name".into())?,
+            EntityResult::Value("Piper".into()),
+        );
+        assert_eq!(
+            friend.get("user/username".into())?,
+            EntityResult::Value("friend".into()),
+        );
+        assert_eq!(
+            friend.get("user/friends".into())?,
+            EntityResult::Repeated(vec![user.clone().into()]),
+        );
+        // assert_eq!(
+        //     user.reverse_get("user/friends".into())?,
+        //     EntityResult::Repeated(vec![EntityResult::Ref(friend)]),
+        // );
     }
 
     Ok(())

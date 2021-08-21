@@ -105,7 +105,7 @@ impl<E: Entity> From<E> for EntityResult<E> {
 }
 
 /// An entity at a single point in time
-pub trait Entity: Sized + PartialEq {
+pub trait Entity: Sized + PartialEq + Clone {
     /// An iterator over an entity's attributes
     type AttributeIter: Iterator<Item = ID>;
 
