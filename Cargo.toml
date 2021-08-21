@@ -24,7 +24,7 @@ crate-type = ["lib", "cdylib", "staticlib"]
 
 [features]
 default = ["sled"]
-c = []
+c = ["cbindgen"]
 
 [dependencies]
 uuid = { version = "0.8", features = ["v4"] }
@@ -37,7 +37,7 @@ sled = { version = "0.34", optional = true }
 criterion = "0.3"
 
 [build-dependencies]
-cbindgen = "0.20"
+cbindgen = { version = "0.20", optional = true }
 
 [dev-dependencies.cargo-husky]
 version = "1"
