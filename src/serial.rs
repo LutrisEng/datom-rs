@@ -90,12 +90,26 @@ pub fn serialize_vaet(datom: &Datom) -> Vec<u8> {
 }
 
 /// Create a range encompassing an entire index
+///
+/// ```
+/// use datom::{serial, Index};
+/// assert_eq!(serial::index_range(Index::EAVT), [0]..[1]);
+/// ```
 pub const fn index_range(index: Index) -> Range<[u8; 1]> {
     [index.byte()]..[index.byte() + 1]
 }
 
 /// Create a range encompassing every possible datom for a given entity
 /// in the [EAVT index](crate::Index::EAVT)
+///
+/// ```
+/// use datom::{serial, ID};
+/// let id = ID::null();
+/// let from = [0u8; 17];
+/// let mut to = from;
+/// to[16] = 1;
+/// assert_eq!(serial::eavt_entity_range(id), from..to);
+/// ```
 pub fn eavt_entity_range(eid: ID) -> Range<[u8; 17]> {
     let mut from = [0; 17];
     let mut to = [0; 17];
