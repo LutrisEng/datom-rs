@@ -12,7 +12,7 @@ use crate::{
 use super::{SledAttributeIter, SledConnection};
 
 /// An [Entity] in a sled-backed database
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct SledEntity<'connection> {
     pub(crate) connection: &'connection SledConnection,
     pub(crate) t: u64,
