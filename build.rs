@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
+#[cfg(feature = "c")]
 extern crate cbindgen;
 
-use std::env;
-
 fn main() {
-    if env::var("CARGO_FEATURE_C").is_ok() {
+    #[cfg(feature = "c")]
+    {
+        use std::env;
+
         let crate_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
         let profile = env::var("PROFILE").unwrap();
 
