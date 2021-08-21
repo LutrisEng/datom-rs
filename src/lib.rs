@@ -62,11 +62,8 @@ if let EntityResult::Value(Value::String(u)) = db.entity(user.into())?.get(usern
 [Datomic's excellent documentation]: https://docs.datomic.com/on-prem/overview/architecture.html
 */
 
-mod connection;
-pub use connection::*;
-
-mod database;
-pub use database::*;
+mod traits;
+pub use traits::*;
 
 mod types;
 pub use types::*;
@@ -90,5 +87,5 @@ pub mod c;
 
 /// The main traits which should be in scope when using datom-rs
 pub mod prelude {
-    pub use crate::{Connection, Database, Entity, Transactable};
+    pub use crate::traits::*;
 }
