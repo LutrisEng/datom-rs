@@ -425,11 +425,22 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
         );
         assert_eq!(
             friend.get("user/friends".into())?,
-            EntityResult::Repeated(vec![user.clone().into()]),
+            EntityResult::Repeated(vec![user.into()]),
         );
         assert_eq!(
             user.reverse_get("user/friends".into())?,
-            EntityResult::Repeated(vec![EntityResult::Ref(friend)]),
+            EntityResult::Repeated(vec![friend.into()]),
+        );
+        let username = db.entity("user/username".into())?.id().to_owned();
+        let first_name = db.entity("user/first-name".into())?.id().to_owned();
+        let friends = db.entity("user/friends".into())?.id().to_owned();
+        assert_eq!(
+            user.attributes()?.collect::<Vec<ID>>(),
+            vec![username, first_name],
+        );
+        assert_eq!(
+            friend.attributes()?.collect::<Vec<ID>>(),
+            vec![username, friends],
         );
     }
 
