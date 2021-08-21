@@ -220,6 +220,7 @@ impl<'connection> Database<'connection> for SledDatabase<'connection> {
 }
 
 /// C bindings
+#[cfg(feature = "c")]
 pub mod c {
     use super::SledDatabase;
 

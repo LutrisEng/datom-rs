@@ -36,6 +36,7 @@ impl From<sled::Error> for ConnectionError {
 }
 
 /// C bindings
+#[cfg(feature = "c")]
 pub mod c {
     use std::cell::RefCell;
 

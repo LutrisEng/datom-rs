@@ -24,6 +24,7 @@ crate-type = ["lib", "cdylib", "staticlib"]
 
 [features]
 default = ["sled"]
+c = []
 
 [dependencies]
 uuid = { version = "0.8", features = ["v4"] }
