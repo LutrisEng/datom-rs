@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use crate::{ConnectionError, Database, Transaction, TransactionError, TransactionResult};
+use crate::{
+    ConnectionError, Database, Transactable, Transaction, TransactionError, TransactionResult,
+};
 
 /// A persistent connection to a database
 pub trait Connection: Sized {
@@ -20,8 +22,15 @@ pub trait Connection: Sized {
     /// in time
     fn as_of(&self, t: u64) -> Result<Self::Database<'_>, ConnectionError>;
     /// Run a transaction on the database
-    fn transact(
+    fn transact_tx(
         &self,
         tx: Transaction,
     ) -> Result<TransactionResult<'_, Self, Self::Database<'_>>, TransactionError>;
+    /// Transact a transactable on the database
+    fn transact<T: Transactable>(
+        &self,
+        txable: T,
+    ) -> Result<TransactionResult<'_, Self, Self::Database<'_>>, TransactionError> {
+        self.transact_tx(txable.tx())
+    }
 }

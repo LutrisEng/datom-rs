@@ -234,6 +234,22 @@ pub fn type_ref() -> ID {
     149893903729185565330222631892178876560u128.into()
 }
 
+/**
+A value for the [value_type](self::value_type) attribute
+
+```
+let id = datom::builtin_idents::type_ref();
+let as_int: u128 = id.into();
+let as_bytes: [u8; 16] = id.into();
+assert_eq!(id, as_int.into());
+assert_eq!(id, as_bytes.into());
+```
+*/
+#[inline]
+pub fn type_boolean() -> ID {
+    149893903729185565330222631892178876560u128.into()
+}
+
 /// The data behind a built-in entity
 pub type BuiltinEntity = HashMap<ID, Value>;
 
@@ -245,17 +261,32 @@ pub fn get_builtin_entities() -> BuiltinEntities {
     [
         (
             id(),
-            [(id(), id().into()), (ident(), Value::from("db/id"))].into(),
+            [
+                (id(), id().into()),
+                (ident(), Value::from("db/id")),
+                (value_type(), Value::from(type_id())),
+                (cardinality(), Value::from(cardinality_one())),
+            ]
+            .into(),
         ),
         (
             ident(),
-            [(id(), ident().into()), (ident(), Value::from("db/ident"))].into(),
+            [
+                (id(), ident().into()),
+                (ident(), Value::from("db/ident")),
+                (unique(), Value::from(true)),
+                (value_type(), Value::from(type_string())),
+                (cardinality(), Value::from(cardinality_one())),
+            ]
+            .into(),
         ),
         (
             cardinality(),
             [
                 (id(), cardinality().into()),
                 (ident(), Value::from("db/cardinality")),
+                (value_type(), Value::from(type_ref())),
+                (cardinality(), Value::from(cardinality_one())),
             ]
             .into(),
         ),
@@ -264,22 +295,38 @@ pub fn get_builtin_entities() -> BuiltinEntities {
             [
                 (id(), value_type().into()),
                 (ident(), Value::from("db/value-type")),
+                (value_type(), Value::from(type_ref())),
+                (cardinality(), Value::from(cardinality_one())),
             ]
             .into(),
         ),
         (
             doc(),
-            [(id(), doc().into()), (ident(), Value::from("db/doc"))].into(),
+            [
+                (id(), doc().into()),
+                (ident(), Value::from("db/doc")),
+                (value_type(), Value::from(type_string())),
+                (cardinality(), Value::from(cardinality_one())),
+            ]
+            .into(),
         ),
         (
             unique(),
-            [(id(), unique().into()), (ident(), Value::from("db/unique"))].into(),
+            [
+                (id(), unique().into()),
+                (ident(), Value::from("db/unique")),
+                (value_type(), Value::from(type_boolean())),
+                (cardinality(), Value::from(cardinality_one())),
+            ]
+            .into(),
         ),
         (
             is_component(),
             [
                 (id(), is_component().into()),
                 (ident(), Value::from("db/is-component")),
+                (value_type(), Value::from(type_boolean())),
+                (cardinality(), Value::from(cardinality_one())),
             ]
             .into(),
         ),
@@ -336,6 +383,14 @@ pub fn get_builtin_entities() -> BuiltinEntities {
             [
                 (id(), type_ref().into()),
                 (ident(), Value::from("db.type/ref")),
+            ]
+            .into(),
+        ),
+        (
+            type_boolean(),
+            [
+                (id(), type_boolean().into()),
+                (ident(), Value::from("db.type/boolean")),
             ]
             .into(),
         ),

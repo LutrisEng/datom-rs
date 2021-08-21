@@ -89,10 +89,13 @@ pub fn serialize_vaet(datom: &Datom) -> Vec<u8> {
     v
 }
 
-/**
-Create a range encompassing every possible datom for a given entity
-in the [EAVT index](crate::Index::EAVT)
-*/
+/// Create a range encompassing an entire index
+pub const fn index_range(index: Index) -> Range<[u8; 1]> {
+    [index.byte()]..[index.byte() + 1]
+}
+
+/// Create a range encompassing every possible datom for a given entity
+/// in the [EAVT index](crate::Index::EAVT)
 pub fn eavt_entity_range(eid: ID) -> Range<[u8; 17]> {
     let mut from = [0; 17];
     let mut to = [0; 17];
@@ -107,10 +110,8 @@ pub fn eavt_entity_range(eid: ID) -> Range<[u8; 17]> {
     from..to
 }
 
-/**
-Create a range encompassing every possible [datom](crate::Datom) for
-a given entity and attribute in the [EAVT index](crate::Index::EAVT)
-*/
+/// Create a range encompassing every possible [datom](crate::Datom) for
+/// a given entity and attribute in the [EAVT index](crate::Index::EAVT)
 pub fn eavt_entity_attribute_range(eid: ID, aid: ID) -> Range<[u8; 33]> {
     let mut base = [0; 33];
     base[0] = Index::EAVT.byte();
@@ -126,10 +127,8 @@ pub fn eavt_entity_attribute_range(eid: ID, aid: ID) -> Range<[u8; 33]> {
     from..to
 }
 
-/**
-Create a range encompassing every possible datom for a given attribute
-in the [AVET index](crate::Index::AVET)
-*/
+/// Create a range encompassing every possible datom for a given
+/// attribute in the [AVET index](crate::Index::AVET)
 pub fn avet_attribute_range(eid: ID) -> Range<[u8; 17]> {
     let mut from = [0; 17];
     let mut to = [0; 17];
@@ -141,6 +140,31 @@ pub fn avet_attribute_range(eid: ID) -> Range<[u8; 17]> {
     let to_bytes = to_u128.to_be_bytes();
     from[1..].copy_from_slice(&eid_bytes);
     to[1..].copy_from_slice(&to_bytes);
+    from..to
+}
+
+/// Create a range encompassing every possible datom for a given
+/// attribute and value in the [AVET index](crate::Index::AVET)
+pub fn avet_attribute_value_range(eid: ID, val: Value) -> Range<Vec<u8>> {
+    let mut val_serialized = serialize_v(&val);
+    let mut from = vec![0u8; 17];
+    from[0] = Index::AVET.byte();
+    let eid_bytes: [u8; 16] = eid.into();
+    from[1..17].copy_from_slice(&eid_bytes);
+    from.append(&mut val_serialized);
+    let mut to = from.clone();
+    let mut i = to.len() - 1;
+    while i > 0 {
+        match to[i].checked_add(1) {
+            Some(x) => {
+                to[i] = x;
+                break;
+            }
+            None => {
+                i -= 1;
+            }
+        }
+    }
     from..to
 }
 
@@ -235,29 +259,27 @@ pub fn deserialize(bytes: &[u8], index: Index) -> Option<Datom> {
     }
 }
 
-/**
-Deserialize a [datom](crate::Datom) from any [index](crate::Index)
-
-```
-use datom::serial::*;
-use datom::{Datom, ID, DatomType, Index::*};
-let my_datom = Datom {
-    entity: ID::new(),
-    attribute: ID::new(),
-    value: "Val".into(),
-    t: 0,
-    datom_type: DatomType::Addition
-};
-let eavt = serialize(&my_datom, EAVT);
-let aevt = serialize(&my_datom, AEVT);
-let avet = serialize(&my_datom, AVET);
-let vaet = serialize(&my_datom, VAET);
-assert_eq!(deserialize_unknown(&eavt), Some((my_datom.clone(), EAVT)));
-assert_eq!(deserialize_unknown(&aevt), Some((my_datom.clone(), AEVT)));
-assert_eq!(deserialize_unknown(&avet), Some((my_datom.clone(), AVET)));
-assert_eq!(deserialize_unknown(&vaet), Some((my_datom.clone(), VAET)));
-```
-*/
+/// Deserialize a [datom](crate::Datom) from any [index](crate::Index)
+///
+/// ```
+/// use datom::serial::*;
+/// use datom::{Datom, ID, DatomType, Index::*};
+/// let my_datom = Datom {
+///     entity: ID::new(),
+///     attribute: ID::new(),
+///     value: "Val".into(),
+///     t: 0,
+///     datom_type: DatomType::Addition
+/// };
+/// let eavt = serialize(&my_datom, EAVT);
+/// let aevt = serialize(&my_datom, AEVT);
+/// let avet = serialize(&my_datom, AVET);
+/// let vaet = serialize(&my_datom, VAET);
+/// assert_eq!(deserialize_unknown(&eavt), Some((my_datom.clone(), EAVT)));
+/// assert_eq!(deserialize_unknown(&aevt), Some((my_datom.clone(), AEVT)));
+/// assert_eq!(deserialize_unknown(&avet), Some((my_datom.clone(), AVET)));
+/// assert_eq!(deserialize_unknown(&vaet), Some((my_datom.clone(), VAET)));
+/// ```
 pub fn deserialize_unknown(bytes: &[u8]) -> Option<(Datom, Index)> {
     let (index_byte, _) = deserialize_byte(bytes);
     let index = Index::from_byte(index_byte);

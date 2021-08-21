@@ -7,7 +7,8 @@ use std::collections::HashSet;
 use crate::{
     builtin_idents,
     serial::{
-        avet_attribute_range, deserialize_unknown, eavt_entity_attribute_range, eavt_entity_range,
+        avet_attribute_range, avet_attribute_value_range, deserialize_unknown,
+        eavt_entity_attribute_range, eavt_entity_range, index_range,
     },
     Connection, Database, Datom, DatomType, Entity, Index, QueryError, Value, EID, ID,
 };
@@ -24,7 +25,6 @@ pub struct SledDatabase<'connection> {
 pub struct SledDatomIter {
     iter: sled::Iter,
     t: u64,
-    index: Index,
 }
 
 impl Iterator for SledDatomIter {
@@ -37,10 +37,8 @@ impl Iterator for SledDatomIter {
                 Some(Err(_)) => continue,
                 Some(Ok((k, _))) => {
                     let bytes: &[u8] = &k;
-                    let (datom, index) = deserialize_unknown(bytes)?;
-                    if index != self.index {
-                        return None;
-                    } else if datom.t <= self.t {
+                    let (datom, _) = deserialize_unknown(bytes)?;
+                    if datom.t <= self.t {
                         return Some(datom);
                     }
                 }
@@ -57,10 +55,8 @@ impl DoubleEndedIterator for SledDatomIter {
                 Some(Err(_)) => continue,
                 Some(Ok((k, _))) => {
                     let bytes: &[u8] = &k;
-                    let (datom, index) = deserialize_unknown(bytes)?;
-                    if index != self.index {
-                        return None;
-                    } else if datom.t <= self.t {
+                    let (datom, _) = deserialize_unknown(bytes)?;
+                    if datom.t <= self.t {
                         return Some(datom);
                     }
                 }
@@ -166,9 +162,8 @@ impl<'connection> Database<'connection> for SledDatabase<'connection> {
 
     fn datoms(&self, index: Index) -> Result<Self::DatomIter, QueryError> {
         Ok(Self::DatomIter {
-            iter: self.connection.db.iter(),
+            iter: self.connection.db.range(index_range(index)),
             t: self.t,
-            index,
         })
     }
 
@@ -176,7 +171,6 @@ impl<'connection> Database<'connection> for SledDatabase<'connection> {
         Ok(Self::DatomIter {
             iter: self.connection.db.range(eavt_entity_range(entity)),
             t: self.t,
-            index: Index::EAVT,
         })
     }
 
@@ -191,7 +185,6 @@ impl<'connection> Database<'connection> for SledDatabase<'connection> {
                 .db
                 .range(eavt_entity_attribute_range(entity, attribute)),
             t: self.t,
-            index: Index::EAVT,
         })
     }
 
@@ -199,7 +192,20 @@ impl<'connection> Database<'connection> for SledDatabase<'connection> {
         Ok(Self::DatomIter {
             iter: self.connection.db.range(avet_attribute_range(attribute)),
             t: self.t,
-            index: Index::EAVT,
+        })
+    }
+
+    fn datoms_for_attribute_value(
+        &self,
+        attribute: ID,
+        value: Value,
+    ) -> Result<Self::DatomIter, QueryError> {
+        Ok(Self::DatomIter {
+            iter: self
+                .connection
+                .db
+                .range(avet_attribute_value_range(attribute, value)),
+            t: self.t,
         })
     }
 

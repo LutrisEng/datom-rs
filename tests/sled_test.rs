@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use datom::{prelude::*, Transaction, ID};
+use datom::{
+    builtin_idents, prelude::*, AttributeSchema, AttributeType, Transaction, Value, EID, ID,
+};
 
 use datom::sled::*;
 
@@ -202,6 +204,132 @@ fn entity_api() -> Result<(), Box<dyn std::error::Error>> {
                 .collect::<Vec<ID>>(),
             vec![username_attr]
         );
+    }
+
+    Ok(())
+}
+
+#[test]
+fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
+    let conn = SledConnection::connect_temp()?;
+
+    {
+        let db = conn.db()?;
+        let mut schema_tx = Transaction::new();
+        schema_tx.add_many(
+            ID::new().into(),
+            [
+                ("db/ident".into(), "user/username".into()),
+                (
+                    "db/value-type".into(),
+                    Value::ID(EID::from("db.type/string").resolve(&db)?),
+                ),
+                (
+                    "db/cardinality".into(),
+                    Value::ID(EID::from("db.cardinality/one").resolve(&db)?),
+                ),
+                ("db/unique".into(), true.into()),
+            ]
+            .into(),
+        );
+        schema_tx.add_many(
+            ID::new().into(),
+            [
+                (builtin_idents::ident().into(), "user/admin?".into()),
+                (
+                    builtin_idents::value_type().into(),
+                    builtin_idents::type_boolean().into(),
+                ),
+                (
+                    builtin_idents::cardinality().into(),
+                    builtin_idents::cardinality_one().into(),
+                ),
+            ]
+            .into(),
+        );
+        schema_tx.append(
+            AttributeSchema::new()
+                .ident("user/first-name".to_string())
+                .value_type(AttributeType::String),
+        );
+        conn.transact(schema_tx)?;
+    }
+
+    {
+        let db = conn.db()?;
+        let username_attribute = db.entity("user/username".into())?;
+        assert_eq!(
+            username_attribute.get("db/ident".into())?,
+            Some("user/username".into()),
+        );
+        assert_eq!(
+            username_attribute.get("db/value-type".into())?,
+            Some(Value::ID(builtin_idents::type_string())),
+        );
+        assert_eq!(
+            username_attribute.get("db/cardinality".into())?,
+            Some(Value::ID(builtin_idents::cardinality_one())),
+        );
+        let admin_attribute = db.entity("user/admin?".into())?;
+        assert_eq!(
+            admin_attribute.get("db/ident".into())?,
+            Some("user/admin?".into()),
+        );
+        assert_eq!(
+            admin_attribute.get("db/value-type".into())?,
+            Some(Value::ID(builtin_idents::type_boolean())),
+        );
+        assert_eq!(
+            admin_attribute.get("db/cardinality".into())?,
+            Some(Value::ID(builtin_idents::cardinality_one())),
+        );
+        let first_name_attribute = db.entity("user/first-name".into())?;
+        assert_eq!(
+            first_name_attribute.get("db/ident".into())?,
+            Some("user/first-name".into()),
+        );
+        assert_eq!(
+            first_name_attribute.get("db/value-type".into())?,
+            Some(Value::ID(builtin_idents::type_string())),
+        );
+    }
+
+    {
+        let mut user_tx = Transaction::new();
+        user_tx.add_many(
+            ID::new().into(),
+            [
+                ("user/username".into(), "pmc".into()),
+                ("user/admin?".into(), true.into()),
+                ("user/first-name".into(), "Piper".into()),
+            ]
+            .into(),
+        );
+        conn.transact(user_tx)?;
+    }
+
+    let db = conn.db()?;
+    let admin = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
+    assert_eq!(admin.get("user/username".into())?, Some("pmc".into()));
+    assert_eq!(admin.get("user/admin?".into())?, Some(true.into()));
+    assert_eq!(admin.get("user/first-name".into())?, Some("Piper".into()));
+
+    {
+        let mut not_admin_tx = Transaction::new();
+        not_admin_tx.retract(
+            EID::Unique(Box::new("user/username".into()), "pmc".into()),
+            "user/admin?".into(),
+        );
+        conn.transact(not_admin_tx)?;
+    }
+
+    {
+        let db = conn.db()?;
+        let user = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
+        assert_eq!(user.get("user/username".into())?, Some("pmc".into()));
+        assert_eq!(user.get("user/admin?".into())?, None);
+        assert_eq!(admin.get("user/admin?".into())?, Some(true.into()));
+        assert_eq!(user.get("user/first-name".into())?, Some("Piper".into()));
     }
 
     Ok(())

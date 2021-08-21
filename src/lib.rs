@@ -89,5 +89,5 @@ pub mod c;
 
 /// The main traits which should be in scope when using datom-rs
 pub mod prelude {
-    pub use crate::{Connection, Database, Entity};
+    pub use crate::{Connection, Database, Entity, Transactable};
 }

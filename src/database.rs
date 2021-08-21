@@ -35,25 +35,27 @@ pub trait Database<'connection> {
 
     /// Get all [datoms](crate::Datom) in the given index
     fn datoms(&self, index: Index) -> Result<Self::DatomIter, QueryError>;
-    /**
-    Get all [datoms](crate::Datom) in the
-    [EAVT index](crate::Index::EAVT) for the given entity
-    */
+    /// Get all [datoms](crate::Datom) in the
+    /// [EAVT index](crate::Index::EAVT) for the given entity
     fn datoms_for_entity(&self, entity: ID) -> Result<Self::DatomIter, QueryError>;
-    /**
-    Get all [datoms](crate::Datom) in the
-    [EAVT index](crate::Index::EAVT) for the given entity and attribute
-    */
+    /// Get all [datoms](crate::Datom) in the
+    /// [EAVT index](crate::Index::EAVT) for the given entity and attribute
     fn datoms_for_entity_attribute(
         &self,
         entity: ID,
         attribute: ID,
     ) -> Result<Self::DatomIter, QueryError>;
-    /**
-    Get all [datoms](crate::Datom) in the
-    [AVET index](crate::Index::AVET) for the given attribute
-    */
+    /// Get all [datoms](crate::Datom) in the
+    /// [AVET index](crate::Index::AVET) for the given attribute
     fn datoms_for_attribute(&self, attribute: ID) -> Result<Self::DatomIter, QueryError>;
+    /// Get all [datoms](crate::Datom) in the
+    /// [AVET index](crate::Index::AVET) for the given attribute and
+    /// value
+    fn datoms_for_attribute_value(
+        &self,
+        attribute: ID,
+        value: Value,
+    ) -> Result<Self::DatomIter, QueryError>;
     /// Get an entity
     fn entity(&self, entity: EID) -> Result<Self::Entity, QueryError>;
 }

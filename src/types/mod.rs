@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
+mod attribute_schema;
+pub use self::attribute_schema::*;
+
 mod connection_error;
 pub use self::connection_error::*;
 
