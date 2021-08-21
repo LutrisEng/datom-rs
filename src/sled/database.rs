@@ -91,7 +91,7 @@ impl Iterator for SledAttributeIter {
 }
 
 /// An [Entity] in a sled-backed database
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct SledEntity<'connection> {
     pub(crate) connection: &'connection SledConnection,
     pub(crate) t: u64,
@@ -119,7 +119,7 @@ impl<'connection> Entity for SledEntity<'connection> {
         let attribute_ent = db.entity(attribute.into())?;
         let is_repeated = !skip_cardinality
             && attribute_ent
-                .get_with_options(builtin_idents::cardinality().into(), true, true)?
+                .get_with_options(builtin_idents::cardinality().into(), true, false)?
                 .is_ref_to(&builtin_idents::cardinality_many());
         let attribute_type = {
             if skip_type {
@@ -149,7 +149,21 @@ impl<'connection> Entity for SledEntity<'connection> {
                     values.insert(datom.value);
                 }
             }
-            EntityResult::Repeated(values.into_iter().map(EntityResult::from).collect())
+            let res: Result<Vec<EntityResult<Self>>, QueryError> = values
+                .into_iter()
+                .map(|v| {
+                    if attribute_type == Some(builtin_idents::type_ref()) {
+                        if let Value::ID(id) = v {
+                            Ok(EntityResult::Ref(db.entity(id.into())?))
+                        } else {
+                            Ok(EntityResult::Value(v))
+                        }
+                    } else {
+                        Ok(EntityResult::from(v))
+                    }
+                })
+                .collect();
+            EntityResult::Repeated(res?)
         } else {
             db.datoms_for_entity_attribute(self.id, attribute)?
                 .max_by(|a, b| a.t.cmp(&b.t))
