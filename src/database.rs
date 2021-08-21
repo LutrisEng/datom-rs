@@ -124,18 +124,8 @@ pub trait Entity: Sized + PartialEq + Clone {
         self.get_with_options(attribute, false, false)
     }
     /// Get the entities with this entity as a value on an attribute
-    /// (reverse lookup), with options
-    fn reverse_get_with_options(
-        &self,
-        attribute: EID,
-        skip_cardinality: bool,
-        skip_type: bool,
-    ) -> Result<EntityResult<Self>, QueryError>;
-    /// Get the entities with this entity as a value on an attribute
     /// (reverse lookup)
-    fn reverse_get(&self, attribute: EID) -> Result<EntityResult<Self>, QueryError> {
-        self.reverse_get_with_options(attribute, false, false)
-    }
+    fn reverse_get(&self, attribute: EID) -> Result<EntityResult<Self>, QueryError>;
     /// Get the attributes on this entity
     fn attributes(&self) -> Result<Self::AttributeIter, QueryError>;
 }
@@ -172,6 +162,14 @@ pub trait Database<'connection> {
         &self,
         attribute: ID,
         value: Value,
+    ) -> Result<Self::DatomIter, QueryError>;
+    /// Get all [datoms](crate::Datom) in the
+    /// [VAET index](crate::Index::VAET) for the given value and
+    /// attribute
+    fn datoms_for_value_attribute(
+        &self,
+        value: Value,
+        attribute: ID,
     ) -> Result<Self::DatomIter, QueryError>;
     /// Get an entity
     fn entity(&self, entity: EID) -> Result<Self::Entity, QueryError>;

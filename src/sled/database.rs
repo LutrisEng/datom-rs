@@ -8,7 +8,7 @@ use crate::{
     builtin_idents,
     serial::{
         avet_attribute_range, avet_attribute_value_range, deserialize_unknown,
-        eavt_entity_attribute_range, eavt_entity_range, index_range,
+        eavt_entity_attribute_range, eavt_entity_range, index_range, vaet_value_attribute_range,
     },
     Connection, Database, Datom, DatomType, Entity, EntityResult, Index, QueryError, Value, EID,
     ID,
@@ -200,13 +200,26 @@ impl<'connection> Entity for SledEntity<'connection> {
         }
     }
 
-    fn reverse_get_with_options(
-        &self,
-        _: EID,
-        _: bool,
-        _: bool,
-    ) -> Result<EntityResult<Self>, QueryError> {
-        todo!()
+    fn reverse_get(&self, attribute: EID) -> Result<EntityResult<Self>, QueryError> {
+        let db = self.connection.as_of(self.t)?;
+        let attribute = attribute.resolve(&db)?;
+        let datoms = db.datoms_for_value_attribute(self.id().into(), attribute)?;
+        let datoms: Vec<Datom> = datoms.collect();
+        // The index is sorted in AVET order, so for a given entity
+        // all additions and retractions will be in time-order.
+        let mut entities = HashSet::new();
+        for datom in datoms {
+            if datom.datom_type == DatomType::Retraction {
+                entities.remove(&datom.entity);
+            } else {
+                entities.insert(datom.entity);
+            }
+        }
+        let res: Result<Vec<EntityResult<Self>>, QueryError> = entities
+            .into_iter()
+            .map(|id| Ok(EntityResult::Ref(db.entity(id.into())?)))
+            .collect();
+        Ok(EntityResult::Repeated(res?))
     }
 
     fn attributes(&self) -> Result<Self::AttributeIter, QueryError> {
@@ -267,6 +280,20 @@ impl<'connection> Database<'connection> for SledDatabase<'connection> {
                 .connection
                 .db
                 .range(avet_attribute_value_range(attribute, value)),
+            t: self.t,
+        })
+    }
+
+    fn datoms_for_value_attribute(
+        &self,
+        value: Value,
+        attribute: ID,
+    ) -> Result<Self::DatomIter, QueryError> {
+        Ok(Self::DatomIter {
+            iter: self
+                .connection
+                .db
+                .range(vaet_value_attribute_range(value, attribute)),
             t: self.t,
         })
     }

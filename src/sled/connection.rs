@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::env::temp_dir;
+use std::{env::temp_dir, fmt::Debug};
 
 use sled::Config;
 use uuid::Uuid;
@@ -15,7 +15,6 @@ use crate::{
 use super::SledDatabase;
 
 /// A persistent [Connection] to a sled-backed database
-#[derive(Debug)]
 pub struct SledConnection {
     pub(crate) db: sled::Db,
     pub(crate) id: ID,
@@ -157,6 +156,46 @@ impl Connection for SledConnection {
         };
         self.unlock_transactor()?;
         res
+    }
+}
+
+impl Debug for SledConnection {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("SledConnection")
+            .field("id", &self.id)
+            .field(
+                "EAVT",
+                &(|| {
+                    Ok::<Vec<Datom>, Box<dyn std::error::Error>>(
+                        self.db()?.datoms(Index::EAVT)?.collect(),
+                    )
+                })(),
+            )
+            .field(
+                "AEVT",
+                &(|| {
+                    Ok::<Vec<Datom>, Box<dyn std::error::Error>>(
+                        self.db()?.datoms(Index::AEVT)?.collect(),
+                    )
+                })(),
+            )
+            .field(
+                "AVET",
+                &(|| {
+                    Ok::<Vec<Datom>, Box<dyn std::error::Error>>(
+                        self.db()?.datoms(Index::AVET)?.collect(),
+                    )
+                })(),
+            )
+            .field(
+                "VAET",
+                &(|| {
+                    Ok::<Vec<Datom>, Box<dyn std::error::Error>>(
+                        self.db()?.datoms(Index::VAET)?.collect(),
+                    )
+                })(),
+            )
+            .finish()
     }
 }
 
