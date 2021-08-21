@@ -399,6 +399,14 @@ pub fn get_builtin_entities() -> BuiltinEntities {
 }
 
 /// Get a built-in attribute ID by its ident
+///
+/// ```
+/// use datom::builtin_idents;
+/// assert_eq!(builtin_idents::builtin_by_ident("db/id"), Some(builtin_idents::id()));
+/// assert_eq!(builtin_idents::builtin_by_ident("db/ident"), Some(builtin_idents::ident()));
+/// assert_eq!(builtin_idents::builtin_by_ident("db/value-type"), Some(builtin_idents::value_type()));
+/// assert_eq!(builtin_idents::builtin_by_ident("not a built-in ident"), None);
+/// ```
 pub fn builtin_by_ident(ident_str: &str) -> Option<ID> {
     let builtins = get_builtin_entities();
     builtins
