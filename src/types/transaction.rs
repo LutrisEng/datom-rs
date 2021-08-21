@@ -13,7 +13,7 @@ pub trait Transactable {
 }
 
 /// A set of facts which can be transacted into a database connection
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Transaction {
     facts: Vec<Fact>,
 }

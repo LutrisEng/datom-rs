@@ -168,6 +168,31 @@ pub fn avet_attribute_value_range(eid: ID, val: Value) -> Range<Vec<u8>> {
     from..to
 }
 
+/// Create a range encompassing every possible datom for a given
+/// value and attribute in the [VAET index](crate::Index::VAET)
+pub fn vaet_value_attribute_range(val: Value, eid: ID) -> Range<Vec<u8>> {
+    let mut val_serialized = serialize_v(&val);
+    let mut from = Vec::with_capacity(1 + val_serialized.len() + 16);
+    from.push(Index::VAET.byte());
+    let eid_bytes: [u8; 16] = eid.into();
+    from.append(&mut val_serialized);
+    from.extend_from_slice(&eid_bytes);
+    let mut to = from.clone();
+    let mut i = to.len() - 1;
+    while i > 0 {
+        match to[i].checked_add(1) {
+            Some(x) => {
+                to[i] = x;
+                break;
+            }
+            None => {
+                i -= 1;
+            }
+        }
+    }
+    from..to
+}
+
 /// Serialize a [datom](crate::Datom) for a given [index](crate::Index)
 pub fn serialize(datom: &Datom, index: Index) -> Vec<u8> {
     match index {

@@ -8,7 +8,7 @@ use crate::{Database, Datom, DatomType, Entity, EntityResult, TransactionError, 
 A fact which hasn't yet been converted to a [Datom] (or set of
 [Datom]s)
 */
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Fact {
     /// Adding an attribute value to an entity
     Add(

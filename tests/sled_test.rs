@@ -427,10 +427,10 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
             friend.get("user/friends".into())?,
             EntityResult::Repeated(vec![user.clone().into()]),
         );
-        // assert_eq!(
-        //     user.reverse_get("user/friends".into())?,
-        //     EntityResult::Repeated(vec![EntityResult::Ref(friend)]),
-        // );
+        assert_eq!(
+            user.reverse_get("user/friends".into())?,
+            EntityResult::Repeated(vec![EntityResult::Ref(friend)]),
+        );
     }
 
     Ok(())
