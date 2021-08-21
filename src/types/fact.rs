@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use crate::{Database, Datom, DatomType, Entity, TransactionError, Value, EID};
+use crate::{Database, Datom, DatomType, Entity, EntityResult, TransactionError, Value, EID};
 
 /**
 A fact which hasn't yet been converted to a [Datom] (or set of
@@ -58,15 +58,20 @@ impl Fact {
             Fact::Retract(entity, attribute) => {
                 let entity = entity.resolve(db)?;
                 let attribute = attribute.resolve(db)?;
-                Ok(Datom {
-                    entity,
-                    attribute,
-                    value: db.entity(entity.into())?.get(attribute.into())?.ok_or(
-                        TransactionError::FailedToRetractNonexistentAttribute(entity, attribute),
-                    )?,
-                    t,
-                    datom_type: DatomType::Retraction,
-                })
+                let value = db.entity(entity.into())?.get(attribute.into())?;
+                if let EntityResult::Value(value) = value {
+                    Ok(Datom {
+                        entity,
+                        attribute,
+                        value,
+                        t,
+                        datom_type: DatomType::Retraction,
+                    })
+                } else {
+                    Err(TransactionError::FailedToRetractRepeatedAttribute(
+                        entity, attribute,
+                    ))
+                }
             }
         }
     }

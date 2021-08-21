@@ -31,7 +31,7 @@ functions extremely similarly to Datomic.
 use datom::{
     prelude::*,
     sled::SledConnection,
-    Transaction, ID, Value,
+    Transaction, ID, Value, EntityResult,
 };
 
 // Create a temporary database
@@ -51,10 +51,10 @@ conn.transact(tx)?;
 // Get a view of the database in the current point in time
 let db = conn.db()?;
 // Get the value of the username attribute on the user entity
-if let Some(Value::String(u)) = db.entity(user.into())?.get(username.into())? {
+if let EntityResult::Value(Value::String(u)) = db.entity(user.into())?.get(username.into())? {
     println!("The user's username is {}.", u);
 }
-# assert_eq!(db.entity(user.into())?.get(username.into())?, Some("pmc".into()));
+# assert_eq!(db.entity(user.into())?.get(username.into())?, EntityResult::Value("pmc".into()));
 # Ok::<(), Box<dyn std::error::Error>>(())
 ```
 

@@ -3,7 +3,8 @@
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
 use datom::{
-    builtin_idents, prelude::*, AttributeSchema, AttributeType, Transaction, Value, EID, ID,
+    builtin_idents, prelude::*, AttributeSchema, AttributeType, EntityResult, Transaction, Value,
+    EID, ID,
 };
 
 use datom::sled::*;
@@ -34,16 +35,22 @@ fn entity_api() -> Result<(), Box<dyn std::error::Error>> {
 
     {
         let pmc_username_before_initial_tx = pmc_before_initial_tx.get(username_attr.into())?;
-        assert_eq!(pmc_username_before_initial_tx, None);
+        assert_eq!(pmc_username_before_initial_tx, EntityResult::NotFound);
         let pmc_username_after_initial_tx = pmc_after_initial_tx.get(username_attr.into())?;
-        assert_eq!(pmc_username_after_initial_tx, Some("pmc".into()));
+        assert_eq!(
+            pmc_username_after_initial_tx,
+            EntityResult::Value("pmc".into())
+        );
 
         let ztaylor_username_before_initial_tx =
             ztaylor_before_initial_tx.get(username_attr.into())?;
-        assert_eq!(ztaylor_username_before_initial_tx, None);
+        assert_eq!(ztaylor_username_before_initial_tx, EntityResult::NotFound);
         let ztaylor_username_after_initial_tx =
             ztaylor_after_initial_tx.get(username_attr.into())?;
-        assert_eq!(ztaylor_username_after_initial_tx, Some("ztaylor54".into()));
+        assert_eq!(
+            ztaylor_username_after_initial_tx,
+            EntityResult::Value("ztaylor54".into())
+        );
 
         assert_eq!(
             pmc_before_initial_tx.attributes()?.collect::<Vec<ID>>(),
@@ -70,16 +77,22 @@ fn entity_api() -> Result<(), Box<dyn std::error::Error>> {
     {
         // Ensure this all still works
         let pmc_username_before_initial_tx = pmc_before_initial_tx.get(username_attr.into())?;
-        assert_eq!(pmc_username_before_initial_tx, None);
+        assert_eq!(pmc_username_before_initial_tx, EntityResult::NotFound);
         let pmc_username_after_initial_tx = pmc_after_initial_tx.get(username_attr.into())?;
-        assert_eq!(pmc_username_after_initial_tx, Some("pmc".into()));
+        assert_eq!(
+            pmc_username_after_initial_tx,
+            EntityResult::Value("pmc".into())
+        );
 
         let ztaylor_username_before_initial_tx =
             ztaylor_before_initial_tx.get(username_attr.into())?;
-        assert_eq!(ztaylor_username_before_initial_tx, None);
+        assert_eq!(ztaylor_username_before_initial_tx, EntityResult::NotFound);
         let ztaylor_username_after_initial_tx =
             ztaylor_after_initial_tx.get(username_attr.into())?;
-        assert_eq!(ztaylor_username_after_initial_tx, Some("ztaylor54".into()));
+        assert_eq!(
+            ztaylor_username_after_initial_tx,
+            EntityResult::Value("ztaylor54".into())
+        );
 
         assert_eq!(
             pmc_before_initial_tx.attributes()?.collect::<Vec<ID>>(),
@@ -105,11 +118,11 @@ fn entity_api() -> Result<(), Box<dyn std::error::Error>> {
 
     {
         let pmc_bio_before_add_pmc_bio_tx = pmc_before_add_pmc_bio_tx.get(bio_attr.into())?;
-        assert_eq!(pmc_bio_before_add_pmc_bio_tx, None);
+        assert_eq!(pmc_bio_before_add_pmc_bio_tx, EntityResult::NotFound);
         let pmc_bio_after_add_pmc_bio_tx = pmc_after_add_pmc_bio_tx.get(bio_attr.into())?;
         assert_eq!(
             pmc_bio_after_add_pmc_bio_tx,
-            Some("Hi! I'm a person!".into())
+            EntityResult::Value("Hi! I'm a person!".into())
         );
 
         assert_eq!(
@@ -129,16 +142,22 @@ fn entity_api() -> Result<(), Box<dyn std::error::Error>> {
     {
         // Ensure this all still works
         let pmc_username_before_initial_tx = pmc_before_initial_tx.get(username_attr.into())?;
-        assert_eq!(pmc_username_before_initial_tx, None);
+        assert_eq!(pmc_username_before_initial_tx, EntityResult::NotFound);
         let pmc_username_after_initial_tx = pmc_after_initial_tx.get(username_attr.into())?;
-        assert_eq!(pmc_username_after_initial_tx, Some("pmc".into()));
+        assert_eq!(
+            pmc_username_after_initial_tx,
+            EntityResult::Value("pmc".into())
+        );
 
         let ztaylor_username_before_initial_tx =
             ztaylor_before_initial_tx.get(username_attr.into())?;
-        assert_eq!(ztaylor_username_before_initial_tx, None);
+        assert_eq!(ztaylor_username_before_initial_tx, EntityResult::NotFound);
         let ztaylor_username_after_initial_tx =
             ztaylor_after_initial_tx.get(username_attr.into())?;
-        assert_eq!(ztaylor_username_after_initial_tx, Some("ztaylor54".into()));
+        assert_eq!(
+            ztaylor_username_after_initial_tx,
+            EntityResult::Value("ztaylor54".into())
+        );
 
         assert_eq!(
             pmc_before_initial_tx.attributes()?.collect::<Vec<ID>>(),
@@ -161,11 +180,11 @@ fn entity_api() -> Result<(), Box<dyn std::error::Error>> {
     {
         // Ensure this all still works
         let pmc_bio_before_add_pmc_bio_tx = pmc_before_add_pmc_bio_tx.get(bio_attr.into())?;
-        assert_eq!(pmc_bio_before_add_pmc_bio_tx, None);
+        assert_eq!(pmc_bio_before_add_pmc_bio_tx, EntityResult::NotFound);
         let pmc_bio_after_add_pmc_bio_tx = pmc_after_add_pmc_bio_tx.get(bio_attr.into())?;
         assert_eq!(
             pmc_bio_after_add_pmc_bio_tx,
-            Some("Hi! I'm a person!".into())
+            EntityResult::Value("Hi! I'm a person!".into())
         );
 
         assert_eq!(
@@ -187,10 +206,10 @@ fn entity_api() -> Result<(), Box<dyn std::error::Error>> {
             pmc_before_retract_pmc_bio_tx.get(bio_attr.into())?;
         assert_eq!(
             pmc_bio_before_retract_pmc_bio_tx,
-            Some("Hi! I'm a person!".into())
+            EntityResult::Value("Hi! I'm a person!".into())
         );
         let pmc_bio_after_retract_pmc_bio_tx = pmc_after_retract_pmc_bio_tx.get(bio_attr.into())?;
-        assert_eq!(pmc_bio_after_retract_pmc_bio_tx, None);
+        assert_eq!(pmc_bio_after_retract_pmc_bio_tx, EntityResult::NotFound);
 
         assert_eq!(
             pmc_before_retract_pmc_bio_tx
@@ -260,37 +279,37 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
         let username_attribute = db.entity("user/username".into())?;
         assert_eq!(
             username_attribute.get("db/ident".into())?,
-            Some("user/username".into()),
+            EntityResult::Value("user/username".into()),
         );
         assert_eq!(
             username_attribute.get("db/value-type".into())?,
-            Some(Value::ID(builtin_idents::type_string())),
+            builtin_idents::type_string(),
         );
         assert_eq!(
             username_attribute.get("db/cardinality".into())?,
-            Some(Value::ID(builtin_idents::cardinality_one())),
+            builtin_idents::cardinality_one(),
         );
         let admin_attribute = db.entity("user/admin?".into())?;
         assert_eq!(
             admin_attribute.get("db/ident".into())?,
-            Some("user/admin?".into()),
+            EntityResult::Value("user/admin?".into()),
         );
         assert_eq!(
             admin_attribute.get("db/value-type".into())?,
-            Some(Value::ID(builtin_idents::type_boolean())),
+            builtin_idents::type_boolean(),
         );
         assert_eq!(
             admin_attribute.get("db/cardinality".into())?,
-            Some(Value::ID(builtin_idents::cardinality_one())),
+            builtin_idents::cardinality_one(),
         );
         let first_name_attribute = db.entity("user/first-name".into())?;
         assert_eq!(
             first_name_attribute.get("db/ident".into())?,
-            Some("user/first-name".into()),
+            EntityResult::Value("user/first-name".into()),
         );
         assert_eq!(
             first_name_attribute.get("db/value-type".into())?,
-            Some(Value::ID(builtin_idents::type_string())),
+            builtin_idents::type_string(),
         );
     }
 
@@ -310,9 +329,18 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
 
     let db = conn.db()?;
     let admin = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
-    assert_eq!(admin.get("user/username".into())?, Some("pmc".into()));
-    assert_eq!(admin.get("user/admin?".into())?, Some(true.into()));
-    assert_eq!(admin.get("user/first-name".into())?, Some("Piper".into()));
+    assert_eq!(
+        admin.get("user/username".into())?,
+        EntityResult::Value("pmc".into())
+    );
+    assert_eq!(
+        admin.get("user/admin?".into())?,
+        EntityResult::Value(true.into())
+    );
+    assert_eq!(
+        admin.get("user/first-name".into())?,
+        EntityResult::Value("Piper".into())
+    );
 
     {
         let mut not_admin_tx = Transaction::new();
@@ -326,10 +354,19 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
     {
         let db = conn.db()?;
         let user = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
-        assert_eq!(user.get("user/username".into())?, Some("pmc".into()));
-        assert_eq!(user.get("user/admin?".into())?, None);
-        assert_eq!(admin.get("user/admin?".into())?, Some(true.into()));
-        assert_eq!(user.get("user/first-name".into())?, Some("Piper".into()));
+        assert_eq!(
+            user.get("user/username".into())?,
+            EntityResult::Value("pmc".into())
+        );
+        assert_eq!(user.get("user/admin?".into())?, EntityResult::NotFound);
+        assert_eq!(
+            admin.get("user/admin?".into())?,
+            EntityResult::Value(true.into())
+        );
+        assert_eq!(
+            user.get("user/first-name".into())?,
+            EntityResult::Value("Piper".into())
+        );
     }
 
     Ok(())

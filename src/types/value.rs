@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::{collections::HashSet, hash::Hash, str::FromStr};
+use std::{hash::Hash, str::FromStr};
 
 use datom_bigdecimal::{BigDecimal, ParseBigDecimalError};
 use num_bigint::BigInt;
@@ -10,7 +10,7 @@ use num_bigint::BigInt;
 use crate::ID;
 
 /// An attribute value.
-#[derive(Clone, Debug, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Value {
     /// A basic string
     String(String),
@@ -22,11 +22,6 @@ pub enum Value {
     ID(ID),
     /// A basic boolean
     Boolean(bool),
-    /**
-    A collection of values. Cannot be transacted, only retrieved
-    from a query or [Entity](crate::Entity)
-    */
-    Repeated(HashSet<Self>),
 }
 
 impl Value {
@@ -69,9 +64,6 @@ impl Value {
                 let byte = if *b { 1 } else { 0 };
                 vec![4, byte]
             }
-            Value::Repeated(_) => {
-                vec![255]
-            }
         }
     }
 
@@ -107,37 +99,6 @@ impl Value {
                 _ => None,
             }?)),
             _ => None,
-        }
-    }
-}
-
-impl PartialEq for Value {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (Self::String(l0), Self::String(r0)) => l0 == r0,
-            (Self::Integer(l0), Self::Integer(r0)) => l0 == r0,
-            (Self::Decimal(l0), Self::Decimal(r0)) => l0 == r0,
-            (Self::ID(l0), Self::ID(r0)) => l0 == r0,
-            (Self::Boolean(l0), Self::Boolean(r0)) => l0 == r0,
-            (Self::Repeated(l0), Self::Repeated(r0)) => l0 == r0,
-            _ => false,
-        }
-    }
-}
-
-impl Hash for Value {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        match self {
-            Self::Repeated(hs) => {
-                state.write_u8(255);
-                state.write(b"repeated");
-                for item in hs {
-                    item.hash(state);
-                }
-            }
-            _ => {
-                state.write(&self.bytes());
-            }
         }
     }
 }
