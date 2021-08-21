@@ -9,11 +9,12 @@ use crate::{ConnectionError, QueryError, EID, ID};
 /// Errors during a [Transaction](crate::Transaction)
 #[derive(Debug)]
 pub enum TransactionError {
-    /**
-    The given attribute doesn't have a value, and cannot be
-    retracted
-    */
+    /// The given attribute doesn't have a value, and cannot be
+    /// retracted
     FailedToRetractNonexistentAttribute(ID, ID),
+    /// The given attribute is repeated, and cannot be retracted without
+    /// specifying a specific value to retract.
+    FailedToRetractRepeatedAttribute(ID, ID),
     /// The given EID doesn't resolve to an entity
     UnresolvedEID(EID),
     /// A query executed during this transaction failed

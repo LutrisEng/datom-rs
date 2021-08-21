@@ -10,12 +10,14 @@ use crate::{
         avet_attribute_range, avet_attribute_value_range, deserialize_unknown,
         eavt_entity_attribute_range, eavt_entity_range, index_range,
     },
-    Connection, Database, Datom, DatomType, Entity, Index, QueryError, Value, EID, ID,
+    Connection, Database, Datom, DatomType, Entity, EntityResult, Index, QueryError, Value, EID,
+    ID,
 };
 
 use super::SledConnection;
 
 /// A view of a sled-backed database
+#[derive(Debug)]
 pub struct SledDatabase<'connection> {
     pub(crate) connection: &'connection SledConnection,
     pub(crate) t: u64,
@@ -89,6 +91,7 @@ impl Iterator for SledAttributeIter {
 }
 
 /// An [Entity] in a sled-backed database
+#[derive(Debug, PartialEq)]
 pub struct SledEntity<'connection> {
     pub(crate) connection: &'connection SledConnection,
     pub(crate) t: u64,
@@ -98,17 +101,42 @@ pub struct SledEntity<'connection> {
 impl<'connection> Entity for SledEntity<'connection> {
     type AttributeIter = SledAttributeIter;
 
+    fn id(&self) -> &ID {
+        &self.id
+    }
+
     fn get_with_options(
         &self,
         attribute: EID,
         skip_cardinality: bool,
-    ) -> Result<Option<Value>, QueryError> {
+        skip_type: bool,
+    ) -> Result<EntityResult<Self>, QueryError> {
         let db = self.connection.as_of(self.t)?;
         let attribute = attribute.resolve(&db)?;
+        if attribute == builtin_idents::id() {
+            return Ok(Value::from(self.id).into());
+        }
         let attribute_ent = db.entity(attribute.into())?;
         let is_repeated = !skip_cardinality
-            && attribute_ent.get_with_options(builtin_idents::cardinality().into(), true)?
-                == Some(Value::ID(builtin_idents::cardinality_many()));
+            && attribute_ent
+                .get_with_options(builtin_idents::cardinality().into(), true, true)?
+                .is_ref_to(&builtin_idents::cardinality_many());
+        let attribute_type = {
+            if skip_type {
+                None
+            } else {
+                let attribute_type = attribute_ent.get_with_options(
+                    builtin_idents::value_type().into(),
+                    true,
+                    true,
+                )?;
+                if let EntityResult::Value(Value::ID(t)) = attribute_type {
+                    Some(t)
+                } else {
+                    None
+                }
+            }
+        };
         let result = if is_repeated {
             let datoms = db.datoms_for_entity_attribute(self.id, attribute)?;
             // The index is sorted in EAVT order, so for a given value
@@ -121,30 +149,50 @@ impl<'connection> Entity for SledEntity<'connection> {
                     values.insert(datom.value);
                 }
             }
-            if values.is_empty() {
-                None
-            } else {
-                Some(Value::Repeated(values))
-            }
+            EntityResult::Repeated(values.into_iter().map(EntityResult::from).collect())
         } else {
             db.datoms_for_entity_attribute(self.id, attribute)?
                 .max_by(|a, b| a.t.cmp(&b.t))
-                .map(|x| {
+                .map(|x| -> Result<EntityResult<Self>, QueryError> {
                     if x.datom_type == DatomType::Retraction {
-                        None
+                        Ok(EntityResult::NotFound)
+                    } else if attribute_type == Some(builtin_idents::type_ref()) {
+                        if let Value::ID(id) = x.value {
+                            Ok(EntityResult::Ref(db.entity(id.into())?))
+                        } else {
+                            Ok(EntityResult::Value(x.value))
+                        }
                     } else {
-                        Some(x.value)
+                        Ok(EntityResult::Value(x.value))
                     }
                 })
-                .flatten()
+                .unwrap_or(Ok(EntityResult::NotFound))?
         };
-        Ok(result.or_else(|| {
-            // Get values for builtin entities
+        if let EntityResult::NotFound = result {
             let builtins = builtin_idents::get_builtin_entities();
-            let builtin = builtins.get(&self.id)?;
-            let val = builtin.get(&attribute)?;
-            Some(val.to_owned())
-        }))
+            let builtin = builtins.get(&self.id);
+            if let Some(builtin) = builtin {
+                let val = builtin.get(&attribute);
+                if let Some(val) = val {
+                    Ok(val.to_owned().into())
+                } else {
+                    Ok(EntityResult::NotFound)
+                }
+            } else {
+                Ok(EntityResult::NotFound)
+            }
+        } else {
+            Ok(result)
+        }
+    }
+
+    fn reverse_get_with_options(
+        &self,
+        _: EID,
+        _: bool,
+        _: bool,
+    ) -> Result<EntityResult<Self>, QueryError> {
+        todo!()
     }
 
     fn attributes(&self) -> Result<Self::AttributeIter, QueryError> {

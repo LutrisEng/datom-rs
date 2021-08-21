@@ -8,15 +8,23 @@ use sled::Config;
 use uuid::Uuid;
 
 use crate::{
-    builtin_idents, serial::serialize, Connection, ConnectionError, Database, Datom, Entity, Index,
-    Transaction, TransactionError, TransactionResult, Value,
+    builtin_idents, serial::serialize, Connection, ConnectionError, Database, Datom, Entity,
+    EntityResult, Index, Transaction, TransactionError, TransactionResult, Value, ID,
 };
 
 use super::SledDatabase;
 
 /// A persistent [Connection] to a sled-backed database
+#[derive(Debug)]
 pub struct SledConnection {
     pub(crate) db: sled::Db,
+    pub(crate) id: ID,
+}
+
+impl PartialEq<Self> for SledConnection {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
 }
 
 const LATEST_T: [u8; 1] = [255u8];
@@ -62,7 +70,7 @@ impl SledConnection {
         path.set_extension("db");
         let cfg = Config::new().path(path).temporary(true);
         let db = cfg.open()?;
-        Ok(Self { db })
+        Ok(Self { db, id: ID::new() })
     }
 }
 
@@ -72,7 +80,7 @@ impl Connection for SledConnection {
     fn connect(uri: &str) -> Result<Self, ConnectionError> {
         let cfg = Config::new().path(uri);
         let db = cfg.open()?;
-        Ok(Self { db })
+        Ok(Self { db, id: ID::new() })
     }
 
     fn latest_t(&self) -> Result<u64, ConnectionError> {
@@ -112,11 +120,26 @@ impl Connection for SledConnection {
                 self.insert(datom, Index::AEVT)?;
                 let attr_entity = before.entity(datom.attribute.into())?;
                 let unique_value =
-                    attr_entity.get_with_options(builtin_idents::unique().into(), true)?;
-                let type_value =
-                    attr_entity.get_with_options(builtin_idents::value_type().into(), true)?;
-                let is_unique = unique_value == Some(Value::Boolean(true));
-                let is_ref = type_value == Some(Value::ID(builtin_idents::type_ref()));
+                    attr_entity.get_with_options(builtin_idents::unique().into(), true, true)?;
+                let type_value = attr_entity.get_with_options(
+                    builtin_idents::value_type().into(),
+                    true,
+                    true,
+                )?;
+                let is_unique = {
+                    if let EntityResult::Value(Value::Boolean(x)) = unique_value {
+                        x
+                    } else {
+                        false
+                    }
+                };
+                let is_ref = {
+                    if let EntityResult::Value(Value::ID(id)) = type_value {
+                        id == builtin_idents::type_ref()
+                    } else {
+                        false
+                    }
+                };
                 if is_unique {
                     self.insert(datom, Index::AVET)?;
                 }
