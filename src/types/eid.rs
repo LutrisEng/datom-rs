@@ -2,29 +2,36 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use crate::{builtin_idents, Database, Index, QueryError, Value, ID};
+use std::cmp::Ordering;
+
+use crate::{builtin_idents, Database, Datom, QueryError, Value, ID};
 
 /**
 An un-resolved entity [ID], which can be used to resolve entities by
 [ident](crate::builtin_idents::ident) or
 [unique](crate::builtin_idents::unique) attribute
 */
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum EID {
     /// A resolved entity [ID]
     Resolved(ID),
     /// Resolve an entity by its [ident](crate::builtin_idents::ident)
     Ident(String),
-    /**
-    Resolve an entity by a [unique](crate::builtin_idents::unique)
-    attribute
-    */
+    /// Resolve an entity by a static
+    /// [ident](crate::builtin_idents::ident)
+    InternedIdent(&'static str),
+    /// Resolve an entity by a [unique](crate::builtin_idents::unique)
+    /// attribute
     Unique(
         /// [unique](crate::builtin_idents::unique) attribute
-        Box<EID>,
+        Box<Self>,
         /// Value
         Value,
     ),
+}
+
+fn by_t(a: &Datom, b: &Datom) -> Ordering {
+    a.t.cmp(&b.t)
 }
 
 impl EID {
@@ -44,17 +51,17 @@ impl EID {
                 if let Some(id) = builtin_idents::builtin_by_ident(ident_str) {
                     return Ok(id);
                 }
-                let ident = builtin_idents::ident();
                 let ident_val = Value::from(ident_str.as_str());
-                db.datoms(Index::VAET)?
-                    .find(|datom| datom.attribute == ident && datom.value == ident_val)
+                db.datoms_for_attribute_value(builtin_idents::ident(), ident_val)?
+                    .max_by(by_t)
                     .map(|datom| datom.entity)
                     .ok_or_else(|| QueryError::UnresolvedEID(self.clone()))
             }
+            Self::InternedIdent(ident_str) => Self::Ident(ident_str.to_string()).resolve(db),
             Self::Unique(attr_eid, val) => {
                 let attr_id = attr_eid.resolve(db)?;
-                db.datoms_for_attribute(attr_id)?
-                    .find(|datom| &datom.value == val)
+                db.datoms_for_attribute_value(attr_id, val.to_owned())?
+                    .max_by(by_t)
                     .map(|datom| datom.entity)
                     .ok_or_else(|| QueryError::UnresolvedEID(self.clone()))
             }
@@ -71,6 +78,12 @@ impl From<ID> for EID {
 impl From<String> for EID {
     fn from(ident: String) -> Self {
         Self::Ident(ident)
+    }
+}
+
+impl From<&'static str> for EID {
+    fn from(ident: &'static str) -> Self {
+        Self::InternedIdent(ident)
     }
 }
 

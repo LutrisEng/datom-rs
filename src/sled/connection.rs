@@ -97,7 +97,7 @@ impl Connection for SledConnection {
         self.as_of(self.latest_t()?)
     }
 
-    fn transact(
+    fn transact_tx(
         &self,
         tx: Transaction,
     ) -> Result<TransactionResult<'_, Self, Self::Database<'_>>, TransactionError> {
@@ -111,12 +111,12 @@ impl Connection for SledConnection {
                 self.insert(datom, Index::EAVT)?;
                 self.insert(datom, Index::AEVT)?;
                 let attr_entity = before.entity(datom.attribute.into())?;
-                let is_unique = attr_entity
-                    .get_with_options(builtin_idents::unique().into(), true)?
-                    == Some(Value::Boolean(true));
-                let is_ref = attr_entity
-                    .get_with_options(builtin_idents::value_type().into(), true)?
-                    == Some(Value::ID(builtin_idents::type_ref()));
+                let unique_value =
+                    attr_entity.get_with_options(builtin_idents::unique().into(), true)?;
+                let type_value =
+                    attr_entity.get_with_options(builtin_idents::value_type().into(), true)?;
+                let is_unique = unique_value == Some(Value::Boolean(true));
+                let is_ref = type_value == Some(Value::ID(builtin_idents::type_ref()));
                 if is_unique {
                     self.insert(datom, Index::AVET)?;
                 }

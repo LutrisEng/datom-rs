@@ -236,3 +236,9 @@ impl From<&ID> for Value {
         Self::ID(id.to_owned())
     }
 }
+
+impl From<bool> for Value {
+    fn from(b: bool) -> Self {
+        Self::Boolean(b)
+    }
+}
