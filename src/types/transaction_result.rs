@@ -23,6 +23,7 @@ pub struct TransactionResult<'connection, C: Connection, D: Database<'connection
 }
 
 /// C bindings
+#[cfg(feature = "c")]
 pub mod c {
     use crate::{
         sled::{SledConnection, SledDatabase},
