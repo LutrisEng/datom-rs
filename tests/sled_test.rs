@@ -250,6 +250,7 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
                         "db/cardinality".into(),
                         Value::ID(EID::from("db.cardinality/one").resolve(&db)?),
                     ),
+                    ("db/doc".into(), "The user's unique username".into()),
                     ("db/unique".into(), true.into()),
                 ]
                 .into(),
@@ -273,6 +274,14 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
                 AttributeSchema::new()
                     .ident("user/first-name".to_string())
                     .value_type(AttributeType::String),
+            );
+            schema_tx.append(
+                AttributeSchema::new()
+                    .set_id(ID::new())
+                    .ident("user/stripe-customer".to_string())
+                    .value_type(AttributeType::Ref)
+                    .component()
+                    .unique(),
             );
             schema_tx.append(
                 AttributeSchema::new()
