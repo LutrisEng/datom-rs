@@ -42,12 +42,21 @@ impl ID {
         Self(Uuid::nil())
     }
 
-    pub(crate) const fn from_u128(x: u128) -> Self {
+    /// A const equivalent to [From<u128>::from]
+    ///
+    /// ```
+    /// use datom::ID;
+    /// assert_eq!(ID::from_u128(0), ID::null());
+    /// ```
+    pub const fn from_u128(x: u128) -> Self {
         Self(Uuid::from_u128(x))
     }
 }
 
 impl Default for ID {
+    /// ```
+    /// datom::ID::default();
+    /// ```
     fn default() -> Self {
         Self::new()
     }
@@ -68,12 +77,20 @@ impl ToString for ID {
 }
 
 impl From<u128> for ID {
+    /// ```
+    /// use datom::ID;
+    /// assert_eq!(ID::from_u128(0), ID::null());
+    /// ```
     fn from(n: u128) -> Self {
         Self(Uuid::from_u128(n))
     }
 }
 
 impl From<ID> for u128 {
+    /// ```
+    /// use datom::ID;
+    /// assert_eq!(0u128, ID::null().into());
+    /// ```
     fn from(val: ID) -> Self {
         val.0.as_u128()
     }
