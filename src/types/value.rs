@@ -80,12 +80,13 @@ impl Value {
                 Some(Self::Integer(int))
             }
             2 => {
+                let scale_len = 0i64.to_be_bytes().len();
                 let e = i64::from_be_bytes(
-                    bytes[0..0i64.to_be_bytes().len()]
+                    bytes[1..scale_len + 1]
                         .try_into()
                         .expect("not enough bytes"),
                 );
-                let i = BigInt::from_signed_bytes_be(&bytes[0i64.to_be_bytes().len()..]);
+                let i = BigInt::from_signed_bytes_be(&bytes[scale_len + 1..]);
                 let dec = BigDecimal::new(i, e);
                 Some(Self::Decimal(dec))
             }
@@ -177,24 +178,10 @@ impl From<BigDecimal> for Value {
     }
 }
 
-impl From<&BigDecimal> for Value {
-    #[inline]
-    fn from(n: &BigDecimal) -> Self {
-        Self::Decimal(n.to_owned())
-    }
-}
-
 impl From<ID> for Value {
     #[inline]
     fn from(id: ID) -> Self {
         Self::ID(id)
-    }
-}
-
-impl From<&ID> for Value {
-    #[inline]
-    fn from(id: &ID) -> Self {
-        Self::ID(id.to_owned())
     }
 }
 

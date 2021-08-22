@@ -124,7 +124,7 @@ impl<'connection> Entity for SledEntity<'connection> {
     fn reverse_get(&self, attribute: EID) -> Result<EntityResult<Self>, QueryError> {
         let db = self.connection.as_of(self.t)?;
         let attribute = attribute.resolve(&db)?;
-        let datoms = db.datoms_for_value_attribute(self.id().into(), attribute)?;
+        let datoms = db.datoms_for_value_attribute(self.id().to_owned().into(), attribute)?;
         let datoms: Vec<Datom> = datoms.collect();
         // The index is sorted in AVET order, so for a given entity
         // all additions and retractions will be in time-order.

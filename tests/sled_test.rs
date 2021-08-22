@@ -8,6 +8,7 @@ use datom::{
 };
 
 use datom::sled::*;
+use datom_bigdecimal::BigDecimal;
 
 #[test]
 fn entity_api() -> Result<(), Box<dyn std::error::Error>> {
@@ -279,6 +280,11 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
                     .value_type(AttributeType::Ref)
                     .many(),
             );
+            schema_tx.append(
+                AttributeSchema::new()
+                    .ident("user/balance".to_string())
+                    .value_type(AttributeType::Decimal),
+            );
             conn.transact(schema_tx)?;
         }
 
@@ -334,6 +340,8 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
             );
         }
 
+        let bal = BigDecimal::new(15042.into(), -2);
+
         {
             let mut user_tx = Transaction::new();
             user_tx.add_many(
@@ -342,6 +350,7 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
                     ("user/username".into(), "pmc".into()),
                     ("user/admin?".into(), true.into()),
                     ("user/first-name".into(), "Piper".into()),
+                    ("user/balance".into(), bal.clone().into()),
                 ]
                 .into(),
             );
@@ -361,6 +370,10 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
         assert_eq!(
             admin.get("user/first-name".into())?,
             EntityResult::Value("Piper".into())
+        );
+        assert_eq!(
+            admin.get("user/balance".into())?,
+            EntityResult::Value(bal.clone().into())
         );
 
         {
@@ -388,6 +401,10 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
                 user.get("user/first-name".into())?,
                 EntityResult::Value("Piper".into())
             );
+            assert_eq!(
+                user.get("user/balance".into())?,
+                EntityResult::Value(bal.clone().into())
+            );
         }
 
         {
@@ -398,7 +415,7 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
                 ID::new().into(),
                 [
                     ("user/username".into(), "friend".into()),
-                    ("user/friends".into(), user.id().into()),
+                    ("user/friends".into(), user.id().to_owned().into()),
                 ]
                 .into(),
             );
@@ -422,6 +439,10 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
                 EntityResult::Value("Piper".into()),
             );
             assert_eq!(
+                user.get("user/balance".into())?,
+                EntityResult::Value(bal.clone().into())
+            );
+            assert_eq!(
                 friend.get("user/username".into())?,
                 EntityResult::Value("friend".into()),
             );
@@ -436,7 +457,8 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
             let username = db.entity("user/username".into())?.id().to_owned();
             let first_name = db.entity("user/first-name".into())?.id().to_owned();
             let friends = db.entity("user/friends".into())?.id().to_owned();
-            let mut user_attributes = [username, first_name];
+            let balance = db.entity("user/balance".into())?.id().to_owned();
+            let mut user_attributes = [username, first_name, balance];
             user_attributes.sort_by_key(ID::to_string);
             user_attributes.reverse();
             let mut friend_attributes = vec![username, friends];
