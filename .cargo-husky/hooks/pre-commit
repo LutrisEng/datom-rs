@@ -5,7 +5,7 @@
 
 set -euxo pipefail
 
-cargo test --all --doc
+cargo test --all
 cargo check --all
 cargo clippy --all
 cargo fmt --all -- --check
