@@ -230,218 +230,221 @@ fn entity_api() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
-    let conn = SledConnection::connect_temp()?;
+    // Catch flakey tests early, since this test involves random IDs
+    for _ in 1..5 {
+        let conn = SledConnection::connect_temp()?;
 
-    {
+        {
+            let db = conn.db()?;
+            let mut schema_tx = Transaction::new();
+            schema_tx.add_many(
+                ID::new().into(),
+                [
+                    ("db/ident".into(), "user/username".into()),
+                    (
+                        "db/value-type".into(),
+                        Value::ID(EID::from("db.type/string").resolve(&db)?),
+                    ),
+                    (
+                        "db/cardinality".into(),
+                        Value::ID(EID::from("db.cardinality/one").resolve(&db)?),
+                    ),
+                    ("db/unique".into(), true.into()),
+                ]
+                .into(),
+            );
+            schema_tx.add_many(
+                ID::new().into(),
+                [
+                    (builtin_idents::ident().into(), "user/admin?".into()),
+                    (
+                        builtin_idents::value_type().into(),
+                        builtin_idents::type_boolean().into(),
+                    ),
+                    (
+                        builtin_idents::cardinality().into(),
+                        builtin_idents::cardinality_one().into(),
+                    ),
+                ]
+                .into(),
+            );
+            schema_tx.append(
+                AttributeSchema::new()
+                    .ident("user/first-name".to_string())
+                    .value_type(AttributeType::String),
+            );
+            schema_tx.append(
+                AttributeSchema::new()
+                    .ident("user/friends".to_string())
+                    .value_type(AttributeType::Ref)
+                    .many(),
+            );
+            conn.transact(schema_tx)?;
+        }
+
+        {
+            let db = conn.db()?;
+            let username_attribute = db.entity("user/username".into())?;
+            assert_eq!(
+                username_attribute.get("db/ident".into())?,
+                EntityResult::Value("user/username".into()),
+            );
+            assert_eq!(
+                username_attribute.get("db/value-type".into())?,
+                builtin_idents::type_string(),
+            );
+            assert_eq!(
+                username_attribute.get("db/cardinality".into())?,
+                builtin_idents::cardinality_one(),
+            );
+            let admin_attribute = db.entity("user/admin?".into())?;
+            assert_eq!(
+                admin_attribute.get("db/ident".into())?,
+                EntityResult::Value("user/admin?".into()),
+            );
+            assert_eq!(
+                admin_attribute.get("db/value-type".into())?,
+                builtin_idents::type_boolean(),
+            );
+            assert_eq!(
+                admin_attribute.get("db/cardinality".into())?,
+                builtin_idents::cardinality_one(),
+            );
+            let first_name_attribute = db.entity("user/first-name".into())?;
+            assert_eq!(
+                first_name_attribute.get("db/ident".into())?,
+                EntityResult::Value("user/first-name".into()),
+            );
+            assert_eq!(
+                first_name_attribute.get("db/value-type".into())?,
+                builtin_idents::type_string(),
+            );
+            let friends_attribute = db.entity("user/friends".into())?;
+            assert_eq!(
+                friends_attribute.get("db/ident".into())?,
+                EntityResult::Value("user/friends".into()),
+            );
+            assert_eq!(
+                friends_attribute.get("db/value-type".into())?,
+                builtin_idents::type_ref(),
+            );
+            assert_eq!(
+                friends_attribute.get("db/cardinality".into())?,
+                builtin_idents::cardinality_many(),
+            );
+        }
+
+        {
+            let mut user_tx = Transaction::new();
+            user_tx.add_many(
+                ID::new().into(),
+                [
+                    ("user/username".into(), "pmc".into()),
+                    ("user/admin?".into(), true.into()),
+                    ("user/first-name".into(), "Piper".into()),
+                ]
+                .into(),
+            );
+            conn.transact(user_tx)?;
+        }
+
         let db = conn.db()?;
-        let mut schema_tx = Transaction::new();
-        schema_tx.add_many(
-            ID::new().into(),
-            [
-                ("db/ident".into(), "user/username".into()),
-                (
-                    "db/value-type".into(),
-                    Value::ID(EID::from("db.type/string").resolve(&db)?),
-                ),
-                (
-                    "db/cardinality".into(),
-                    Value::ID(EID::from("db.cardinality/one").resolve(&db)?),
-                ),
-                ("db/unique".into(), true.into()),
-            ]
-            .into(),
-        );
-        schema_tx.add_many(
-            ID::new().into(),
-            [
-                (builtin_idents::ident().into(), "user/admin?".into()),
-                (
-                    builtin_idents::value_type().into(),
-                    builtin_idents::type_boolean().into(),
-                ),
-                (
-                    builtin_idents::cardinality().into(),
-                    builtin_idents::cardinality_one().into(),
-                ),
-            ]
-            .into(),
-        );
-        schema_tx.append(
-            AttributeSchema::new()
-                .ident("user/first-name".to_string())
-                .value_type(AttributeType::String),
-        );
-        schema_tx.append(
-            AttributeSchema::new()
-                .ident("user/friends".to_string())
-                .value_type(AttributeType::Ref)
-                .many(),
-        );
-        conn.transact(schema_tx)?;
-    }
-
-    {
-        let db = conn.db()?;
-        let username_attribute = db.entity("user/username".into())?;
+        let admin = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
         assert_eq!(
-            username_attribute.get("db/ident".into())?,
-            EntityResult::Value("user/username".into()),
-        );
-        assert_eq!(
-            username_attribute.get("db/value-type".into())?,
-            builtin_idents::type_string(),
-        );
-        assert_eq!(
-            username_attribute.get("db/cardinality".into())?,
-            builtin_idents::cardinality_one(),
-        );
-        let admin_attribute = db.entity("user/admin?".into())?;
-        assert_eq!(
-            admin_attribute.get("db/ident".into())?,
-            EntityResult::Value("user/admin?".into()),
-        );
-        assert_eq!(
-            admin_attribute.get("db/value-type".into())?,
-            builtin_idents::type_boolean(),
-        );
-        assert_eq!(
-            admin_attribute.get("db/cardinality".into())?,
-            builtin_idents::cardinality_one(),
-        );
-        let first_name_attribute = db.entity("user/first-name".into())?;
-        assert_eq!(
-            first_name_attribute.get("db/ident".into())?,
-            EntityResult::Value("user/first-name".into()),
-        );
-        assert_eq!(
-            first_name_attribute.get("db/value-type".into())?,
-            builtin_idents::type_string(),
-        );
-        let friends_attribute = db.entity("user/friends".into())?;
-        assert_eq!(
-            friends_attribute.get("db/ident".into())?,
-            EntityResult::Value("user/friends".into()),
-        );
-        assert_eq!(
-            friends_attribute.get("db/value-type".into())?,
-            builtin_idents::type_ref(),
-        );
-        assert_eq!(
-            friends_attribute.get("db/cardinality".into())?,
-            builtin_idents::cardinality_many(),
-        );
-    }
-
-    {
-        let mut user_tx = Transaction::new();
-        user_tx.add_many(
-            ID::new().into(),
-            [
-                ("user/username".into(), "pmc".into()),
-                ("user/admin?".into(), true.into()),
-                ("user/first-name".into(), "Piper".into()),
-            ]
-            .into(),
-        );
-        conn.transact(user_tx)?;
-    }
-
-    let db = conn.db()?;
-    let admin = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
-    assert_eq!(
-        admin.get("user/username".into())?,
-        EntityResult::Value("pmc".into())
-    );
-    assert_eq!(
-        admin.get("user/admin?".into())?,
-        EntityResult::Value(true.into())
-    );
-    assert_eq!(
-        admin.get("user/first-name".into())?,
-        EntityResult::Value("Piper".into())
-    );
-
-    {
-        let mut not_admin_tx = Transaction::new();
-        not_admin_tx.retract(
-            EID::Unique(Box::new("user/username".into()), "pmc".into()),
-            "user/admin?".into(),
-        );
-        conn.transact(not_admin_tx)?;
-    }
-
-    {
-        let db = conn.db()?;
-        let user = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
-        assert_eq!(
-            user.get("user/username".into())?,
+            admin.get("user/username".into())?,
             EntityResult::Value("pmc".into())
         );
-        assert_eq!(user.get("user/admin?".into())?, EntityResult::NotFound);
         assert_eq!(
             admin.get("user/admin?".into())?,
             EntityResult::Value(true.into())
         );
         assert_eq!(
-            user.get("user/first-name".into())?,
+            admin.get("user/first-name".into())?,
             EntityResult::Value("Piper".into())
         );
-    }
 
-    {
-        let db = conn.db()?;
-        let user = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
-        let mut friend_tx = Transaction::new();
-        friend_tx.add_many(
-            ID::new().into(),
-            [
-                ("user/username".into(), "friend".into()),
-                ("user/friends".into(), user.id().into()),
-            ]
-            .into(),
-        );
-        conn.transact(friend_tx)?;
-    }
+        {
+            let mut not_admin_tx = Transaction::new();
+            not_admin_tx.retract(
+                EID::Unique(Box::new("user/username".into()), "pmc".into()),
+                "user/admin?".into(),
+            );
+            conn.transact(not_admin_tx)?;
+        }
 
-    {
-        let db = conn.db()?;
-        let user = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
-        let friend = db.entity(EID::Unique(
-            Box::new("user/username".into()),
-            "friend".into(),
-        ))?;
-        assert_eq!(
-            user.get("user/username".into())?,
-            EntityResult::Value("pmc".into()),
-        );
-        assert_eq!(user.get("user/admin?".into())?, EntityResult::NotFound);
-        assert_eq!(
-            user.get("user/first-name".into())?,
-            EntityResult::Value("Piper".into()),
-        );
-        assert_eq!(
-            friend.get("user/username".into())?,
-            EntityResult::Value("friend".into()),
-        );
-        assert_eq!(
-            friend.get("user/friends".into())?,
-            EntityResult::Repeated(vec![user.into()]),
-        );
-        assert_eq!(
-            user.reverse_get("user/friends".into())?,
-            EntityResult::Repeated(vec![friend.into()]),
-        );
-        let username = db.entity("user/username".into())?.id().to_owned();
-        let first_name = db.entity("user/first-name".into())?.id().to_owned();
-        let friends = db.entity("user/friends".into())?.id().to_owned();
-        assert_eq!(
-            user.attributes()?.collect::<Vec<ID>>(),
-            vec![username, first_name],
-        );
-        assert_eq!(
-            friend.attributes()?.collect::<Vec<ID>>(),
-            vec![username, friends],
-        );
+        {
+            let db = conn.db()?;
+            let user = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
+            assert_eq!(
+                user.get("user/username".into())?,
+                EntityResult::Value("pmc".into())
+            );
+            assert_eq!(user.get("user/admin?".into())?, EntityResult::NotFound);
+            assert_eq!(
+                admin.get("user/admin?".into())?,
+                EntityResult::Value(true.into())
+            );
+            assert_eq!(
+                user.get("user/first-name".into())?,
+                EntityResult::Value("Piper".into())
+            );
+        }
+
+        {
+            let db = conn.db()?;
+            let user = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
+            let mut friend_tx = Transaction::new();
+            friend_tx.add_many(
+                ID::new().into(),
+                [
+                    ("user/username".into(), "friend".into()),
+                    ("user/friends".into(), user.id().into()),
+                ]
+                .into(),
+            );
+            conn.transact(friend_tx)?;
+        }
+
+        {
+            let db = conn.db()?;
+            let user = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
+            let friend = db.entity(EID::Unique(
+                Box::new("user/username".into()),
+                "friend".into(),
+            ))?;
+            assert_eq!(
+                user.get("user/username".into())?,
+                EntityResult::Value("pmc".into()),
+            );
+            assert_eq!(user.get("user/admin?".into())?, EntityResult::NotFound);
+            assert_eq!(
+                user.get("user/first-name".into())?,
+                EntityResult::Value("Piper".into()),
+            );
+            assert_eq!(
+                friend.get("user/username".into())?,
+                EntityResult::Value("friend".into()),
+            );
+            assert_eq!(
+                friend.get("user/friends".into())?,
+                EntityResult::Repeated(vec![user.into()]),
+            );
+            assert_eq!(
+                user.reverse_get("user/friends".into())?,
+                EntityResult::Repeated(vec![friend.into()]),
+            );
+            let username = db.entity("user/username".into())?.id().to_owned();
+            let first_name = db.entity("user/first-name".into())?.id().to_owned();
+            let friends = db.entity("user/friends".into())?.id().to_owned();
+            let mut user_attributes = [username, first_name];
+            user_attributes.sort_by_key(ID::to_string);
+            user_attributes.reverse();
+            let mut friend_attributes = vec![username, friends];
+            friend_attributes.sort_by_key(ID::to_string);
+            friend_attributes.reverse();
+            assert_eq!(user.attributes()?.collect::<Vec<ID>>(), user_attributes);
+            assert_eq!(friend.attributes()?.collect::<Vec<ID>>(), friend_attributes);
+        }
     }
 
     Ok(())
