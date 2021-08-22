@@ -62,6 +62,9 @@ if let EntityResult::Value(Value::String(u)) = db.entity(user.into())?.get(usern
 [Datomic's excellent documentation]: https://docs.datomic.com/on-prem/overview/architecture.html
 */
 
+#[macro_use]
+extern crate lazy_static;
+
 mod traits;
 pub use traits::*;
 

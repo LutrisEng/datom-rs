@@ -23,13 +23,14 @@ pub enum AttributeType {
 
 impl From<AttributeType> for ID {
     fn from(t: AttributeType) -> Self {
+        use builtin_idents::*;
         match t {
-            AttributeType::String => builtin_idents::type_string(),
-            AttributeType::Integer => builtin_idents::type_integer(),
-            AttributeType::Decimal => builtin_idents::type_decimal(),
-            AttributeType::ID => builtin_idents::type_id(),
-            AttributeType::Ref => builtin_idents::type_ref(),
-            AttributeType::Boolean => builtin_idents::type_boolean(),
+            AttributeType::String => TYPE_STRING,
+            AttributeType::Integer => TYPE_INTEGER,
+            AttributeType::Decimal => TYPE_DECIMAL,
+            AttributeType::ID => TYPE_ID,
+            AttributeType::Ref => TYPE_REF,
+            AttributeType::Boolean => TYPE_BOOLEAN,
         }
     }
 }
@@ -114,34 +115,34 @@ impl Default for AttributeSchema {
 impl Transactable for AttributeSchema {
     fn tx(&self) -> Transaction {
         let mut tx = Transaction::new();
-        tx.add(self.id.into(), builtin_idents::id().into(), self.id.into());
+        tx.add(self.id.into(), builtin_idents::ID.into(), self.id.into());
         if let Some(ident) = self.ident.clone() {
-            tx.add(self.id.into(), builtin_idents::ident().into(), ident.into());
+            tx.add(self.id.into(), builtin_idents::IDENT.into(), ident.into());
         }
         if self.many {
             tx.add(
                 self.id.into(),
-                builtin_idents::cardinality().into(),
-                builtin_idents::cardinality_many().into(),
+                builtin_idents::CARDINALITY.into(),
+                builtin_idents::CARDINALITY_MANY.into(),
             )
         }
         if let Some(t) = self.value_type {
             tx.add(
                 self.id.into(),
-                builtin_idents::value_type().into(),
+                builtin_idents::VALUE_TYPE.into(),
                 Value::ID(t.into()),
             );
         }
         if let Some(doc) = self.doc.clone() {
-            tx.add(self.id.into(), builtin_idents::doc().into(), doc.into());
+            tx.add(self.id.into(), builtin_idents::DOC.into(), doc.into());
         }
         if self.unique {
-            tx.add(self.id.into(), builtin_idents::unique().into(), true.into());
+            tx.add(self.id.into(), builtin_idents::UNIQUE.into(), true.into());
         }
         if self.component {
             tx.add(
                 self.id.into(),
-                builtin_idents::is_component().into(),
+                builtin_idents::IS_COMPONENT.into(),
                 true.into(),
             );
         }

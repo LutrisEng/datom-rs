@@ -257,14 +257,14 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
             schema_tx.add_many(
                 ID::new().into(),
                 [
-                    (builtin_idents::ident().into(), "user/admin?".into()),
+                    (builtin_idents::IDENT.into(), "user/admin?".into()),
                     (
-                        builtin_idents::value_type().into(),
-                        builtin_idents::type_boolean().into(),
+                        builtin_idents::VALUE_TYPE.into(),
+                        builtin_idents::TYPE_BOOLEAN.into(),
                     ),
                     (
-                        builtin_idents::cardinality().into(),
-                        builtin_idents::cardinality_one().into(),
+                        builtin_idents::CARDINALITY.into(),
+                        builtin_idents::CARDINALITY_ONE.into(),
                     ),
                 ]
                 .into(),
@@ -297,11 +297,11 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
             );
             assert_eq!(
                 username_attribute.get("db/value-type".into())?,
-                builtin_idents::type_string(),
+                builtin_idents::TYPE_STRING,
             );
             assert_eq!(
                 username_attribute.get("db/cardinality".into())?,
-                builtin_idents::cardinality_one(),
+                builtin_idents::CARDINALITY_ONE,
             );
             let admin_attribute = db.entity("user/admin?".into())?;
             assert_eq!(
@@ -310,11 +310,11 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
             );
             assert_eq!(
                 admin_attribute.get("db/value-type".into())?,
-                builtin_idents::type_boolean(),
+                builtin_idents::TYPE_BOOLEAN,
             );
             assert_eq!(
                 admin_attribute.get("db/cardinality".into())?,
-                builtin_idents::cardinality_one(),
+                builtin_idents::CARDINALITY_ONE,
             );
             let first_name_attribute = db.entity("user/first-name".into())?;
             assert_eq!(
@@ -323,7 +323,7 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
             );
             assert_eq!(
                 first_name_attribute.get("db/value-type".into())?,
-                builtin_idents::type_string(),
+                builtin_idents::TYPE_STRING,
             );
             let friends_attribute = db.entity("user/friends".into())?;
             assert_eq!(
@@ -332,11 +332,11 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
             );
             assert_eq!(
                 friends_attribute.get("db/value-type".into())?,
-                builtin_idents::type_ref(),
+                builtin_idents::TYPE_REF,
             );
             assert_eq!(
                 friends_attribute.get("db/cardinality".into())?,
-                builtin_idents::cardinality_many(),
+                builtin_idents::CARDINALITY_MANY,
             );
         }
 

@@ -48,11 +48,13 @@ impl EID {
         match self {
             Self::Resolved(id) => Ok(*id),
             Self::Ident(ident_str) => {
-                if let Some(id) = builtin_idents::builtin_by_ident(ident_str) {
-                    return Ok(id);
+                if let Some(entity) = builtin_idents::BUILTIN_ENTITIES_BY_IDENT.get(ident_str) {
+                    if let Some(Value::ID(id)) = entity.get(&builtin_idents::ID) {
+                        return Ok(id.to_owned());
+                    }
                 }
                 let ident_val = Value::from(ident_str.as_str());
-                db.datoms_for_attribute_value(builtin_idents::ident(), ident_val)?
+                db.datoms_for_attribute_value(builtin_idents::IDENT, ident_val)?
                     .max_by(by_t)
                     .map(|datom| datom.entity)
                     .ok_or_else(|| QueryError::UnresolvedEID(self.clone()))

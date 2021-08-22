@@ -41,6 +41,10 @@ impl ID {
     pub const fn null() -> Self {
         Self(Uuid::nil())
     }
+
+    pub(crate) const fn from_u128(x: u128) -> Self {
+        Self(Uuid::from_u128(x))
+    }
 }
 
 impl Default for ID {
