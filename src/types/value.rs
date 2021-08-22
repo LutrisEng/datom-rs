@@ -274,6 +274,13 @@ mod tests {
             Value::from((BigInt::from(u128::MAX) + BigInt::from(u128::MAX)) * -1),
             Some(vec![1, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]),
         );
+        test(
+            Value::from(&(BigInt::from(u128::MAX) + BigInt::from(u128::MAX))),
+            Some(vec![
+                1, 1, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+                254,
+            ]),
+        );
     }
 
     #[test]
@@ -287,6 +294,10 @@ mod tests {
             Some(vec![
                 2, 0, 0, 0, 0, 0, 0, 0, 17, 106, 148, 215, 79, 67, 0, 4,
             ]),
+        );
+        test(
+            BigDecimal::from(0).into(),
+            Some(vec![2, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
         );
         test_failure(&[2]);
         // PRs welcome for more test cases
@@ -330,5 +341,11 @@ mod tests {
         test_failure(&[4]);
         test_failure(&[4, 3, 0]);
         test_failure(&[4, 0, 0]);
+    }
+
+    #[test]
+    fn serialize_invalid() {
+        test_failure(&[5]);
+        test_failure(&[255]);
     }
 }
