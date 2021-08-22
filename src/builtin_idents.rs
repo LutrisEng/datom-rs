@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::collections::HashMap;
+use std::{collections::HashMap, lazy::SyncLazy};
 
 use crate::{Value, ID as TID};
 
@@ -117,158 +117,150 @@ pub type BuiltinEntities = HashMap<TID, BuiltinEntity>;
 /// The type of the data behind all built-in entities, by ident
 pub type BuiltinEntitiesByIdent = HashMap<String, BuiltinEntity>;
 
-lazy_static! {
-    /// The data behind all built-in entities
-    pub static ref BUILTIN_ENTITIES: BuiltinEntities = [
-            (
-                ID,
-                [
-                    (ID, ID.into()),
-                    (IDENT, Value::from("db/id")),
-                    (VALUE_TYPE, Value::from(TYPE_ID)),
-                    (CARDINALITY, Value::from(CARDINALITY_ONE)),
-                ]
-                .into(),
-            ),
-            (
-                IDENT,
-                [
-                    (ID, IDENT.into()),
-                    (IDENT, Value::from("db/ident")),
-                    (UNIQUE, Value::from(true)),
-                    (VALUE_TYPE, Value::from(TYPE_STRING)),
-                    (CARDINALITY, Value::from(CARDINALITY_ONE)),
-                ]
-                .into(),
-            ),
-            (
-                CARDINALITY,
-                [
-                    (ID, CARDINALITY.into()),
-                    (IDENT, Value::from("db/cardinality")),
-                    (VALUE_TYPE, Value::from(TYPE_REF)),
-                    (CARDINALITY, Value::from(CARDINALITY_ONE)),
-                ]
-                .into(),
-            ),
-            (
-                VALUE_TYPE,
-                [
-                    (ID, VALUE_TYPE.into()),
-                    (IDENT, Value::from("db/value-type")),
-                    (VALUE_TYPE, Value::from(TYPE_REF)),
-                    (CARDINALITY, Value::from(CARDINALITY_ONE)),
-                ]
-                .into(),
-            ),
-            (
-                DOC,
-                [
-                    (ID, DOC.into()),
-                    (IDENT, Value::from("db/doc")),
-                    (VALUE_TYPE, Value::from(TYPE_STRING)),
-                    (CARDINALITY, Value::from(CARDINALITY_ONE)),
-                ]
-                .into(),
-            ),
-            (
-                UNIQUE,
-                [
-                    (ID, UNIQUE.into()),
-                    (IDENT, Value::from("db/unique")),
-                    (VALUE_TYPE, Value::from(TYPE_BOOLEAN)),
-                    (CARDINALITY, Value::from(CARDINALITY_ONE)),
-                ]
-                .into(),
-            ),
-            (
-                IS_COMPONENT,
-                [
-                    (ID, IS_COMPONENT.into()),
-                    (IDENT, Value::from("db/is-component")),
-                    (VALUE_TYPE, Value::from(TYPE_BOOLEAN)),
-                    (CARDINALITY, Value::from(CARDINALITY_ONE)),
-                ]
-                .into(),
-            ),
-            (
-                CARDINALITY_ONE,
-                [
-                    (ID, CARDINALITY_ONE.into()),
-                    (IDENT, Value::from("db.cardinality/one")),
-                ]
-                .into(),
-            ),
-            (
-                CARDINALITY_MANY,
-                [
-                    (ID, CARDINALITY_MANY.into()),
-                    (IDENT, Value::from("db.cardinality/many")),
-                ]
-                .into(),
-            ),
-            (
-                TYPE_STRING,
-                [
-                    (ID, TYPE_STRING.into()),
-                    (IDENT, Value::from("db.type/string")),
-                ]
-                .into(),
-            ),
-            (
-                TYPE_INTEGER,
-                [
-                    (ID, TYPE_INTEGER.into()),
-                    (IDENT, Value::from("db.type/integer")),
-                ]
-                .into(),
-            ),
-            (
-                TYPE_DECIMAL,
-                [
-                    (ID, TYPE_DECIMAL.into()),
-                    (IDENT, Value::from("db.type/decimal")),
-                ]
-                .into(),
-            ),
-            (
-                TYPE_ID,
-                [
-                    (ID, TYPE_ID.into()),
-                    (IDENT, Value::from("db.type/id")),
-                ]
-                .into(),
-            ),
-            (
-                TYPE_REF,
-                [
-                    (ID, TYPE_REF.into()),
-                    (IDENT, Value::from("db.type/ref")),
-                ]
-                .into(),
-            ),
-            (
-                TYPE_BOOLEAN,
-                [
-                    (ID, TYPE_BOOLEAN.into()),
-                    (IDENT, Value::from("db.type/boolean")),
-                ]
-                .into(),
-            ),
-        ]
-        .into();
+/// The data behind all built-in entities
+pub static BUILTIN_ENTITIES: SyncLazy<BuiltinEntities> = SyncLazy::new(|| {
+    [
+        (
+            ID,
+            [
+                (ID, ID.into()),
+                (IDENT, Value::from("db/id")),
+                (VALUE_TYPE, Value::from(TYPE_ID)),
+                (CARDINALITY, Value::from(CARDINALITY_ONE)),
+            ]
+            .into(),
+        ),
+        (
+            IDENT,
+            [
+                (ID, IDENT.into()),
+                (IDENT, Value::from("db/ident")),
+                (UNIQUE, Value::from(true)),
+                (VALUE_TYPE, Value::from(TYPE_STRING)),
+                (CARDINALITY, Value::from(CARDINALITY_ONE)),
+            ]
+            .into(),
+        ),
+        (
+            CARDINALITY,
+            [
+                (ID, CARDINALITY.into()),
+                (IDENT, Value::from("db/cardinality")),
+                (VALUE_TYPE, Value::from(TYPE_REF)),
+                (CARDINALITY, Value::from(CARDINALITY_ONE)),
+            ]
+            .into(),
+        ),
+        (
+            VALUE_TYPE,
+            [
+                (ID, VALUE_TYPE.into()),
+                (IDENT, Value::from("db/value-type")),
+                (VALUE_TYPE, Value::from(TYPE_REF)),
+                (CARDINALITY, Value::from(CARDINALITY_ONE)),
+            ]
+            .into(),
+        ),
+        (
+            DOC,
+            [
+                (ID, DOC.into()),
+                (IDENT, Value::from("db/doc")),
+                (VALUE_TYPE, Value::from(TYPE_STRING)),
+                (CARDINALITY, Value::from(CARDINALITY_ONE)),
+            ]
+            .into(),
+        ),
+        (
+            UNIQUE,
+            [
+                (ID, UNIQUE.into()),
+                (IDENT, Value::from("db/unique")),
+                (VALUE_TYPE, Value::from(TYPE_BOOLEAN)),
+                (CARDINALITY, Value::from(CARDINALITY_ONE)),
+            ]
+            .into(),
+        ),
+        (
+            IS_COMPONENT,
+            [
+                (ID, IS_COMPONENT.into()),
+                (IDENT, Value::from("db/is-component")),
+                (VALUE_TYPE, Value::from(TYPE_BOOLEAN)),
+                (CARDINALITY, Value::from(CARDINALITY_ONE)),
+            ]
+            .into(),
+        ),
+        (
+            CARDINALITY_ONE,
+            [
+                (ID, CARDINALITY_ONE.into()),
+                (IDENT, Value::from("db.cardinality/one")),
+            ]
+            .into(),
+        ),
+        (
+            CARDINALITY_MANY,
+            [
+                (ID, CARDINALITY_MANY.into()),
+                (IDENT, Value::from("db.cardinality/many")),
+            ]
+            .into(),
+        ),
+        (
+            TYPE_STRING,
+            [
+                (ID, TYPE_STRING.into()),
+                (IDENT, Value::from("db.type/string")),
+            ]
+            .into(),
+        ),
+        (
+            TYPE_INTEGER,
+            [
+                (ID, TYPE_INTEGER.into()),
+                (IDENT, Value::from("db.type/integer")),
+            ]
+            .into(),
+        ),
+        (
+            TYPE_DECIMAL,
+            [
+                (ID, TYPE_DECIMAL.into()),
+                (IDENT, Value::from("db.type/decimal")),
+            ]
+            .into(),
+        ),
+        (
+            TYPE_ID,
+            [(ID, TYPE_ID.into()), (IDENT, Value::from("db.type/id"))].into(),
+        ),
+        (
+            TYPE_REF,
+            [(ID, TYPE_REF.into()), (IDENT, Value::from("db.type/ref"))].into(),
+        ),
+        (
+            TYPE_BOOLEAN,
+            [
+                (ID, TYPE_BOOLEAN.into()),
+                (IDENT, Value::from("db.type/boolean")),
+            ]
+            .into(),
+        ),
+    ]
+    .into()
+});
 
-    /// The data behind all built-in entities, by ident
-    pub static ref BUILTIN_ENTITIES_BY_IDENT: BuiltinEntitiesByIdent = {
-        let mut m = HashMap::new();
-        for e in BUILTIN_ENTITIES.values() {
-            if let Some(Value::String(ident)) = e.get(&IDENT) {
-                m.insert(ident.to_owned(), e.to_owned());
-            }
+/// The data behind all built-in entities, by ident
+pub static BUILTIN_ENTITIES_BY_IDENT: SyncLazy<BuiltinEntitiesByIdent> = SyncLazy::new(|| {
+    let mut m = HashMap::new();
+    for e in BUILTIN_ENTITIES.values() {
+        if let Some(Value::String(ident)) = e.get(&IDENT) {
+            m.insert(ident.to_owned(), e.to_owned());
         }
-        m
-    };
-}
+    }
+    m
+});
 
 #[cfg(test)]
 mod tests {
