@@ -190,3 +190,127 @@ impl From<bool> for Value {
         Self::Boolean(b)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::builtin_idents;
+
+    use super::*;
+
+    fn test(val: Value, constant: Option<Vec<u8>>) {
+        // Ensure serialization is consistent
+        assert_eq!(val.bytes(), val.bytes());
+        // Ensure round-trip serialization/deserialization is exact
+        assert_eq!(Value::from_bytes(&val.bytes()), Some(val.clone()));
+        // Ensure serialization is stable
+        if let Some(constant) = constant {
+            assert_eq!(val.bytes(), constant);
+        }
+    }
+
+    #[test]
+    fn serialize_string() {
+        test("".into(), Some(vec![0]));
+        test(
+            "Hello, world! This is a string.".into(),
+            Some(vec![
+                0, 72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33, 32, 84, 104, 105,
+                115, 32, 105, 115, 32, 97, 32, 115, 116, 114, 105, 110, 103, 46,
+            ]),
+        );
+        // No way I'm inlining the bytes for this
+        test(include_str!("lipsum.txt").into(), None);
+    }
+
+    #[test]
+    fn serialize_integer() {
+        test(Value::from(0), Some(vec![1, 0]));
+        test(Value::from(u8::MAX), Some(vec![1, 0, 255]));
+        test(Value::from(u16::MAX), Some(vec![1, 0, 255, 255]));
+        test(Value::from(u32::MAX), Some(vec![1, 0, 255, 255, 255, 255]));
+        test(
+            Value::from(u64::MAX),
+            Some(vec![1, 0, 255, 255, 255, 255, 255, 255, 255, 255]),
+        );
+        test(
+            Value::from(u128::MAX),
+            Some(vec![
+                1, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+                255,
+            ]),
+        );
+        test(Value::from(i8::MAX), Some(vec![1, 127]));
+        test(Value::from(i16::MAX), Some(vec![1, 127, 255]));
+        test(Value::from(i32::MAX), Some(vec![1, 127, 255, 255, 255]));
+        test(
+            Value::from(i64::MAX),
+            Some(vec![1, 127, 255, 255, 255, 255, 255, 255, 255]),
+        );
+        test(
+            Value::from(i128::MAX),
+            Some(vec![
+                1, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            ]),
+        );
+        test(
+            Value::from(BigInt::from(u128::MAX) + BigInt::from(u128::MAX)),
+            Some(vec![
+                1, 1, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+                254,
+            ]),
+        );
+        test(
+            Value::from((BigInt::from(u128::MAX) + BigInt::from(u128::MAX)) * -1),
+            Some(vec![1, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]),
+        );
+    }
+
+    #[test]
+    fn serialize_decimal() {
+        test(
+            0.0.try_into().unwrap(),
+            Some(vec![2, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+        );
+        test(
+            (1.0 / 10.0 * 3.0).try_into().unwrap(),
+            Some(vec![
+                2, 0, 0, 0, 0, 0, 0, 0, 17, 106, 148, 215, 79, 67, 0, 4,
+            ]),
+        );
+        // PRs welcome for more test cases
+    }
+
+    #[test]
+    fn serialize_id() {
+        test(
+            ID::null().into(),
+            Some(vec![3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+        );
+        test(
+            builtin_idents::id().into(),
+            Some(vec![
+                3, 248, 66, 64, 237, 25, 19, 74, 89, 129, 129, 207, 7, 40, 63, 192, 169,
+            ]),
+        );
+        test(
+            builtin_idents::ident().into(),
+            Some(vec![
+                3, 199, 224, 136, 63, 185, 11, 73, 49, 143, 245, 143, 95, 63, 236, 252, 202,
+            ]),
+        );
+        test(
+            builtin_idents::type_id().into(),
+            Some(vec![
+                3, 255, 140, 71, 76, 66, 79, 67, 230, 140, 184, 99, 9, 96, 8, 136, 79,
+            ]),
+        );
+        test(ID::new().into(), None);
+    }
+
+    #[test]
+    fn serialize_bool() {
+        // This one's easy
+        test(true.into(), Some(vec![4, 1]));
+        test(false.into(), Some(vec![4, 0]));
+    }
+}
