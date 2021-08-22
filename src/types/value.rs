@@ -81,23 +81,29 @@ impl Value {
             }
             2 => {
                 let scale_len = 0i64.to_be_bytes().len();
-                let e = i64::from_be_bytes(
-                    bytes[1..scale_len + 1]
-                        .try_into()
-                        .expect("not enough bytes"),
-                );
+                if bytes.len() < scale_len + 1 {
+                    return None;
+                }
+                let e = i64::from_be_bytes(bytes[1..scale_len + 1].try_into().ok()?);
                 let i = BigInt::from_signed_bytes_be(&bytes[scale_len + 1..]);
                 let dec = BigDecimal::new(i, e);
                 Some(Self::Decimal(dec))
             }
             3 => {
-                let bytes: [u8; 16] = bytes[1..17].try_into().expect("not enough bytes");
+                if bytes.len() != 17 {
+                    return None;
+                }
+                let bytes: [u8; 16] = bytes[1..17].try_into().ok()?;
                 Some(Self::ID(bytes.into()))
             }
-            4 => Some(Self::Boolean(match bytes[1] {
-                0 => Some(false),
-                1 => Some(true),
-                _ => None,
+            4 => Some(Self::Boolean(if bytes.len() != 2 {
+                None
+            } else {
+                match bytes[1] {
+                    0 => Some(false),
+                    1 => Some(true),
+                    _ => None,
+                }
             }?)),
             _ => None,
         }
@@ -208,6 +214,11 @@ mod tests {
         }
     }
 
+    fn test_failure(bytes: &[u8]) {
+        // Ensure deserialization fails
+        assert_eq!(Value::from_bytes(bytes), None);
+    }
+
     #[test]
     fn serialize_string() {
         test("".into(), Some(vec![0]));
@@ -277,6 +288,7 @@ mod tests {
                 2, 0, 0, 0, 0, 0, 0, 0, 17, 106, 148, 215, 79, 67, 0, 4,
             ]),
         );
+        test_failure(&[2]);
         // PRs welcome for more test cases
     }
 
@@ -305,6 +317,8 @@ mod tests {
             ]),
         );
         test(ID::new().into(), None);
+        test_failure(&[3]);
+        test_failure(&[3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
     }
 
     #[test]
@@ -312,5 +326,9 @@ mod tests {
         // This one's easy
         test(true.into(), Some(vec![4, 1]));
         test(false.into(), Some(vec![4, 0]));
+        test_failure(&[4, 3]);
+        test_failure(&[4]);
+        test_failure(&[4, 3, 0]);
+        test_failure(&[4, 0, 0]);
     }
 }
