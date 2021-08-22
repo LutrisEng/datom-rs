@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+// SPDX-FileType: GENERATED
+// SPDX-License-Identifier: CC0-1.0
+// SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
+
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ultrices sapien. In lacinia, arcu a semper molestie, quam eros lacinia ante, ac laoreet quam lorem sed nulla. Sed vel molestie augue. Etiam elit neque, convallis sit amet rutrum vitae, facilisis accumsan sem. Nam interdum urna quis eleifend fermentum. Phasellus in sem tristique magna porta accumsan vehicula a massa. Vestibulum imperdiet interdum justo sit amet viverra.
 
 Curabitur convallis turpis a nibh mollis porta. Proin volutpat orci felis, et dictum urna rutrum non. Vestibulum pulvinar, nibh eget ullamcorper molestie, odio nibh sodales augue, nec consequat arcu quam vel ligula. Fusce accumsan massa at magna venenatis euismod. Quisque lacinia eget orci semper blandit. Vivamus lectus elit, tincidunt nec posuere non, facilisis ut nulla. Sed blandit diam nec nunc tempor dictum. Mauris aliquam aliquet feugiat. Suspendisse consequat, tellus in euismod dapibus, elit dui maximus nunc, ut imperdiet risus sapien ut velit. Maecenas fermentum eu orci eu ultricies. Sed tempor posuere feugiat. Vivamus non quam varius, auctor nibh a, maximus eros.
