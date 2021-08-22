@@ -21,6 +21,29 @@ pub struct SledConnection {
 }
 
 impl PartialEq<Self> for SledConnection {
+    /// ```
+    /// use datom::sled::*;
+    /// let conn1 = SledConnection::connect_temp()?;
+    /// let conn2 = SledConnection::connect_temp()?;
+    /// let conn1r = &conn1;
+    /// let conn2r = &conn2;
+    ///
+    /// assert_eq!(&conn1, &conn1);
+    /// assert_eq!(&conn1, conn1r);
+    /// assert_eq!(conn1r, &conn1);
+    /// assert_eq!(conn1r, conn1r);
+    ///
+    /// assert_ne!(&conn1, &conn2);
+    /// assert_ne!(&conn1, conn2r);
+    /// assert_ne!(conn1r, &conn2);
+    /// assert_ne!(conn1r, conn2r);
+    /// assert_ne!(&conn2, &conn1);
+    /// assert_ne!(&conn2, conn1r);
+    /// assert_ne!(conn2r, &conn1);
+    /// assert_ne!(conn2r, conn1r);
+    ///
+    /// # Ok::<(), Box<dyn std::error::Error>>(())
+    /// ```
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
     }
@@ -76,6 +99,21 @@ impl SledConnection {
 impl Connection for SledConnection {
     type Database<'a> = SledDatabase<'a>;
 
+    /// ```
+    /// use datom::{prelude::*, sled::*};
+    ///
+    /// let mut path = std::env::temp_dir();
+    /// path.push(uuid::Uuid::new_v4().to_string());
+    /// path.set_extension("db");
+    /// {
+    ///     let conn = SledConnection::connect(path.to_str().ok_or(datom::ConnectionError::InvalidData)?)?;
+    ///     let db = conn.db()?;
+    ///     // ...
+    /// }
+    /// std::fs::remove_dir_all(path)?;
+    ///
+    /// # Ok::<(), Box<dyn std::error::Error>>(())
+    /// ```
     fn connect(uri: &str) -> Result<Self, ConnectionError> {
         let cfg = Config::new().path(uri);
         let db = cfg.open()?;
@@ -160,6 +198,13 @@ impl Connection for SledConnection {
 }
 
 impl Debug for SledConnection {
+    /// ```
+    /// use datom::sled::*;
+    ///
+    /// let conn = SledConnection::connect_temp()?;
+    /// println!("{:#?}", conn);
+    /// # Ok::<(), Box<dyn std::error::Error>>(())
+    /// ```
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("SledConnection")
             .field("id", &self.id)
