@@ -6,106 +6,56 @@ use std::{collections::HashMap, lazy::SyncLazy};
 
 use crate::{Value, ID as TID};
 
-/**
-An entity's [ID]. This is a virtual attribute, and isn't actually stored.
-*/
-
+/// An entity's [ID]. This is a virtual attribute, and isn't actually
+/// stored.
 pub static ID: TID = TID::from_u128(329992551406372030633500533120122732713u128);
 
-/**
-An entity's alias, usually used for the attribute schema.
-*/
-
+/// An entity's alias, usually used for the attribute schema.
 pub static IDENT: TID = TID::from_u128(265682209113858765770461024079827500234u128);
 
-/**
-Whether an attribute associates one value or multiple values with an
-entity
-*/
-
+/// Whether an attribute associates one value or multiple values with an
+/// entity
 pub static CARDINALITY: TID = TID::from_u128(110064945635332807503383834157761461043u128);
 
-/**
-The intended type for an attribute. Note that this is not
-(currently) strictly checked.
-*/
-
+/// The intended type for an attribute. Note that this is not
+/// (currently) strictly checked.
 pub static VALUE_TYPE: TID = TID::from_u128(276059213908560386420175049892299151374u128);
 
-/**
-A documentation string for an entity
-*/
-
+/// A documentation string for an entity
 pub static DOC: TID = TID::from_u128(303289866496710859530474533904741988829u128);
 
-/**
-Whether there can only be one entity per value for this attribute
-```
-*/
-
+/// Whether there can only be one entity per value for this attribute
 pub static UNIQUE: TID = TID::from_u128(307615836394596470679724073561969695989);
 
-/**
-Whether the entity referred to in this [type_ref](self::type_ref) attribute is a
-sub-component. When you retract an entity, all sub-components will
-also be retracted.
-*/
-
+/// Whether the entity referred to in this [type_ref](self::type_ref) attribute is a
+/// sub-component. When you retract an entity, all sub-components will
+/// also be retracted.
 pub static IS_COMPONENT: TID = TID::from_u128(308724514559417715856375983930347810391u128);
 
-/**
-A value for the [CARDINALITY](self::CARDINALITY) attribute
-```
-*/
-
+/// A value for the [CARDINALITY](self::CARDINALITY) attribute
 pub static CARDINALITY_ONE: TID = TID::from_u128(143444949937465711736574828873158396909u128);
 
-/**
-A value for the [CARDINALITY](self::CARDINALITY) attribute
-```
-*/
+/// A value for the [CARDINALITY](self::CARDINALITY) attribute
 
 pub static CARDINALITY_MANY: TID = TID::from_u128(11338831660433813835424721536043447369u128);
 
-/**
-A value for the [VALUE_TYPE](self::VALUE_TYPE) attribute
-```
-*/
+/// A value for the [VALUE_TYPE](self::VALUE_TYPE) attribute
 
 pub static TYPE_STRING: TID = TID::from_u128(301439516182801820546961599694687577507u128);
 
-/**
-A value for the [VALUE_TYPE](self::VALUE_TYPE) attribute
-```
-*/
-
+/// A value for the [VALUE_TYPE](self::VALUE_TYPE) attribute
 pub static TYPE_INTEGER: TID = TID::from_u128(183876393307651966214416059730593095u128);
 
-/**
-A value for the [VALUE_TYPE](self::VALUE_TYPE) attribute
-```
-*/
-
+/// A value for the [VALUE_TYPE](self::VALUE_TYPE) attribute
 pub static TYPE_DECIMAL: TID = TID::from_u128(297077785792417755741249562058415972414u128);
 
-/**
-A value for the [VALUE_TYPE](self::VALUE_TYPE) attribute
-```
-*/
-
+/// A value for the [VALUE_TYPE](self::VALUE_TYPE) attribute
 pub static TYPE_ID: TID = TID::from_u128(339681506578292470250558610134765439055u128);
 
-/**
-A value for the [VALUE_TYPE](self::VALUE_TYPE) attribute
-```
-*/
-
+/// A value for the [VALUE_TYPE](self::VALUE_TYPE) attribute
 pub static TYPE_REF: TID = TID::from_u128(149893903729185565330222631892178876560u128);
 
-/**
-A value for the [VALUE_TYPE](self::VALUE_TYPE) attribute
-*/
-
+/// A value for the [VALUE_TYPE](self::VALUE_TYPE) attribute
 pub static TYPE_BOOLEAN: TID = TID::from_u128(149893903729185565330222631892178876560u128);
 
 /// The data behind a built-in entity
