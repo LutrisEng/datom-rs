@@ -310,19 +310,19 @@ mod tests {
             Some(vec![3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
         );
         test(
-            builtin_idents::id().into(),
+            builtin_idents::ID.into(),
             Some(vec![
                 3, 248, 66, 64, 237, 25, 19, 74, 89, 129, 129, 207, 7, 40, 63, 192, 169,
             ]),
         );
         test(
-            builtin_idents::ident().into(),
+            builtin_idents::IDENT.into(),
             Some(vec![
                 3, 199, 224, 136, 63, 185, 11, 73, 49, 143, 245, 143, 95, 63, 236, 252, 202,
             ]),
         );
         test(
-            builtin_idents::type_id().into(),
+            builtin_idents::TYPE_ID.into(),
             Some(vec![
                 3, 255, 140, 71, 76, 66, 79, 67, 230, 140, 184, 99, 9, 96, 8, 136, 79,
             ]),

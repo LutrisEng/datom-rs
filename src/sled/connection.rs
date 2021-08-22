@@ -157,12 +157,9 @@ impl Connection for SledConnection {
                 self.insert(datom, Index::AEVT)?;
                 let attr_entity = before.entity(datom.attribute.into())?;
                 let unique_value =
-                    attr_entity.get_with_options(builtin_idents::unique().into(), true, true)?;
-                let type_value = attr_entity.get_with_options(
-                    builtin_idents::value_type().into(),
-                    true,
-                    true,
-                )?;
+                    attr_entity.get_with_options(builtin_idents::UNIQUE.into(), true, true)?;
+                let type_value =
+                    attr_entity.get_with_options(builtin_idents::VALUE_TYPE.into(), true, true)?;
                 let is_unique = {
                     if let EntityResult::Value(Value::Boolean(x)) = unique_value {
                         x
@@ -172,7 +169,7 @@ impl Connection for SledConnection {
                 };
                 let is_ref = {
                     if let EntityResult::Value(Value::ID(id)) = type_value {
-                        id == builtin_idents::type_ref()
+                        id == builtin_idents::TYPE_REF
                     } else {
                         false
                     }

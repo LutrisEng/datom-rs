@@ -34,20 +34,20 @@ impl<'connection> Entity for SledEntity<'connection> {
     ) -> Result<EntityResult<Self>, QueryError> {
         let db = self.connection.as_of(self.t)?;
         let attribute = attribute.resolve(&db)?;
-        if attribute == builtin_idents::id() {
+        if attribute == builtin_idents::ID {
             return Ok(Value::from(self.id).into());
         }
         let attribute_ent = db.entity(attribute.into())?;
         let is_repeated = !skip_cardinality
             && attribute_ent
-                .get_with_options(builtin_idents::cardinality().into(), true, false)?
-                .is_ref_to(&builtin_idents::cardinality_many());
+                .get_with_options(builtin_idents::CARDINALITY.into(), true, false)?
+                .is_ref_to(&builtin_idents::CARDINALITY_MANY);
         let attribute_type = {
             if skip_type {
                 None
             } else {
                 let attribute_type = attribute_ent.get_with_options(
-                    builtin_idents::value_type().into(),
+                    builtin_idents::VALUE_TYPE.into(),
                     true,
                     true,
                 )?;
@@ -73,7 +73,7 @@ impl<'connection> Entity for SledEntity<'connection> {
             let res: Result<Vec<EntityResult<Self>>, QueryError> = values
                 .into_iter()
                 .map(|v| {
-                    if attribute_type == Some(builtin_idents::type_ref()) {
+                    if attribute_type == Some(builtin_idents::TYPE_REF) {
                         if let Value::ID(id) = v {
                             Ok(EntityResult::Ref(db.entity(id.into())?))
                         } else {
@@ -91,7 +91,7 @@ impl<'connection> Entity for SledEntity<'connection> {
                 .map(|x| -> Result<EntityResult<Self>, QueryError> {
                     if x.datom_type == DatomType::Retraction {
                         Ok(EntityResult::NotFound)
-                    } else if attribute_type == Some(builtin_idents::type_ref()) {
+                    } else if attribute_type == Some(builtin_idents::TYPE_REF) {
                         if let Value::ID(id) = x.value {
                             Ok(EntityResult::Ref(db.entity(id.into())?))
                         } else {
@@ -104,8 +104,7 @@ impl<'connection> Entity for SledEntity<'connection> {
                 .unwrap_or(Ok(EntityResult::NotFound))?
         };
         if let EntityResult::NotFound = result {
-            let builtins = builtin_idents::get_builtin_entities();
-            let builtin = builtins.get(&self.id);
+            let builtin = builtin_idents::BUILTIN_ENTITIES.get(&self.id);
             if let Some(builtin) = builtin {
                 let val = builtin.get(&attribute);
                 if let Some(val) = val {

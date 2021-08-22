@@ -30,6 +30,7 @@ c = ["cbindgen"]
 uuid = { version = "0.8", features = ["v4"] }
 num-bigint = "0.4"
 datom-bigdecimal = "0.3.0"
+lazy_static = "1.4.0"
 
 sled = { version = "0.34", optional = true }
 
