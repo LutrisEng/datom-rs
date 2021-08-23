@@ -384,6 +384,14 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
             admin.get("user/balance".into())?,
             EntityResult::Value(bal.clone().into())
         );
+        assert_eq!(
+            admin.get("db/id".into())?,
+            EntityResult::Value(
+                EID::Unique(Box::new("user/username".into()), "pmc".into())
+                    .resolve(&db)?
+                    .into()
+            ),
+        );
 
         {
             let mut not_admin_tx = Transaction::new();
