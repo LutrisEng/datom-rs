@@ -36,14 +36,23 @@ impl From<AttributeType> for ID {
 }
 
 /// An imperative way to generate an attribute's schema
+#[derive(Clone)]
 pub struct AttributeSchema {
-    id: ID,
-    ident: Option<String>,
-    many: bool,
-    value_type: Option<AttributeType>,
-    doc: Option<String>,
-    unique: bool,
-    component: bool,
+    /// The attribute's ID
+    pub id: ID,
+    /// The attribute's unique identifier
+    pub ident: Option<String>,
+    /// Whether this attribute can store multiple values for an entity
+    pub many: bool,
+    /// What type values should be in this attribute
+    pub value_type: Option<AttributeType>,
+    /// A docstring for this attribute
+    pub doc: Option<String>,
+    /// Whether there can only be one entity of each value for this
+    /// attribute
+    pub unique: bool,
+    /// Whether this attribute refers to a component
+    pub component: bool,
 }
 
 impl AttributeSchema {
