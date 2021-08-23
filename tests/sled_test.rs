@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
+use std::collections::HashSet;
+
 use datom::{
     builtin_idents, prelude::*, AttributeSchema, AttributeType, EntityResult, Transaction, Value,
     EID, ID,
@@ -294,6 +296,12 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
                     .ident("user/balance".to_string())
                     .value_type(AttributeType::Decimal),
             );
+            schema_tx.append(
+                AttributeSchema::new()
+                    .ident("user/repeated-numbers".to_string())
+                    .value_type(AttributeType::Integer)
+                    .many(),
+            );
             conn.transact(schema_tx)?;
         }
 
@@ -360,6 +368,7 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
                     ("user/admin?".into(), true.into()),
                     ("user/first-name".into(), "Piper".into()),
                     ("user/balance".into(), bal.clone().into()),
+                    ("user/repeated-numbers".into(), 1234.into()),
                 ]
                 .into(),
             );
@@ -383,6 +392,10 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
         assert_eq!(
             admin.get("user/balance".into())?,
             EntityResult::Value(bal.clone().into())
+        );
+        assert_eq!(
+            admin.get("user/repeated-numbers".into())?,
+            EntityResult::Repeated(vec![EntityResult::Value(1234.into())])
         );
         assert_eq!(
             admin.get("db/id".into())?,
@@ -428,14 +441,16 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
             let db = conn.db()?;
             let user = db.entity(EID::Unique(Box::new("user/username".into()), "pmc".into()))?;
             let mut friend_tx = Transaction::new();
+            let friend_id = ID::new();
             friend_tx.add_many(
-                ID::new().into(),
+                friend_id.into(),
                 [
                     ("user/username".into(), "friend".into()),
                     ("user/friends".into(), user.id().to_owned().into()),
                 ]
                 .into(),
             );
+            friend_tx.add(friend_id.into(), "user/friends".into(), 4321.into());
             conn.transact(friend_tx)?;
         }
 
@@ -463,19 +478,22 @@ fn schema_entity_api() -> Result<(), Box<dyn std::error::Error>> {
                 friend.get("user/username".into())?,
                 EntityResult::Value("friend".into()),
             );
-            assert_eq!(
-                friend.get("user/friends".into())?,
-                EntityResult::Repeated(vec![user.into()]),
-            );
-            assert_eq!(
-                user.reverse_get("user/friends".into())?,
-                EntityResult::Repeated(vec![friend.into()]),
-            );
+            let friends = friend.get("user/friends".into())?;
+            if let EntityResult::Repeated(results) = friends {
+                let friend_set: HashSet<EntityResult<SledEntity>> =
+                    HashSet::from_iter(results.into_iter());
+                assert_eq!(friend_set.len(), 2);
+                assert!(friend_set.contains(&user.into()));
+                assert!(friend_set.contains(&EntityResult::Value(4321.into())));
+            } else {
+                panic!();
+            }
             let username = db.entity("user/username".into())?.id().to_owned();
             let first_name = db.entity("user/first-name".into())?.id().to_owned();
             let friends = db.entity("user/friends".into())?.id().to_owned();
             let balance = db.entity("user/balance".into())?.id().to_owned();
-            let mut user_attributes = [username, first_name, balance];
+            let repeated_numbers = db.entity("user/repeated-numbers".into())?.id().to_owned();
+            let mut user_attributes = [username, first_name, balance, repeated_numbers];
             user_attributes.sort_by_key(ID::to_string);
             user_attributes.reverse();
             let mut friend_attributes = vec![username, friends];

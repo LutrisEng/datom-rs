@@ -2,11 +2,14 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::fmt::{self, Debug, Formatter};
+use std::{
+    fmt::{self, Debug, Formatter},
+    hash::Hash,
+};
 
 use crate::{Entity, Value, ID};
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 /// The result of getting an attribute on an entity
 pub enum EntityResult<E: Entity> {
     /// A value for that attribute wasn't found on this entity
