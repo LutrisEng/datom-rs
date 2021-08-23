@@ -49,6 +49,8 @@ impl PartialEq<Self> for SledConnection {
     }
 }
 
+impl Eq for SledConnection {}
+
 const LATEST_T: [u8; 1] = [255u8];
 const TRANSACTOR_LOCK: [u8; 1] = [254u8];
 

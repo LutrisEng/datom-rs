@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::collections::HashSet;
+use std::{collections::HashSet, hash::Hash};
 
 use crate::{
     builtin_idents, Connection, Database, Datom, DatomType, Entity, EntityResult, QueryError,
@@ -12,7 +12,7 @@ use crate::{
 use super::{SledAttributeIter, SledConnection};
 
 /// An [Entity] in a sled-backed database
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct SledEntity<'connection> {
     pub(crate) connection: &'connection SledConnection,
     pub(crate) t: u64,
@@ -145,5 +145,12 @@ impl<'connection> Entity for SledEntity<'connection> {
     fn attributes(&self) -> Result<Self::AttributeIter, QueryError> {
         let db = self.connection.as_of(self.t)?;
         Ok(SledAttributeIter::new(db.datoms_for_entity(self.id)?))
+    }
+}
+
+impl<'connection> Hash for SledEntity<'connection> {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.t.hash(state);
+        self.id.hash(state);
     }
 }

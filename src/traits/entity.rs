@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
+use std::hash::Hash;
+
 use crate::{EntityResult, QueryError, EID, ID};
 
 /// An entity at a single point in time
-pub trait Entity: Sized + PartialEq + Clone {
+pub trait Entity: Sized + PartialEq + Eq + Clone + Hash {
     /// An iterator over an entity's attributes
     type AttributeIter: Iterator<Item = ID>;
 
