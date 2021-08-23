@@ -116,6 +116,9 @@ impl AttributeSchema {
 }
 
 impl Default for AttributeSchema {
+    /// ```
+    /// datom::AttributeSchema::default();
+    /// ```
     fn default() -> Self {
         Self::new()
     }
