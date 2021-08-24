@@ -161,7 +161,7 @@ jobs:
           name: ${{ matrix.target }}
           path: target/release
 
-  fmt:
+  lint:
     name: Lint
     needs: check
     runs-on: ubuntu-latest
@@ -234,3 +234,18 @@ jobs:
           user_name: "github-actions[bot]"
           user_email: "github-actions[bot]@users.noreply.github.com"
           commit_message: Auto-generated documentation
+
+  ready_to_merge:
+    name: Ready to Merge
+    needs:
+      - check
+      - test
+      - test_cross
+      - lint
+      - security_audit
+      - reuse
+      - validate_citation
+      - docs
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo Good to go!
