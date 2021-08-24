@@ -91,7 +91,6 @@ jobs:
           - x86_64-unknown-linux-musl
           - x86_64-unknown-netbsd
           ## Rust Tier 2 (w/o host tools) targets that we care about testing
-          - sparc64-unknown-linux-gnu
           - wasm32-wasi
         include:
           - target: i686-pc-windows-gnu
@@ -141,15 +140,12 @@ jobs:
           - x86_64-unknown-linux-musl
           - x86_64-unknown-netbsd
           ## Rust Tier 2 (w/o host tools) targets that we care about
-          - sparc64-unknown-linux-gnu
           - wasm32-wasi
           ## Rust Tier 3 targets that we (kinda) care about
           - aarch64-unknown-freebsd
           - aarch64-unknown-netbsd
           - i686-unknown-netbsd
           - i686-unknown-openbsd
-          - sparc64-unknown-netbsd
-          - sparc64-unknown-openbsd
           - x86_64-unknown-openbsd
         include:
           - target: i686-pc-windows-gnu
