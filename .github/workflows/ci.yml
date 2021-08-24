@@ -111,7 +111,7 @@ jobs:
 
   build_release:
     name: Build release binary for ${{ matrix.target }}
-    needs: test-cross
+    needs: test_cross
     runs-on: ubuntu-latest
     strategy:
       matrix:
