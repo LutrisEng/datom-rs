@@ -33,6 +33,7 @@ jobs:
 
   test:
     name: Test on ${{ matrix.os }}
+    needs: check
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -46,8 +47,11 @@ jobs:
           override: true
       - uses: Swatinem/rust-cache@v1
       - name: Run tests without coverage
-        run: cargo test --all
+        uses: actions-rs/cargo@v1
         if: matrix.os != 'ubuntu-latest'
+        with:
+          command: test
+          args: --all
       - name: Run tests with coverage
         run: cargo test --all
         if: matrix.os == 'ubuntu-latest'
@@ -64,8 +68,102 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ${{ steps.coverage.outputs.report }}
 
+  test_cross:
+    name: Cross-test on ${{ matrix.target }}
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          # Rust Tier 1 targets (except ones we've already tested)
+          - aarch64-unknown-linux-gnu
+          - i686-pc-windows-gnu
+          - i686-pc-windows-msvc
+          - i686-unknown-linux-gnu
+          # - x86_64-apple-darwin
+          - x86_64-pc-windows-gnu
+          # - x86_64-pc-windows-msvc
+          # - x86_64-unknown-linux-gnu
+          # Rust Tier 2 (w/ host tools) targets that we care about testing
+          - aarch64-apple-darwin
+          - aarch64-unknown-linux-musl
+          - x86_64-unknown-freebsd
+          - x86_64-unknown-linux-musl
+          - x86_64-unknown-netbsd
+          # Rust Tier 2 (w/o host tools) targets that we care about testing
+          - sparc64-unknown-linux-gnu
+          - wasm32-wasi
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          target: ${{ matrix.target }}
+          toolchain: nightly
+          profile: minimal
+          override: true
+      - uses: Swatinem/rust-cache@v1
+      - uses: actions-rs/cargo@v1
+        if: matrix.os != 'ubuntu-latest'
+        with:
+          use-cross: true
+          command: test
+          args: --all --target ${{ matrix.target }}
+
+  build_release:
+    name: Build release binary for ${{ matrix.target }}
+    needs: test-cross
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          # Rust Tier 1 targets
+          - aarch64-unknown-linux-gnu
+          - i686-pc-windows-gnu
+          - i686-pc-windows-msvc
+          - i686-unknown-linux-gnu
+          - x86_64-apple-darwin
+          - x86_64-pc-windows-gnu
+          - x86_64-pc-windows-msvc
+          - x86_64-unknown-linux-gnu
+          # Rust Tier 2 (w/ host tools) targets that we care about
+          - aarch64-apple-darwin
+          - aarch64-unknown-linux-musl
+          - x86_64-unknown-freebsd
+          - x86_64-unknown-linux-musl
+          - x86_64-unknown-netbsd
+          # Rust Tier 2 (w/o host tools) targets that we care about
+          - sparc64-unknown-linux-gnu
+          - wasm32-wasi
+          # Rust Tier 3 targets that we (kinda) care about
+          - aarch64-unknown-freebsd
+          - aarch64-unknown-netbsd
+          - i686-unknown-netbsd
+          - i686-unknown-openbsd
+          - sparc64-unknown-netbsd
+          - sparc64-unknown-openbsd
+          - x86_64-unknown-openbsd
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          target: ${{ matrix.target }}
+          toolchain: nightly
+          profile: minimal
+          override: true
+      - uses: Swatinem/rust-cache@v1
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --all --release
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.target }}
+          path: target/release
+
   fmt:
     name: Lint
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -113,6 +211,7 @@ jobs:
 
   docs:
     name: Build Docs
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
