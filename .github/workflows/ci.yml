@@ -71,11 +71,11 @@ jobs:
   test_cross:
     name: Cross-test on ${{ matrix.target }}
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     strategy:
       matrix:
         target:
-          # Rust Tier 1 targets (except ones we've already tested)
+          ## Rust Tier 1 targets (except ones we've already tested)
           - aarch64-unknown-linux-gnu
           - i686-pc-windows-gnu
           - i686-pc-windows-msvc
@@ -84,15 +84,24 @@ jobs:
           - x86_64-pc-windows-gnu
           # - x86_64-pc-windows-msvc
           # - x86_64-unknown-linux-gnu
-          # Rust Tier 2 (w/ host tools) targets that we care about testing
+          ## Rust Tier 2 (w/ host tools) targets that we care about testing
           - aarch64-apple-darwin
           - aarch64-unknown-linux-musl
           - x86_64-unknown-freebsd
           - x86_64-unknown-linux-musl
           - x86_64-unknown-netbsd
-          # Rust Tier 2 (w/o host tools) targets that we care about testing
+          ## Rust Tier 2 (w/o host tools) targets that we care about testing
           - sparc64-unknown-linux-gnu
           - wasm32-wasi
+        include:
+          - target: i686-pc-windows-gnu
+            os: windows-latest
+          - target: i686-pc-windows-msvc
+            os: windows-latest
+          - target: x86_64-pc-windows-gnu
+            os: windows-latest
+          - target: aarch64-apple-darwin
+            os: macos-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
@@ -112,11 +121,11 @@ jobs:
   build_release:
     name: Build release binary for ${{ matrix.target }}
     needs: test_cross
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     strategy:
       matrix:
         target:
-          # Rust Tier 1 targets
+          ## Rust Tier 1 targets
           - aarch64-unknown-linux-gnu
           - i686-pc-windows-gnu
           - i686-pc-windows-msvc
@@ -125,16 +134,16 @@ jobs:
           - x86_64-pc-windows-gnu
           - x86_64-pc-windows-msvc
           - x86_64-unknown-linux-gnu
-          # Rust Tier 2 (w/ host tools) targets that we care about
+          ## Rust Tier 2 (w/ host tools) targets that we care about
           - aarch64-apple-darwin
           - aarch64-unknown-linux-musl
           - x86_64-unknown-freebsd
           - x86_64-unknown-linux-musl
           - x86_64-unknown-netbsd
-          # Rust Tier 2 (w/o host tools) targets that we care about
+          ## Rust Tier 2 (w/o host tools) targets that we care about
           - sparc64-unknown-linux-gnu
           - wasm32-wasi
-          # Rust Tier 3 targets that we (kinda) care about
+          ## Rust Tier 3 targets that we (kinda) care about
           - aarch64-unknown-freebsd
           - aarch64-unknown-netbsd
           - i686-unknown-netbsd
@@ -142,6 +151,19 @@ jobs:
           - sparc64-unknown-netbsd
           - sparc64-unknown-openbsd
           - x86_64-unknown-openbsd
+        include:
+          - target: i686-pc-windows-gnu
+            os: windows-latest
+          - target: i686-pc-windows-msvc
+            os: windows-latest
+          - target: x86_64-pc-windows-gnu
+            os: windows-latest
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+          - target: aarch64-apple-darwin
+            os: macos-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
