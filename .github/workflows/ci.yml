@@ -113,7 +113,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         if: matrix.os != 'ubuntu-latest'
         with:
-          use-cross: true
+          use-cross: ${{ !matrix.os && matrix.os == 'ubuntu-latest' }}
           command: test
           args: --all --target ${{ matrix.target }}
 
@@ -171,9 +171,9 @@ jobs:
       - uses: Swatinem/rust-cache@v1
       - uses: actions-rs/cargo@v1
         with:
-          use-cross: true
+          use-cross: ${{ !matrix.os && matrix.os == 'ubuntu-latest' }}
           command: build
-          args: --all --release
+          args: --all --release --target ${{ matrix.target }}
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.target }}
