@@ -4,7 +4,7 @@
 
 use std::ops::Range;
 
-use crate::StorageError;
+use crate::{StorageError, ID};
 
 /// A serialized datom
 pub type Item = Vec<u8>;
@@ -13,7 +13,7 @@ pub type Item = Vec<u8>;
 pub type ItemIterator<'s> = Box<dyn DoubleEndedIterator<Item = Result<Item, StorageError>> + 's>;
 
 /// A [std::collections::BTreeSet<Datom>]-like storage backend
-pub trait Storage: Sync + Send + PartialEq {
+pub trait Storage {
     /// Get all items within this range
     fn range(&self, r: Range<&[u8]>) -> Result<ItemIterator<'_>, StorageError>;
 
@@ -22,4 +22,25 @@ pub trait Storage: Sync + Send + PartialEq {
 
     /// Insert many new items into the backend (in one transaction, if possible)
     fn insert_many(&self, is: &[Item]) -> Result<(), StorageError>;
+
+    /// Get a unique ID for this instance
+    fn id(&self) -> ID;
+}
+
+impl<S: Storage + ?Sized> Storage for Box<S> {
+    fn range(&self, r: Range<&[u8]>) -> Result<ItemIterator<'_>, StorageError> {
+        (**self).range(r)
+    }
+
+    fn insert(&self, i: Item) -> Result<(), StorageError> {
+        (**self).insert(i)
+    }
+
+    fn insert_many(&self, is: &[Item]) -> Result<(), StorageError> {
+        (**self).insert_many(is)
+    }
+
+    fn id(&self) -> ID {
+        (**self).id()
+    }
 }

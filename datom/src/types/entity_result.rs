@@ -9,7 +9,7 @@ use std::{
 
 use crate::{storage::Storage, Entity, Value, ID};
 
-#[derive(Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 /// The result of getting an attribute on an entity
 pub enum EntityResult<'connection, S: Storage> {
     /// A value for that attribute wasn't found on this entity
@@ -62,6 +62,25 @@ impl<'connection, S: Storage> EntityResult<'connection, S> {
     }
 }
 
+impl<'connection, S: Storage> PartialEq<Self> for EntityResult<'connection, S> {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Self::Value(l0), Self::Value(r0)) => l0 == r0,
+            (Self::Ref(l0), Self::Ref(r0)) => l0 == r0,
+            (Self::Repeated(l0), Self::Repeated(r0)) => l0 == r0,
+            _ => core::mem::discriminant(self) == core::mem::discriminant(other),
+        }
+    }
+}
+
+impl<'connection, S: Storage> Eq for EntityResult<'connection, S> {}
+
+impl<'connection, S: Storage> Hash for EntityResult<'connection, S> {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        core::mem::discriminant(self).hash(state);
+    }
+}
+
 impl<'connection, S: Storage> PartialEq<Value> for EntityResult<'connection, S> {
     fn eq(&self, other: &Value) -> bool {
         match self {
@@ -71,7 +90,9 @@ impl<'connection, S: Storage> PartialEq<Value> for EntityResult<'connection, S> 
     }
 }
 
-impl<'connection, S: Storage> PartialEq<Entity<'connection, S>> for EntityResult<'connection, S> {
+impl<'connection, S: Storage + PartialEq> PartialEq<Entity<'connection, S>>
+    for EntityResult<'connection, S>
+{
     fn eq(&self, other: &Entity<'connection, S>) -> bool {
         match self {
             Self::Ref(s) => s == other,
@@ -86,7 +107,7 @@ impl<'connection, S: Storage> PartialEq<ID> for EntityResult<'connection, S> {
     }
 }
 
-impl<'connection, S: Storage> PartialEq<Vec<Self>> for EntityResult<'connection, S> {
+impl<'connection, S: Storage + PartialEq> PartialEq<Vec<Self>> for EntityResult<'connection, S> {
     fn eq(&self, other: &Vec<Self>) -> bool {
         match self {
             Self::Repeated(s) => s == other,

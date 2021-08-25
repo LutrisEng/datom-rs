@@ -6,13 +6,13 @@ use std::{collections::BTreeSet, ops::Range};
 
 use crate::{
     storage::{Item, ItemIterator, Storage},
-    StorageError,
+    StorageError, ID,
 };
 
 /// A storage backend backed by a [BTreeSet]
-#[derive(PartialEq)]
 pub struct BTreeSetStorage {
     set: BTreeSet<Item>,
+    id: ID,
 }
 
 impl Storage for BTreeSetStorage {
@@ -37,6 +37,10 @@ impl Storage for BTreeSetStorage {
         // Ok(())
         todo!()
     }
+
+    fn id(&self) -> ID {
+        self.id
+    }
 }
 
 impl BTreeSetStorage {
@@ -44,6 +48,7 @@ impl BTreeSetStorage {
     pub fn new() -> Self {
         Self {
             set: BTreeSet::new(),
+            id: ID::new(),
         }
     }
 }

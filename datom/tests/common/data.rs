@@ -5,8 +5,7 @@
 use std::{collections::HashSet, lazy::SyncLazy};
 
 use datom::{
-    builtin_idents, Connection, Database, Entity, EntityResult, Transactable, Transaction, Value,
-    ID,
+    builtin_idents, DynamicConnection, EntityResult, Transactable, Transaction, Value, ID,
 };
 use num_bigint::BigInt;
 
@@ -54,7 +53,7 @@ static USERS: SyncLazy<Vec<User>> = SyncLazy::new(|| {
     .into()
 });
 
-pub fn transact_users<C: Connection>(conn: &C) -> Result<(), Box<dyn std::error::Error>> {
+pub fn transact_users(conn: &DynamicConnection) -> Result<(), Box<dyn std::error::Error>> {
     let mut tx = Transaction::new();
     for user in USERS.iter() {
         tx.append(user);
@@ -63,8 +62,8 @@ pub fn transact_users<C: Connection>(conn: &C) -> Result<(), Box<dyn std::error:
     Ok(())
 }
 
-pub fn users_transacted_properly<C: Connection>(
-    conn: &C,
+pub fn users_transacted_properly(
+    conn: &DynamicConnection,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let db = conn.db()?;
     for user in USERS.iter() {
