@@ -8,8 +8,8 @@ use sled::{transaction::ConflictableTransactionError, Config, Db};
 use uuid::Uuid;
 
 use crate::{
-    storage::{Item, ItemIterator, Storage, StorageError},
-    ID,
+    storage::{Item, ItemIterator, Storage},
+    StorageError, ID,
 };
 
 impl From<sled::Error> for StorageError {

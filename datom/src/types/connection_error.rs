@@ -4,7 +4,7 @@
 
 use std::{error::Error, fmt};
 
-use crate::storage::StorageError;
+use crate::StorageError;
 
 /// Network/disk errors
 #[derive(Debug)]

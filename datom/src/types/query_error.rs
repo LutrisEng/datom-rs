@@ -4,7 +4,7 @@
 
 use std::{error::Error, fmt};
 
-use crate::{storage::StorageError, ConnectionError, EID};
+use crate::{ConnectionError, StorageError, EID};
 
 /// Errors during a [Database](crate::Database) query
 #[derive(Debug)]

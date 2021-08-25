@@ -49,6 +49,9 @@ pub use self::index::*;
 mod query_error;
 pub use self::query_error::*;
 
+mod storage_error;
+pub use self::storage_error::*;
+
 mod transaction_error;
 pub use self::transaction_error::*;
 

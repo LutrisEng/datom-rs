@@ -62,9 +62,6 @@ if let EntityResult::Value(Value::String(u)) = db.entity(user.into())?.get(usern
 [Datomic's excellent documentation]: https://docs.datomic.com/on-prem/overview/architecture.html
 */
 
-mod traits;
-pub use traits::*;
-
 mod types;
 pub use types::*;
 
@@ -77,10 +74,8 @@ pub mod builtin_idents;
 mod merge_iters;
 pub use merge_iters::*;
 
+/// API for storage backends
+pub mod storage;
+
 /// Storage backends
 pub mod backends;
-
-/// The main traits which should be in scope when using datom-rs
-pub mod prelude {
-    pub use crate::traits::*;
-}
