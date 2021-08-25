@@ -77,9 +77,8 @@ pub mod builtin_idents;
 mod merge_iters;
 pub use merge_iters::*;
 
-/// [sled](https://sled.rs) storage backend
-#[cfg(feature = "sled")]
-pub mod sled;
+/// Storage backends
+pub mod backends;
 
 /// The main traits which should be in scope when using datom-rs
 pub mod prelude {

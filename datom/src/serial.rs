@@ -207,6 +207,16 @@ pub fn vaet_value_attribute_range(val: Value, eid: ID) -> Range<Vec<u8>> {
     from..to
 }
 
+/// Convert a range of arrays to a range of slices
+pub fn range_slice<T, const N: usize>(r: &'_ Range<[T; N]>) -> Range<&'_ [T]> {
+    &r.start..&r.end
+}
+
+/// Convert a range of [Vec]s to a range of slices
+pub fn vec_range_slice<T>(r: &'_ Range<Vec<T>>) -> Range<&'_ [T]> {
+    &r.start..&r.end
+}
+
 /// Serialize a [datom](crate::Datom) for a given [index](crate::Index)
 pub fn serialize(datom: &Datom, index: Index) -> Vec<u8> {
     match index {

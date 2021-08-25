@@ -4,7 +4,7 @@
 
 use std::collections::HashMap;
 
-use crate::{Database, Datom, Fact, TransactionError, Value, EID};
+use crate::{storage::Storage, Database, Datom, Fact, TransactionError, Value, EID};
 
 /// A type which can be appended to a transaction
 pub trait Transactable {
@@ -57,10 +57,10 @@ impl Transaction {
     }
 
     /// Convert the [Transaction] to a set of [Datom]s
-    pub fn datoms<'c, D: Database<'c>>(
+    pub fn datoms<'c, S: Storage>(
         &self,
         t: u64,
-        db: &D,
+        db: &Database<'c, S>,
     ) -> Result<Vec<Datom>, TransactionError> {
         self.facts
             .iter()

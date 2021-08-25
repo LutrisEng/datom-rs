@@ -21,10 +21,7 @@ pub trait Entity: Sized + PartialEq + Eq + Clone + Hash {
         skip_cardinality: bool,
         skip_type: bool,
     ) -> Result<EntityResult<Self>, QueryError>;
-    /// Get the value of an attribute on this entity
-    fn get(&self, attribute: EID) -> Result<EntityResult<Self>, QueryError> {
-        self.get_with_options(attribute, false, false)
-    }
+
     /// Get the entities with this entity as a value on an attribute
     /// (reverse lookup)
     fn reverse_get(&self, attribute: EID) -> Result<EntityResult<Self>, QueryError>;

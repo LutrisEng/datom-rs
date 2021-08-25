@@ -2,25 +2,20 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::{env::temp_dir, fmt::Debug};
-
-use sled::Config;
-use uuid::Uuid;
+use std::fmt::Debug;
 
 use crate::{
-    builtin_idents, serial::serialize, Connection, ConnectionError, Database, Datom, Entity,
-    EntityResult, Index, Transaction, TransactionError, TransactionResult, Value, ID,
+    builtin_idents, serial::serialize, storage::Storage, ConnectionError, Database, Datom,
+    EntityResult, Index, Transactable, Transaction, TransactionError, TransactionResult, Value, ID,
 };
 
-use super::SledDatabase;
-
-/// A persistent [Connection] to a sled-backed database
-pub struct SledConnection {
-    pub(crate) db: sled::Db,
+/// A persistent connection to a database
+pub struct Connection<S: Storage> {
+    pub(crate) storage: S,
     pub(crate) id: ID,
 }
 
-impl PartialEq<Self> for SledConnection {
+impl<S: Storage> PartialEq<Self> for Connection<S> {
     /// ```
     /// use datom::sled::*;
     /// let conn1 = SledConnection::connect_temp()?;
@@ -49,106 +44,45 @@ impl PartialEq<Self> for SledConnection {
     }
 }
 
-impl Eq for SledConnection {}
+impl<S: Storage> Eq for Connection<S> {}
 
-const LATEST_T: [u8; 1] = [255u8];
-const TRANSACTOR_LOCK: [u8; 1] = [254u8];
-
-impl SledConnection {
-    fn insert(&self, datom: &Datom, index: Index) -> Result<(), ConnectionError> {
-        self.db.insert(serialize(datom, index), vec![])?;
-        Ok(())
+impl<S: Storage> Connection<S> {
+    /// Fetch the t-value for the latest transaction
+    pub fn latest_t(&self) -> Result<u64, ConnectionError> {
+        Ok(0)
     }
 
-    fn set_t(&self, t: u64) -> Result<(), ConnectionError> {
-        self.db.insert(LATEST_T, &t.to_be_bytes())?;
-        Ok(())
+    fn set_t(&self, _: u64) -> Result<(), ConnectionError> {
+        todo!()
     }
 
-    fn lock_transactor(&self) -> Result<(), ConnectionError> {
-        while self
-            .db
-            .compare_and_swap(
-                TRANSACTOR_LOCK,
-                Option::<&'static str>::None,
-                Some("Locked"),
-            )?
-            .is_err()
-        {
-            // Wait for the transactor to unlock
-        }
-        Ok(())
-    }
-
-    fn unlock_transactor(&self) -> Result<(), ConnectionError> {
-        self.db.remove(TRANSACTOR_LOCK)?;
-        Ok(())
-    }
-
-    /// Create a connection to a temporary database. When the
-    /// [SledConnection] is dropped, the temporary database will be
-    /// removed from the disk. This is useful for tests.
-    pub fn connect_temp() -> Result<Self, ConnectionError> {
-        let mut path = temp_dir();
-        path.push(Uuid::new_v4().to_string());
-        path.set_extension("db");
-        let cfg = Config::new().path(path).temporary(true);
-        let db = cfg.open()?;
-        Ok(Self { db, id: ID::new() })
-    }
-}
-
-impl Connection for SledConnection {
-    type Database<'a> = SledDatabase<'a>;
-
-    /// ```
-    /// use datom::{prelude::*, sled::*};
-    ///
-    /// let mut path = std::env::temp_dir();
-    /// path.push(uuid::Uuid::new_v4().to_string());
-    /// path.set_extension("db");
-    /// {
-    ///     let conn = SledConnection::connect(path.to_str().ok_or(datom::ConnectionError::InvalidData)?)?;
-    ///     let db = conn.db()?;
-    ///     // ...
-    /// }
-    /// std::fs::remove_dir_all(path)?;
-    ///
-    /// # Ok::<(), Box<dyn std::error::Error>>(())
-    /// ```
-    fn connect(uri: &str) -> Result<Self, ConnectionError> {
-        let cfg = Config::new().path(uri);
-        let db = cfg.open()?;
-        Ok(Self { db, id: ID::new() })
-    }
-
-    fn latest_t(&self) -> Result<u64, ConnectionError> {
-        match self.db.get(LATEST_T)? {
-            Some(t_bytes) => Ok(u64::from_be_bytes(
-                t_bytes[..]
-                    .try_into()
-                    .map_err(|_| ConnectionError::InvalidData)?,
-            )),
-            None => Ok(0),
-        }
-    }
-
-    fn as_of(&self, t: u64) -> Result<Self::Database<'_>, ConnectionError> {
-        Ok(SledDatabase {
+    /// Fetch the t-value for the latest transaction
+    pub fn as_of(&self, t: u64) -> Result<Database<'_, S>, ConnectionError> {
+        Ok(Database {
             connection: self,
             t,
         })
     }
 
-    fn db(&self) -> Result<Self::Database<'_>, ConnectionError> {
+    /// Get a [database](crate::database::Database) for the current
+    /// point in time
+    pub fn db(&self) -> Result<Database<'_, S>, ConnectionError> {
         self.as_of(self.latest_t()?)
     }
 
-    fn transact_tx(
+    /// Get a [database](crate::database::Database) for a specific point
+    /// in time
+    pub fn insert(&self, datom: &Datom, index: Index) -> Result<(), ConnectionError> {
+        self.storage
+            .insert(serialize(datom, index))
+            .map_err(|e| e.into())
+    }
+
+    /// Run a transaction on the database
+    pub fn transact_tx(
         &self,
         tx: Transaction,
-    ) -> Result<TransactionResult<'_, Self, Self::Database<'_>>, TransactionError> {
-        self.lock_transactor()?;
+    ) -> Result<TransactionResult<'_, S>, TransactionError> {
         let res = {
             let t_before = self.latest_t()?;
             let t = t_before + 1;
@@ -191,12 +125,19 @@ impl Connection for SledConnection {
                 data,
             })
         };
-        self.unlock_transactor()?;
         res
+    }
+
+    /// Transact a transactable on the database
+    pub fn transact<T: Transactable>(
+        &self,
+        txable: T,
+    ) -> Result<TransactionResult<'_, S>, TransactionError> {
+        self.transact_tx(txable.tx())
     }
 }
 
-impl Debug for SledConnection {
+impl<S: Storage> Debug for Connection<S> {
     /// ```
     /// use datom::sled::*;
     ///
@@ -205,7 +146,7 @@ impl Debug for SledConnection {
     /// # Ok::<(), Box<dyn std::error::Error>>(())
     /// ```
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("SledConnection")
+        f.debug_struct("Connection")
             .field("id", &self.id)
             .field(
                 "EAVT",

@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-// For clarity's sake, this is in alphabetical order.
+/// [sled] storage backend
+#[cfg(feature = "sled")]
+pub mod sled;
 
-/// Storage backend traits
-pub mod storage;
+/// [BTreeSet] storage backend
+#[cfg(feature = "btreeset")]
+pub mod btreeset;

@@ -2,17 +2,17 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::{error::Error, fmt, io};
+use std::{error::Error, fmt};
+
+use crate::storage::StorageError;
 
 /// Network/disk errors
 #[derive(Debug)]
 pub enum ConnectionError {
     /// There was invalid data in the data store
     InvalidData,
-    /// There was an IO error
-    IO(io::Error),
-    /// There was an other error, possibly in the underlying data store
-    Miscellaneous(Box<dyn std::error::Error>),
+    /// There was an error in the underlying storage backend
+    Storage(StorageError),
 }
 
 impl fmt::Display for ConnectionError {
@@ -21,16 +21,17 @@ impl fmt::Display for ConnectionError {
     }
 }
 
-impl Error for ConnectionError {}
-
-impl From<io::Error> for ConnectionError {
-    fn from(e: io::Error) -> Self {
-        Self::IO(e)
+impl Error for ConnectionError {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        match self {
+            ConnectionError::Storage(e) => Some(e),
+            _ => None,
+        }
     }
 }
 
-impl From<sled::Error> for ConnectionError {
-    fn from(e: sled::Error) -> Self {
-        Self::Miscellaneous(Box::new(e))
+impl From<StorageError> for ConnectionError {
+    fn from(e: StorageError) -> Self {
+        Self::Storage(e)
     }
 }

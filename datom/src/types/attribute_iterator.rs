@@ -4,26 +4,24 @@
 
 use std::collections::HashSet;
 
-use crate::{DatomType, ID};
-
-use super::SledDatomIter;
+use crate::{DatomIterator, DatomType, QueryError, ID};
 
 /// An iterator over attributes in a sled-backed database
-pub struct SledAttributeIter {
-    iter: SledDatomIter,
+pub struct AttributeIterator<'d> {
+    iter: DatomIterator<'d>,
     seen: HashSet<ID>,
 }
 
-impl SledAttributeIter {
-    pub(crate) fn new(iter: SledDatomIter) -> Self {
-        Self {
+impl<'d> AttributeIterator<'d> {
+    pub(crate) fn new(iter: DatomIterator<'d>) -> Result<Self, QueryError> {
+        Ok(Self {
             iter,
             seen: HashSet::new(),
-        }
+        })
     }
 }
 
-impl Iterator for SledAttributeIter {
+impl<'s> Iterator for AttributeIterator<'s> {
     type Item = ID;
 
     fn next(&mut self) -> Option<Self::Item> {
