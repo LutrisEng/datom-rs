@@ -18,6 +18,6 @@ fn main() {
             .with_language(cbindgen::Language::C)
             .generate()
             .expect("Unable to generate bindings")
-            .write_to_file(format!("target/{}/datom.h", profile));
+            .write_to_file(format!("../target/{}/datom.h", profile));
     }
 }
