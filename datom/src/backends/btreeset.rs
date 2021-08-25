@@ -4,7 +4,10 @@
 
 use std::{collections::BTreeSet, ops::Range};
 
-use crate::storage::{Item, ItemIterator, Storage, StorageError};
+use crate::{
+    storage::{Item, ItemIterator, Storage},
+    StorageError,
+};
 
 /// A storage backend backed by a [BTreeSet]
 #[derive(PartialEq)]
