@@ -5,8 +5,8 @@
 use std::lazy::SyncLazy;
 
 use datom::{
-    backends::sled::SledStorage, builtin_idents, new_dynamic_connection, AttributeSchema,
-    AttributeType, DynamicConnection, EntityResult, Transaction,
+    backends::SledStorage, builtin_idents, new_dynamic_connection, AttributeSchema, AttributeType,
+    DynamicConnection, EntityResult, Transaction,
 };
 
 static ATTRIBUTES: SyncLazy<Vec<AttributeSchema>> = SyncLazy::new(|| {
