@@ -1,0 +1,48 @@
+# SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+# SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
+# SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
+
+cargo-features = ["edition2021"]
+
+[package]
+name = "datom"
+version = "0.1.1-pre3"
+authors = ["Lutris Engineering, Inc <contact@lutris.engineering>"]
+edition = "2021"
+description = "datom-rs: an open-source database inspired by Datomic"
+readme = "../README.md"
+homepage = "https://os.lutris.engineering/datom-rs/"
+repository = "https://github.com/LutrisEng/datom-rs"
+license = "BlueOak-1.0.0 OR BSD-2-Clause-Patent"
+keywords = ["database", "datomic"]
+categories = ["database-implementations", "database"]
+
+[lib]
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[features]
+default = ["sled"]
+c = ["libc", "cbindgen"]
+java = ["jni"]
+
+[dependencies]
+uuid = { version = "0.8", features = ["v4"] }
+num-bigint = "0.4"
+datom-bigdecimal = "0.3.0"
+
+# sled storage backend
+sled = { version = "0.34", optional = true }
+
+# C bindings
+libc = { version = "0.2", optional = true }
+
+# Java bindings
+jni = { version = "0.19", optional = true }
+
+[build-dependencies]
+cbindgen = { version = "0.20", optional = true }
+
+[dev-dependencies.cargo-husky]
+version = "1"
+default-features = false
+features = ["user-hooks"]
