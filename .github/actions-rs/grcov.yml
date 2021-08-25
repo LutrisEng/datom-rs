@@ -4,5 +4,10 @@
 
 ignore-not-existing: true
 llvm: true
-keep-only:
-  - datom/**/*
+ignore:
+  - "/*"
+  - "C:/*"
+  - "../*"
+  - "datom-c/*"
+  - "datom-java/*"
+  - "datom-node/*"
