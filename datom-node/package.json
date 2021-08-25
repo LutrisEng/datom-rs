@@ -1,0 +1,31 @@
+{
+  "name": "datom-rs",
+  "version": "0.1.1-pre3",
+  "description": "Node.js bindings for an open-source database inspired by Datomic",
+  "main": "index.node",
+  "readme": "../README.md",
+  "scripts": {
+    "build": "cargo-cp-artifact -ac datom-node index.node -- cargo build --message-format=json-render-diagnostics",
+    "install": "npm run build",
+    "test": "cargo test",
+    "jest": "jest"
+  },
+  "author": "Lutris Engineering, Inc <contact@lutris.engineering>",
+  "license": "BlueOak-1.0.0 OR BSD-2-Clause-Patent",
+  "devDependencies": {
+    "cargo-cp-artifact": "^0.1",
+    "jest": "^27.0.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LutrisEng/datom-rs.git"
+  },
+  "keywords": [
+    "database",
+    "datomic"
+  ],
+  "bugs": {
+    "url": "https://github.com/LutrisEng/datom-rs/issues"
+  },
+  "homepage": "https://github.com/LutrisEng/datom-rs#readme"
+}

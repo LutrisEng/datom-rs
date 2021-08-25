@@ -5,6 +5,7 @@
 [workspace]
 members = [
     "datom",
+    "datom-node",
 ]
 
 [profile.release]

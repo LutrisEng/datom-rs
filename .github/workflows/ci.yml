@@ -47,10 +47,10 @@ jobs:
           override: true
       - uses: Swatinem/rust-cache@v1
       - name: Run tests without coverage
-        run: cargo test --all
+        run: cargo test --all -- --nocapture
         if: matrix.os != 'ubuntu-latest'
       - name: Run tests with coverage
-        run: cargo test --all
+        run: cargo test --all -- --nocapture
         if: matrix.os == 'ubuntu-latest'
         env:
           CARGO_INCREMENTAL: "0"
