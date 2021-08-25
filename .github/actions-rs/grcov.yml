@@ -4,7 +4,5 @@
 
 ignore-not-existing: true
 llvm: true
-ignore:
-  - "/*"
-  - "C:/*"
-  - "../*"
+keep-only:
+  - datom/**/*
