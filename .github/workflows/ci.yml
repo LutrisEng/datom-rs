@@ -30,7 +30,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: check
-          args: --all --all-features
+          args: --all
 
   test:
     name: Test on ${{ matrix.os }}
@@ -47,10 +47,10 @@ jobs:
           override: true
       - uses: Swatinem/rust-cache@v1
       - name: Run tests without coverage
-        run: cargo test --all --all-features
+        run: cargo test --all
         if: matrix.os != 'ubuntu-latest'
       - name: Run tests with coverage
-        run: cargo test --all --all-features
+        run: cargo test --all
         if: matrix.os == 'ubuntu-latest'
         env:
           CARGO_INCREMENTAL: "0"
@@ -126,7 +126,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: doc
-          args: --all --all-features
+          args: --all
       - run: cp -R website/* target/doc/
       - uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/main'
