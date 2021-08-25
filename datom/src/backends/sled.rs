@@ -30,12 +30,6 @@ pub struct SledStorage {
     id: ID,
 }
 
-impl PartialEq<Self> for SledStorage {
-    fn eq(&self, other: &Self) -> bool {
-        self.id == other.id
-    }
-}
-
 impl Storage for SledStorage {
     fn range(&self, r: Range<&[u8]>) -> Result<ItemIterator<'_>, StorageError> {
         Ok(Box::new(
@@ -58,6 +52,10 @@ impl Storage for SledStorage {
             Ok::<(), ConflictableTransactionError>(())
         })?;
         Ok(())
+    }
+
+    fn id(&self) -> ID {
+        self.id
     }
 }
 

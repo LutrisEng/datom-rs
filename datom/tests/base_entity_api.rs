@@ -10,7 +10,7 @@ use common::{
     data::{transact_users, users_transacted_properly},
     schema::{connection_with_schema, schema_transacted_properly},
 };
-use datom::{Connection, Database, Entity, EntityResult, Transaction, TransactionError, EID};
+use datom::{EntityResult, Transaction, TransactionError, EID};
 
 #[test]
 fn schema_only() -> Result<(), Box<dyn std::error::Error>> {

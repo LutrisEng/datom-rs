@@ -46,7 +46,24 @@ impl<S: Storage> PartialEq<Self> for Connection<S> {
 
 impl<S: Storage> Eq for Connection<S> {}
 
+/// A connection which uses a dynamically dispatched storage backend
+pub type DynamicConnection = Connection<Box<dyn Storage>>;
+
+/// Create a new connection which uses a dynamically dispatched storage
+/// backend
+pub fn new_dynamic_connection<S: Storage + 'static>(storage: S) -> DynamicConnection {
+    Connection::new(Box::new(storage))
+}
+
 impl<S: Storage> Connection<S> {
+    /// Create a new connection from a storage backend
+    pub fn new(storage: S) -> Self {
+        Self {
+            storage,
+            id: ID::new(),
+        }
+    }
+
     /// Fetch the t-value for the latest transaction
     pub fn latest_t(&self) -> Result<u64, ConnectionError> {
         Ok(0)

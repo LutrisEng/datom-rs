@@ -5,8 +5,8 @@
 use std::lazy::SyncLazy;
 
 use datom::{
-    builtin_idents, sled::SledConnection, AttributeSchema, AttributeType, Connection, Database,
-    Entity, EntityResult, Transaction,
+    backends::sled::SledStorage, builtin_idents, new_dynamic_connection, AttributeSchema,
+    AttributeType, DynamicConnection, EntityResult, Transaction,
 };
 
 static ATTRIBUTES: SyncLazy<Vec<AttributeSchema>> = SyncLazy::new(|| {
@@ -36,7 +36,7 @@ static ATTRIBUTES: SyncLazy<Vec<AttributeSchema>> = SyncLazy::new(|| {
     .into()
 });
 
-pub fn transact_schema<C: Connection>(conn: &C) -> Result<(), Box<dyn std::error::Error>> {
+pub fn transact_schema(conn: &DynamicConnection) -> Result<(), Box<dyn std::error::Error>> {
     let mut tx = Transaction::new();
     for attr in ATTRIBUTES.iter() {
         tx.append(attr.to_owned());
@@ -45,14 +45,15 @@ pub fn transact_schema<C: Connection>(conn: &C) -> Result<(), Box<dyn std::error
     Ok(())
 }
 
-pub fn connection_with_schema() -> Result<SledConnection, Box<dyn std::error::Error>> {
-    let conn = SledConnection::connect_temp()?;
+pub fn connection_with_schema() -> Result<DynamicConnection, Box<dyn std::error::Error>> {
+    let storage = SledStorage::connect_temp()?;
+    let conn = new_dynamic_connection(storage);
     transact_schema(&conn)?;
     Ok(conn)
 }
 
-pub fn schema_transacted_properly<C: Connection>(
-    conn: &C,
+pub fn schema_transacted_properly(
+    conn: &DynamicConnection,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let db = conn.db()?;
     for attr in ATTRIBUTES.iter() {

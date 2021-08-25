@@ -10,11 +10,17 @@ use crate::{
 };
 
 /// An entity in a database
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, Eq, Clone, Copy)]
 pub struct Entity<'connection, S: Storage> {
     pub(crate) connection: &'connection Connection<S>,
     pub(crate) t: u64,
     pub(crate) id: ID,
+}
+
+impl<'connection, S: Storage> PartialEq<Self> for Entity<'connection, S> {
+    fn eq(&self, other: &Self) -> bool {
+        self.connection == other.connection && self.t == other.t && self.id == other.id
+    }
 }
 
 impl<'connection, S: Storage> Entity<'connection, S> {
