@@ -8,7 +8,10 @@ use chrono::Utc;
 
 use crate::{
     builtin_idents,
-    serial::{deserialize_tr, serialize, serialize_tr, tr_range, vec_range_slice},
+    serial::{
+        deserialize_tr, serialize_aevt, serialize_avet, serialize_eavt, serialize_tr,
+        serialize_vaet, tr_range, vec_range_slice,
+    },
     storage::Storage,
     ConnectionError, Database, Datom, EntityResult, Index, Transactable, Transaction,
     TransactionError, TransactionRecord, TransactionResult, Value, ID,
@@ -99,67 +102,58 @@ impl<S: Storage> Connection<S> {
         self.as_of(self.latest_t()?)
     }
 
-    /// Get a [database](crate::database::Database) for a specific point
-    /// in time
-    pub fn insert(&self, datom: &Datom, index: Index) -> Result<(), ConnectionError> {
-        self.storage
-            .insert(serialize(datom, index))
-            .map_err(ConnectionError::from)
-    }
-
     /// Run a transaction on the database
     pub fn transact_tx(
         &self,
         tx: Transaction,
     ) -> Result<TransactionResult<'_, S>, TransactionError> {
-        let res = {
-            let t_before = self.latest_t()?;
-            let t = t_before + 1;
-            let before = self.as_of(t_before)?;
-            let data = tx.datoms(t, &before)?;
-            for datom in data.iter() {
-                self.insert(datom, Index::EAVT)?;
-                self.insert(datom, Index::AEVT)?;
-                let attr_entity = before.entity(datom.attribute.into())?;
-                let unique_value =
-                    attr_entity.get_with_options(builtin_idents::UNIQUE.into(), true, true)?;
-                let type_value =
-                    attr_entity.get_with_options(builtin_idents::VALUE_TYPE.into(), true, true)?;
-                let is_unique = {
-                    if let EntityResult::Value(Value::Boolean(x)) = unique_value {
-                        x
-                    } else {
-                        false
-                    }
-                };
-                let is_ref = {
-                    if let EntityResult::Value(Value::ID(id)) = type_value {
-                        id == builtin_idents::TYPE_REF
-                    } else {
-                        false
-                    }
-                };
-                if is_unique {
-                    self.insert(datom, Index::AVET)?;
+        let t_before = self.latest_t()?;
+        let t = t_before + 1;
+        let before = self.as_of(t_before)?;
+        let data = tx.datoms(t, &before)?;
+        let mut items: Vec<Vec<u8>> = vec![];
+        for datom in data.iter() {
+            items.push(serialize_eavt(datom));
+            items.push(serialize_aevt(datom));
+            let attr_entity = before.entity(datom.attribute.into())?;
+            let unique_value =
+                attr_entity.get_with_options(builtin_idents::UNIQUE.into(), true, true)?;
+            let type_value =
+                attr_entity.get_with_options(builtin_idents::VALUE_TYPE.into(), true, true)?;
+            let is_unique = {
+                if let EntityResult::Value(Value::Boolean(x)) = unique_value {
+                    x
+                } else {
+                    false
                 }
-                if is_ref {
-                    self.insert(datom, Index::VAET)?;
+            };
+            let is_ref = {
+                if let EntityResult::Value(Value::ID(id)) = type_value {
+                    id == builtin_idents::TYPE_REF
+                } else {
+                    false
                 }
+            };
+            if is_unique {
+                items.push(serialize_avet(datom));
             }
-            self.storage
-                .insert(serialize_tr(&TransactionRecord {
-                    t,
-                    timestamp: Utc::now(),
-                }))
-                .map_err(ConnectionError::from)?;
-            Ok(TransactionResult {
-                connection: self,
-                before,
-                after: self.as_of(t)?,
-                data,
-            })
-        };
-        res
+            if is_ref {
+                items.push(serialize_vaet(datom));
+            }
+        }
+        items.push(serialize_tr(&TransactionRecord {
+            t,
+            timestamp: Utc::now(),
+        }));
+        self.storage
+            .insert_many(&items)
+            .map_err(ConnectionError::from)?;
+        Ok(TransactionResult {
+            connection: self,
+            before,
+            after: self.as_of(t)?,
+            data,
+        })
     }
 
     /// Transact a transactable on the database
