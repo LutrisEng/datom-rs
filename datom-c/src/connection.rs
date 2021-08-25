@@ -4,7 +4,7 @@
 
 use std::{ffi::CStr, os::raw::c_char};
 
-use crate::{
+use datom::{
     sled::{SledConnection, SledDatabase},
     Connection, Transaction,
 };

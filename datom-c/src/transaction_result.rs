@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use crate::{
+use datom::{
     sled::{SledConnection, SledDatabase},
     Connection, Database, TransactionResult,
 };

@@ -5,34 +5,25 @@
 cargo-features = ["edition2021"]
 
 [package]
-name = "datom"
+name = "datom-c"
 version = "0.1.1-pre3"
 authors = ["Lutris Engineering, Inc <contact@lutris.engineering>"]
 edition = "2021"
-description = "datom-rs: an open-source database inspired by Datomic"
+description = "C bindings for an open-source database inspired by Datomic"
 readme = "../README.md"
 homepage = "https://os.lutris.engineering/datom-rs/"
 repository = "https://github.com/LutrisEng/datom-rs"
 license = "BlueOak-1.0.0 OR BSD-2-Clause-Patent"
 keywords = ["database", "datomic"]
-categories = ["database-implementations", "database"]
+categories = ["database"]
+exclude = ["index.node"]
 
-[features]
-default = ["sled"]
-java = ["jni"]
+[lib]
+crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-uuid = { version = "0.8", features = ["v4"] }
-num-bigint = "0.4"
-datom-bigdecimal = "0.3.0"
+datom = { path = "../datom" }
+libc = "0.2"
 
-# sled storage backend
-sled = { version = "0.34", optional = true }
-
-# Java bindings
-jni = { version = "0.19", optional = true }
-
-[dev-dependencies.cargo-husky]
-version = "1"
-default-features = false
-features = ["user-hooks"]
+[build-dependencies]
+cbindgen = "0.20"

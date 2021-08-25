@@ -81,9 +81,6 @@ pub use merge_iters::*;
 #[cfg(feature = "sled")]
 pub mod sled;
 
-/// Bindings to other programming languages
-pub mod bindings;
-
 /// The main traits which should be in scope when using datom-rs
 pub mod prelude {
     pub use crate::traits::*;
