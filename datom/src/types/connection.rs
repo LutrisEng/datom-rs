@@ -4,9 +4,14 @@
 
 use std::fmt::Debug;
 
+use chrono::Utc;
+
 use crate::{
-    builtin_idents, serial::serialize, storage::Storage, ConnectionError, Database, Datom,
-    EntityResult, Index, Transactable, Transaction, TransactionError, TransactionResult, Value, ID,
+    builtin_idents,
+    serial::{deserialize_tr, serialize, serialize_tr, tr_range, vec_range_slice},
+    storage::Storage,
+    ConnectionError, Database, Datom, EntityResult, Index, Transactable, Transaction,
+    TransactionError, TransactionRecord, TransactionResult, Value, ID,
 };
 
 /// A persistent connection to a database
@@ -66,11 +71,16 @@ impl<S: Storage> Connection<S> {
 
     /// Fetch the t-value for the latest transaction
     pub fn latest_t(&self) -> Result<u64, ConnectionError> {
-        Ok(0)
-    }
-
-    fn set_t(&self, _: u64) -> Result<(), ConnectionError> {
-        todo!()
+        if let Some(res) = self.storage.range(vec_range_slice(&tr_range()))?.last() {
+            let bytes = res?;
+            if let Some(tx) = deserialize_tr(&bytes) {
+                Ok(tx.t)
+            } else {
+                Err(ConnectionError::InvalidData)
+            }
+        } else {
+            Ok(0)
+        }
     }
 
     /// Fetch the t-value for the latest transaction
@@ -92,7 +102,7 @@ impl<S: Storage> Connection<S> {
     pub fn insert(&self, datom: &Datom, index: Index) -> Result<(), ConnectionError> {
         self.storage
             .insert(serialize(datom, index))
-            .map_err(|e| e.into())
+            .map_err(ConnectionError::from)
     }
 
     /// Run a transaction on the database
@@ -134,7 +144,12 @@ impl<S: Storage> Connection<S> {
                     self.insert(datom, Index::VAET)?;
                 }
             }
-            self.set_t(t)?;
+            self.storage
+                .insert(serialize_tr(&TransactionRecord {
+                    t,
+                    timestamp: Utc::now(),
+                }))
+                .map_err(ConnectionError::from)?;
             Ok(TransactionResult {
                 connection: self,
                 before,

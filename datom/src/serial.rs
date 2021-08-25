@@ -4,10 +4,16 @@
 
 use std::ops::Range;
 
-use crate::{Datom, DatomType, Index, Value, ID};
+use chrono::{TimeZone, Utc};
+
+use crate::{Datom, DatomType, Index, TransactionRecord, Value, ID};
 
 const fn u64_byte_count() -> usize {
     0u64.to_be_bytes().len()
+}
+
+const fn i64_byte_count() -> usize {
+    0i64.to_be_bytes().len()
 }
 
 fn serialize_v(v: &Value) -> Vec<u8> {
@@ -30,6 +36,11 @@ fn deserialize_id(bytes: &[u8]) -> Option<(ID, &[u8])> {
 fn deserialize_u64(bytes: &[u8]) -> Option<(u64, &[u8])> {
     let u = u64::from_be_bytes(bytes[0..u64_byte_count()].try_into().ok()?);
     Some((u, &bytes[u64_byte_count()..]))
+}
+
+fn deserialize_i64(bytes: &[u8]) -> Option<(i64, &[u8])> {
+    let u = i64::from_be_bytes(bytes[0..i64_byte_count()].try_into().ok()?);
+    Some((u, &bytes[i64_byte_count()..]))
 }
 
 fn deserialize_v(bytes: &[u8]) -> Option<(Value, &[u8])> {
@@ -87,6 +98,17 @@ pub fn serialize_vaet(datom: &Datom) -> Vec<u8> {
     v.append(&mut datom.t.to_be_bytes().to_vec());
     v.push(datom.datom_type.byte());
     v
+}
+
+/// Serialize a [TransactionRecord]
+pub fn serialize_tr(tr: &TransactionRecord) -> Vec<u8> {
+    let t_bytes = tr.t.to_be_bytes();
+    let timestamp_bytes = tr.timestamp.timestamp_millis().to_be_bytes();
+    let mut v = [0; 1 + u64_byte_count() + i64_byte_count()];
+    v[0] = 255;
+    v[1..t_bytes.len() + 1].copy_from_slice(&t_bytes);
+    v[t_bytes.len() + 1..].copy_from_slice(&timestamp_bytes);
+    v.to_vec()
 }
 
 /// Create a range encompassing an entire index
@@ -207,6 +229,11 @@ pub fn vaet_value_attribute_range(val: Value, eid: ID) -> Range<Vec<u8>> {
     from..to
 }
 
+/// Create a range encompassing every transaction result
+pub fn tr_range() -> Range<Vec<u8>> {
+    vec![255]..vec![255; 1 + u64_byte_count() + i64_byte_count()]
+}
+
 /// Convert a range of arrays to a range of slices
 pub fn range_slice<T, const N: usize>(r: &'_ Range<[T; N]>) -> Range<&'_ [T]> {
     &r.start..&r.end
@@ -295,6 +322,17 @@ pub fn deserialize_vaet(bytes: &[u8]) -> Option<Datom> {
         value,
         t,
         datom_type,
+    })
+}
+
+/// Deserialize a [TransactionRecord]
+pub fn deserialize_tr(bytes: &[u8]) -> Option<TransactionRecord> {
+    let (_, bytes) = deserialize_byte(bytes);
+    let (t, bytes) = deserialize_u64(bytes)?;
+    let (ts_millis, _) = deserialize_i64(bytes)?;
+    Some(TransactionRecord {
+        t,
+        timestamp: Utc.timestamp_millis(ts_millis),
     })
 }
 
