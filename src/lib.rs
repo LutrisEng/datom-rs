@@ -81,9 +81,8 @@ pub use merge_iters::*;
 #[cfg(feature = "sled")]
 pub mod sled;
 
-/// C bindings
-#[cfg(feature = "c")]
-pub mod c;
+/// Bindings to other programming languages
+pub mod bindings;
 
 /// The main traits which should be in scope when using datom-rs
 pub mod prelude {
