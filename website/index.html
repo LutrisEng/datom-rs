@@ -114,21 +114,21 @@
                 <div class="pure-u-1-5"></div>
             </div>
             <section id="example">
-                <pre><code class="lang-rust">use datom::{
-    prelude::*,
-    sled::SledConnection,
-    Transaction, ID, Value, EntityResult,
-};
+                <pre><code class="lang-rust">//! use datom::{backends::SledStorage, Connection, EntityResult, Transaction, Value, ID};
 
-// Create a temporary database
-let conn = SledConnection::connect_temp()?;
+// Use the sled storage backend to create a temporary database
+let storage = SledStorage::connect_temp()?;
+
+// Create a connection from that backend
+let conn = Connection::new(storage);
 
 // Create an ID to use for the username attribute
 let username = ID::new();
 // Create an ID to use for the user's entity
 let user = ID::new();
 
-// Create a transaction setting the username attribute on the user entity to "pmc"
+// Create a transaction setting the username attribute on the user
+// entity to "pmc"
 let mut tx = Transaction::new();
 tx.add(user.into(), username.into(), "pmc".into());
 // Execute the transaction using the connection

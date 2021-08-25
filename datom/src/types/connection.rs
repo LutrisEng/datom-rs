@@ -22,9 +22,11 @@ pub struct Connection<S: Storage> {
 
 impl<S: Storage> PartialEq<Self> for Connection<S> {
     /// ```
-    /// use datom::sled::*;
-    /// let conn1 = SledConnection::connect_temp()?;
-    /// let conn2 = SledConnection::connect_temp()?;
+    /// use datom::{backends::SledStorage, Connection};
+    /// let storage1 = SledStorage::connect_temp()?;
+    /// let storage2 = SledStorage::connect_temp()?;
+    /// let conn1 = Connection::new(storage1);
+    /// let conn2 = Connection::new(storage2);
     /// let conn1r = &conn1;
     /// let conn2r = &conn2;
     ///
@@ -171,9 +173,10 @@ impl<S: Storage> Connection<S> {
 
 impl<S: Storage> Debug for Connection<S> {
     /// ```
-    /// use datom::sled::*;
+    /// use datom::{Connection, backends::SledStorage};
     ///
-    /// let conn = SledConnection::connect_temp()?;
+    /// let storage = SledStorage::connect_temp()?;
+    /// let conn = Connection::new(storage);
     /// println!("{:#?}", conn);
     /// # Ok::<(), Box<dyn std::error::Error>>(())
     /// ```
