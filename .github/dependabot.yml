@@ -8,6 +8,30 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+  - package-ecosystem: "cargo"
+    directory: "/datom"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "cargo"
+    directory: "/datom-c"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "cargo"
+    directory: "/datom-java"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gradle"
+    directory: "/datom-java/lib"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "cargo"
+    directory: "/datom-node"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "npm"
+    directory: "/datom-node"
+    schedule:
+      interval: "daily"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
