@@ -49,7 +49,7 @@ jobs:
         with:
           node-version: "14"
           cache: "npm"
-          cache-dependency-path: "datom_node/package-lock.json"
+          cache-dependency-path: "datom-node/package-lock.json"
       - uses: actions/setup-java@v2
         with:
           distribution: "adopt"
