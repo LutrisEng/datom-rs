@@ -24,14 +24,22 @@ crate-type = ["lib", "cdylib", "staticlib"]
 
 [features]
 default = ["sled"]
-c = ["cbindgen"]
+c = ["libc", "cbindgen"]
+java = ["jni"]
 
 [dependencies]
 uuid = { version = "0.8", features = ["v4"] }
 num-bigint = "0.4"
 datom-bigdecimal = "0.3.0"
 
+# sled storage backend
 sled = { version = "0.34", optional = true }
+
+# C bindings
+libc = { version = "0.2", optional = true }
+
+# Java bindings
+jni = { version = "0.19", optional = true }
 
 [build-dependencies]
 cbindgen = { version = "0.20", optional = true }

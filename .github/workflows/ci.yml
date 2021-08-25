@@ -29,7 +29,7 @@ jobs:
       - uses: Swatinem/rust-cache@v1
       - uses: actions-rs/cargo@v1
         with:
-          command: check
+          command: check --all --all-features
 
   test:
     name: Test on ${{ matrix.os }}
@@ -46,10 +46,10 @@ jobs:
           override: true
       - uses: Swatinem/rust-cache@v1
       - name: Run tests without coverage
-        run: cargo test --all
+        run: cargo test --all --all-features
         if: matrix.os != 'ubuntu-latest'
       - name: Run tests with coverage
-        run: cargo test --all
+        run: cargo test --all --all-features
         if: matrix.os == 'ubuntu-latest'
         env:
           CARGO_INCREMENTAL: "0"
@@ -79,11 +79,11 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: fmt
-          args: --all -- --check
+          args: --all --all-features -- --check
       - uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all
+          args: --all --all-features
           name: Clippy
 
   security_audit:
@@ -124,7 +124,7 @@ jobs:
       - uses: Swatinem/rust-cache@v1
       - uses: actions-rs/cargo@v1
         with:
-          command: doc
+          command: doc --all --all-features
       - run: cp -R website/* target/doc/
       - uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/main'
