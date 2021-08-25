@@ -25,6 +25,7 @@ btreeset = []
 uuid = { version = "0.8", features = ["v4"] }
 num-bigint = "0.4"
 datom-bigdecimal = "0.3.0"
+chrono = "0.4"
 
 # sled storage backend
 sled = { version = "0.34", optional = true }

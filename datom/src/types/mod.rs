@@ -55,6 +55,9 @@ pub use self::storage_error::*;
 mod transaction_error;
 pub use self::transaction_error::*;
 
+mod transaction_record;
+pub use self::transaction_record::*;
+
 mod transaction_result;
 pub use self::transaction_result::*;
 
