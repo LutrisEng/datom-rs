@@ -4,11 +4,23 @@
 
 // For clarity's sake, this is in alphabetical order.
 
+mod attribute_iterator;
+pub use self::attribute_iterator::*;
+
 mod attribute_schema;
 pub use self::attribute_schema::*;
 
 mod connection_error;
 pub use self::connection_error::*;
+
+mod connection;
+pub use self::connection::*;
+
+mod database;
+pub use self::database::*;
+
+mod datom_iterator;
+pub use self::datom_iterator::*;
 
 mod datom_type;
 pub use self::datom_type::*;
@@ -21,6 +33,9 @@ pub use self::eid::*;
 
 mod entity_result;
 pub use self::entity_result::*;
+
+mod entity;
+pub use self::entity::*;
 
 mod fact;
 pub use self::fact::*;

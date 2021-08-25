@@ -18,8 +18,8 @@ keywords = ["database", "datomic"]
 categories = ["database-implementations", "database"]
 
 [features]
-default = ["sled"]
-java = ["jni"]
+default = ["btreeset", "sled"]
+btreeset = []
 
 [dependencies]
 uuid = { version = "0.8", features = ["v4"] }
@@ -28,9 +28,6 @@ datom-bigdecimal = "0.3.0"
 
 # sled storage backend
 sled = { version = "0.34", optional = true }
-
-# Java bindings
-jni = { version = "0.19", optional = true }
 
 [dev-dependencies.cargo-husky]
 version = "1"

@@ -7,24 +7,24 @@ use std::{
     hash::Hash,
 };
 
-use crate::{Entity, Value, ID};
+use crate::{storage::Storage, Entity, Value, ID};
 
 #[derive(Clone, PartialEq, Eq, Hash)]
 /// The result of getting an attribute on an entity
-pub enum EntityResult<E: Entity> {
+pub enum EntityResult<'connection, S: Storage> {
     /// A value for that attribute wasn't found on this entity
     NotFound,
     /// A value for that attribute was found on this entity
     Value(Value),
     /// A value for that attribute was found on this entity, and it
     /// refers to another entity.
-    Ref(E),
+    Ref(Entity<'connection, S>),
     /// Possibly multiple values for that attribute were found on this
     /// entity
     Repeated(Vec<Self>),
 }
 
-impl<E: Entity> Debug for EntityResult<E> {
+impl<'connection, S: Storage> Debug for EntityResult<'connection, S> {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::NotFound => write!(f, "NotFound")?,
@@ -51,7 +51,7 @@ impl<E: Entity> Debug for EntityResult<E> {
     }
 }
 
-impl<E: Entity> EntityResult<E> {
+impl<'connection, S: Storage> EntityResult<'connection, S> {
     /// Check if the result is a reference to a specific ID
     pub fn is_ref_to(&self, id: &ID) -> bool {
         if let Self::Ref(e) = self {
@@ -62,7 +62,7 @@ impl<E: Entity> EntityResult<E> {
     }
 }
 
-impl<E: Entity> PartialEq<Value> for EntityResult<E> {
+impl<'connection, S: Storage> PartialEq<Value> for EntityResult<'connection, S> {
     fn eq(&self, other: &Value) -> bool {
         match self {
             Self::Value(s) => s == other,
@@ -71,8 +71,8 @@ impl<E: Entity> PartialEq<Value> for EntityResult<E> {
     }
 }
 
-impl<E: Entity> PartialEq<E> for EntityResult<E> {
-    fn eq(&self, other: &E) -> bool {
+impl<'connection, S: Storage> PartialEq<Entity<'connection, S>> for EntityResult<'connection, S> {
+    fn eq(&self, other: &Entity<'connection, S>) -> bool {
         match self {
             Self::Ref(s) => s == other,
             _ => false,
@@ -80,13 +80,13 @@ impl<E: Entity> PartialEq<E> for EntityResult<E> {
     }
 }
 
-impl<E: Entity> PartialEq<ID> for EntityResult<E> {
+impl<'connection, S: Storage> PartialEq<ID> for EntityResult<'connection, S> {
     fn eq(&self, other: &ID) -> bool {
         self.is_ref_to(other)
     }
 }
 
-impl<E: Entity> PartialEq<Vec<Self>> for EntityResult<E> {
+impl<'connection, S: Storage> PartialEq<Vec<Self>> for EntityResult<'connection, S> {
     fn eq(&self, other: &Vec<Self>) -> bool {
         match self {
             Self::Repeated(s) => s == other,
@@ -95,14 +95,14 @@ impl<E: Entity> PartialEq<Vec<Self>> for EntityResult<E> {
     }
 }
 
-impl<E: Entity> From<Value> for EntityResult<E> {
+impl<'connection, S: Storage> From<Value> for EntityResult<'connection, S> {
     fn from(v: Value) -> Self {
         Self::Value(v)
     }
 }
 
-impl<E: Entity> From<E> for EntityResult<E> {
-    fn from(e: E) -> Self {
+impl<'connection, S: Storage> From<Entity<'connection, S>> for EntityResult<'connection, S> {
+    fn from(e: Entity<'connection, S>) -> Self {
         Self::Ref(e)
     }
 }

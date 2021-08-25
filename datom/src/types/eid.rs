@@ -4,7 +4,7 @@
 
 use std::cmp::Ordering;
 
-use crate::{builtin_idents, Database, Datom, QueryError, Value, ID};
+use crate::{builtin_idents, storage::Storage, Database, Datom, QueryError, Value, ID};
 
 /**
 An un-resolved entity [ID], which can be used to resolve entities by
@@ -44,7 +44,7 @@ impl EID {
     }
 
     /// Resolve this [EID] into its [ID] according to a [Database]
-    pub fn resolve<'c, D: Database<'c>>(&self, db: &D) -> Result<ID, QueryError> {
+    pub fn resolve<'c, S: Storage>(&self, db: &Database<'c, S>) -> Result<ID, QueryError> {
         match self {
             Self::Resolved(id) => Ok(*id),
             Self::Ident(ident_str) => {

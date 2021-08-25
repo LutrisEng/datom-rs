@@ -5,33 +5,31 @@
 use std::{collections::HashSet, hash::Hash};
 
 use crate::{
-    builtin_idents, Connection, Database, Datom, DatomType, Entity, EntityResult, QueryError,
-    Value, EID, ID,
+    builtin_idents, storage::Storage, AttributeIterator, Connection, Datom, DatomType,
+    EntityResult, QueryError, Value, EID, ID,
 };
 
-use super::{SledAttributeIter, SledConnection};
-
-/// An [Entity] in a sled-backed database
+/// An entity in a database
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
-pub struct SledEntity<'connection> {
-    pub(crate) connection: &'connection SledConnection,
+pub struct Entity<'connection, S: Storage> {
+    pub(crate) connection: &'connection Connection<S>,
     pub(crate) t: u64,
     pub(crate) id: ID,
 }
 
-impl<'connection> Entity for SledEntity<'connection> {
-    type AttributeIter = SledAttributeIter;
-
-    fn id(&self) -> &ID {
+impl<'connection, S: Storage> Entity<'connection, S> {
+    /// Get the ID of this entity
+    pub fn id(&self) -> &ID {
         &self.id
     }
 
-    fn get_with_options(
+    /// Get the value of an attribute on this entity, with options
+    pub fn get_with_options(
         &self,
         attribute: EID,
         skip_cardinality: bool,
         skip_type: bool,
-    ) -> Result<EntityResult<Self>, QueryError> {
+    ) -> Result<EntityResult<'connection, S>, QueryError> {
         let db = self.connection.as_of(self.t)?;
         let attribute = attribute.resolve(&db)?;
         if attribute == builtin_idents::ID {
@@ -70,7 +68,7 @@ impl<'connection> Entity for SledEntity<'connection> {
                     values.insert(datom.value);
                 }
             }
-            let res: Result<Vec<EntityResult<Self>>, QueryError> = values
+            let res: Result<Vec<EntityResult<'connection, S>>, QueryError> = values
                 .into_iter()
                 .map(|v| {
                     if attribute_type == Some(builtin_idents::TYPE_REF) {
@@ -88,7 +86,7 @@ impl<'connection> Entity for SledEntity<'connection> {
         } else {
             db.datoms_for_entity_attribute(self.id, attribute)?
                 .max_by(|a, b| a.t.cmp(&b.t))
-                .map(|x| -> Result<EntityResult<Self>, QueryError> {
+                .map(|x| -> Result<EntityResult<'connection, S>, QueryError> {
                     if x.datom_type == DatomType::Retraction {
                         Ok(EntityResult::NotFound)
                     } else if attribute_type == Some(builtin_idents::TYPE_REF) {
@@ -120,7 +118,14 @@ impl<'connection> Entity for SledEntity<'connection> {
         }
     }
 
-    fn reverse_get(&self, attribute: EID) -> Result<EntityResult<Self>, QueryError> {
+    /// Get the value of an attribute on this entity
+    pub fn get(&self, attribute: EID) -> Result<EntityResult<'connection, S>, QueryError> {
+        self.get_with_options(attribute, false, false)
+    }
+
+    /// Get the entities with this entity as a value on an attribute
+    /// (reverse lookup)
+    pub fn reverse_get(&self, attribute: EID) -> Result<EntityResult<'connection, S>, QueryError> {
         let db = self.connection.as_of(self.t)?;
         let attribute = attribute.resolve(&db)?;
         let datoms = db.datoms_for_value_attribute(self.id().to_owned().into(), attribute)?;
@@ -135,20 +140,21 @@ impl<'connection> Entity for SledEntity<'connection> {
                 entities.insert(datom.entity);
             }
         }
-        let res: Result<Vec<EntityResult<Self>>, QueryError> = entities
+        let res: Result<Vec<EntityResult<'connection, S>>, QueryError> = entities
             .into_iter()
             .map(|id| Ok(EntityResult::Ref(db.entity(id.into())?)))
             .collect();
         Ok(EntityResult::Repeated(res?))
     }
 
-    fn attributes(&self) -> Result<Self::AttributeIter, QueryError> {
-        let db = self.connection.as_of(self.t)?;
-        Ok(SledAttributeIter::new(db.datoms_for_entity(self.id)?))
+    /// Get the attributes on this entity
+    pub fn attributes(&self) -> Result<AttributeIterator<'connection>, QueryError> {
+        let iter = self.connection.as_of(self.t)?.datoms_for_entity(self.id)?;
+        AttributeIterator::new(iter)
     }
 }
 
-impl<'connection> Hash for SledEntity<'connection> {
+impl<'connection, S: Storage> Hash for Entity<'connection, S> {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         self.t.hash(state);
         self.id.hash(state);
