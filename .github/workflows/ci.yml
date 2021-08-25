@@ -29,7 +29,8 @@ jobs:
       - uses: Swatinem/rust-cache@v1
       - uses: actions-rs/cargo@v1
         with:
-          command: check --all --all-features
+          command: check
+          args: --all --all-features
 
   test:
     name: Test on ${{ matrix.os }}
@@ -79,11 +80,11 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: fmt
-          args: --all --all-features -- --check
+          args: --all -- --check
       - uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all --all-features
+          args: --all
           name: Clippy
 
   security_audit:
@@ -124,7 +125,8 @@ jobs:
       - uses: Swatinem/rust-cache@v1
       - uses: actions-rs/cargo@v1
         with:
-          command: doc --all --all-features
+          command: doc
+          args: --all --all-features
       - run: cp -R website/* target/doc/
       - uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/main'
