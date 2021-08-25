@@ -4,7 +4,7 @@
 
 use std::cell::RefCell;
 
-use crate::ConnectionError;
+use datom::ConnectionError;
 
 /// Network/disk errors
 #[repr(C)]

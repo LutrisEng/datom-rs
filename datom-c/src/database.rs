@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use crate::sled::SledDatabase;
+use datom::sled::SledDatabase;
 
 /// Destroy a connection to a sled-backed database view
 ///

@@ -5,6 +5,7 @@
 [workspace]
 members = [
     "datom",
+    "datom-c",
     "datom-node",
 ]
 

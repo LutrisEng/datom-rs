@@ -4,7 +4,7 @@
 
 use std::{ffi::CStr, os::raw::c_char};
 
-use crate::{Value, EID, ID};
+use datom::{Value, EID, ID};
 
 /// Create an EID object from a 16-byte ID.
 #[no_mangle]
