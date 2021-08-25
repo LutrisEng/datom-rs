@@ -26,7 +26,8 @@
 		"matklad.rust-analyzer",
 		"tamasfe.even-better-toml",
 		"serayuzgur.crates",
-		"ecmel.vscode-html-css"
+		"ecmel.vscode-html-css",
+		"redhat.java"
 	],
 
 	"remoteUser": "vscode"
