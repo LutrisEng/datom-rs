@@ -13,7 +13,7 @@ pub type Item = Vec<u8>;
 pub type ItemIterator<'s> = Box<dyn DoubleEndedIterator<Item = Result<Item, StorageError>> + 's>;
 
 /// A [std::collections::BTreeSet<Datom>]-like storage backend
-pub trait Storage {
+pub trait Storage: Send + Sync {
     /// Get all items within this range
     fn range(&self, r: Range<&[u8]>) -> Result<ItemIterator<'_>, StorageError>;
 
