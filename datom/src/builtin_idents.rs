@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::{collections::HashMap, lazy::SyncLazy};
+use once_cell::sync::Lazy;
+use std::collections::HashMap;
 
 use crate::{Value, ID as TID};
 
@@ -68,7 +69,7 @@ pub type BuiltinEntities = HashMap<TID, BuiltinEntity>;
 pub type BuiltinEntitiesByIdent = HashMap<String, BuiltinEntity>;
 
 /// The data behind all built-in entities
-pub static BUILTIN_ENTITIES: SyncLazy<BuiltinEntities> = SyncLazy::new(|| {
+pub static BUILTIN_ENTITIES: Lazy<BuiltinEntities> = Lazy::new(|| {
     [
         (
             ID,
@@ -202,7 +203,7 @@ pub static BUILTIN_ENTITIES: SyncLazy<BuiltinEntities> = SyncLazy::new(|| {
 });
 
 /// The data behind all built-in entities, by ident
-pub static BUILTIN_ENTITIES_BY_IDENT: SyncLazy<BuiltinEntitiesByIdent> = SyncLazy::new(|| {
+pub static BUILTIN_ENTITIES_BY_IDENT: Lazy<BuiltinEntitiesByIdent> = Lazy::new(|| {
     let mut m = HashMap::new();
     for e in BUILTIN_ENTITIES.values() {
         if let Some(Value::String(ident)) = e.get(&IDENT) {
