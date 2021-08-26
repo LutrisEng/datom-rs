@@ -16,10 +16,10 @@ pub extern "C" fn datom_disconnect(_: Box<Connection>) {}
 
 #[no_mangle]
 pub extern "C" fn datom_db(conn: &'_ Connection) -> Option<Box<Database<'_>>> {
-    let res: Result<Box<Database>, ConnectionError> = try {
+    let res: Result<Box<Database>, ConnectionError> = (|| {
         let db = conn.c.db()?;
-        Box::new(db.into())
-    };
+        Ok(Box::new(db.into()))
+    })();
     match res {
         Ok(d) => Some(d),
         Err(_) => {

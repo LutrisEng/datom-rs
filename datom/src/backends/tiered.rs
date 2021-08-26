@@ -5,8 +5,9 @@
 use std::{cmp::Ordering, ops::Range};
 
 use crate::{
+    merge_iters::MergeIters,
     storage::{Item, ItemIterator, Storage},
-    MergeIters, StorageError, ID,
+    StorageError, ID,
 };
 
 /// A storage backend backed by two other storage backends
@@ -60,8 +61,7 @@ impl Ord for StorageError {
 
 impl<A: Storage, B: Storage> Storage for TieredStorage<A, B> {
     fn range(&self, r: Range<&[u8]>) -> Result<ItemIterator<'_>, StorageError> {
-        let iters = vec![self.a.range(r.clone())?, self.b.range(r.clone())?];
-        let merged = MergeIters::new(iters);
+        let merged = MergeIters::new(self.a.range(r.clone())?, self.b.range(r.clone())?);
         Ok(Box::new(merged.map(|x| x.0)))
     }
 

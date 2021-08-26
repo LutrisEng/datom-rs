@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-#![feature(generic_associated_types, map_first_last, once_cell)]
 #![deny(missing_docs)]
 #![warn(clippy::nursery, clippy::cargo)]
 #![doc(
@@ -70,7 +69,6 @@ pub mod serial;
 pub mod builtin_idents;
 
 mod merge_iters;
-pub use merge_iters::*;
 
 /// API for storage backends
 pub mod storage;

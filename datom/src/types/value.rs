@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::{hash::Hash, str::FromStr};
+use std::{
+    convert::{TryFrom, TryInto},
+    hash::Hash,
+    str::FromStr,
+};
 
 use datom_bigdecimal::{BigDecimal, ParseBigDecimalError};
 use num_bigint::BigInt;
