@@ -123,8 +123,10 @@ jobs:
           - nightly
           # Ensure nothing breaks in the next Rust release
           - beta
+          # Ensure nothing breaks in the current Rust release
+          - stable
           # Ensure the MSRV doesn't break
-          # - "1.55.0" # TODO: when 1.55 releases, uncomment this
+          - "1.54"
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
