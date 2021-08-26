@@ -38,4 +38,4 @@ archery = { version = "0.4", optional = true }
 [dev-dependencies.cargo-husky]
 version = "1"
 default-features = false
-features = ["user-hooks"]
+features = ["precommit-hook", "run-for-all", "run-cargo-check", "run-cargo-clippy", "run-cargo-fmt"]
