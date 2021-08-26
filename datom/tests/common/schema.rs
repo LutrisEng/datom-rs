@@ -5,7 +5,7 @@
 use std::lazy::SyncLazy;
 
 use datom::{
-    backends::{RedBlackTreeSetStorage, SledStorage},
+    backends::{RedBlackTreeSetStorage, SledStorage, TieredStorage},
     builtin_idents, new_dynamic_connection, AttributeSchema, AttributeType, DynamicConnection,
     EntityResult, Transaction,
 };
@@ -56,6 +56,15 @@ pub fn sled_connection_with_schema() -> Result<DynamicConnection, Box<dyn std::e
 pub fn redblacktreeset_connection_with_schema(
 ) -> Result<DynamicConnection, Box<dyn std::error::Error>> {
     let storage = RedBlackTreeSetStorage::new();
+    let conn = new_dynamic_connection(storage);
+    transact_schema(&conn)?;
+    Ok(conn)
+}
+
+pub fn tiered_connection_with_schema() -> Result<DynamicConnection, Box<dyn std::error::Error>> {
+    let a = SledStorage::connect_temp()?;
+    let b = RedBlackTreeSetStorage::new();
+    let storage = TieredStorage::new(a, b);
     let conn = new_dynamic_connection(storage);
     transact_schema(&conn)?;
     Ok(conn)
