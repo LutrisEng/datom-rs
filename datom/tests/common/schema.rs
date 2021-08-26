@@ -4,10 +4,13 @@
 
 use std::lazy::SyncLazy;
 
+#[cfg(feature = "redblacktreeset")]
+use datom::backends::RedBlackTreeSetStorage;
+#[cfg(feature = "sled")]
+use datom::backends::SledStorage;
 use datom::{
-    backends::{RedBlackTreeSetStorage, SledStorage, TieredStorage},
-    builtin_idents, new_dynamic_connection, AttributeSchema, AttributeType, DynamicConnection,
-    EntityResult, Transaction,
+    backends::TieredStorage, builtin_idents, new_dynamic_connection, AttributeSchema,
+    AttributeType, DynamicConnection, EntityResult, Transaction,
 };
 
 static ATTRIBUTES: SyncLazy<Vec<AttributeSchema>> = SyncLazy::new(|| {
@@ -46,6 +49,7 @@ pub fn transact_schema(conn: &DynamicConnection) -> Result<(), Box<dyn std::erro
     Ok(())
 }
 
+#[cfg(feature = "sled")]
 pub fn sled_connection_with_schema() -> Result<DynamicConnection, Box<dyn std::error::Error>> {
     let storage = SledStorage::connect_temp()?;
     let conn = new_dynamic_connection(storage);
@@ -53,6 +57,7 @@ pub fn sled_connection_with_schema() -> Result<DynamicConnection, Box<dyn std::e
     Ok(conn)
 }
 
+#[cfg(feature = "redblacktreeset")]
 pub fn redblacktreeset_connection_with_schema(
 ) -> Result<DynamicConnection, Box<dyn std::error::Error>> {
     let storage = RedBlackTreeSetStorage::new();
@@ -61,6 +66,7 @@ pub fn redblacktreeset_connection_with_schema(
     Ok(conn)
 }
 
+#[cfg(all(feature = "sled", feature = "redblacktreeset"))]
 pub fn tiered_connection_with_schema() -> Result<DynamicConnection, Box<dyn std::error::Error>> {
     let a = SledStorage::connect_temp()?;
     let b = RedBlackTreeSetStorage::new();
@@ -68,6 +74,18 @@ pub fn tiered_connection_with_schema() -> Result<DynamicConnection, Box<dyn std:
     let conn = new_dynamic_connection(storage);
     transact_schema(&conn)?;
     Ok(conn)
+}
+
+pub fn with_connection<F: Fn(DynamicConnection) -> Result<(), Box<dyn std::error::Error>>>(
+    f: F,
+) -> Result<(), Box<dyn std::error::Error>> {
+    #[cfg(feature = "sled")]
+    f(sled_connection_with_schema()?)?;
+    #[cfg(feature = "redblacktreeset")]
+    f(redblacktreeset_connection_with_schema()?)?;
+    #[cfg(all(feature = "sled", feature = "redblacktreeset"))]
+    f(tiered_connection_with_schema()?)?;
+    Ok(())
 }
 
 pub fn schema_transacted_properly(
