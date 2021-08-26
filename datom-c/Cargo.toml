@@ -6,7 +6,7 @@ cargo-features = ["edition2021"]
 
 [package]
 name = "datom-c"
-version = "0.1.1-pre3"
+version = "0.1.1-pre4"
 authors = ["Lutris Engineering, Inc <contact@lutris.engineering>"]
 edition = "2021"
 description = "C bindings for an open-source database inspired by Datomic"
@@ -16,6 +16,7 @@ repository = "https://github.com/LutrisEng/datom-rs"
 license = "BlueOak-1.0.0 OR BSD-2-Clause-Patent"
 keywords = ["database", "datomic"]
 categories = ["database"]
+publish = false
 
 [lib]
 crate-type = ["cdylib", "staticlib"]

@@ -14,7 +14,7 @@ authors:
   email: "contact@lutris.engineering"
   website: "https://lutris.engineering"
 title: "datom-rs"
-version: 0.1.1-pre3
+version: 0.1.1-pre4
 date-released: 2021-08-20
 url: "https://os.lutris.engineering/datom-rs"
 repository-code: "https://github.com/LutrisEng/datom-rs"
