@@ -85,14 +85,7 @@ impl Storage for RedBlackTreeSetStorage {
         }))
     }
 
-    fn insert(&self, i: Item) -> Result<(), StorageError> {
-        let set = (&*self.set.load_full()).clone();
-        let set = set.insert(i);
-        self.set.swap(Arc::new(set));
-        Ok(())
-    }
-
-    fn insert_many(&self, is: &[Item]) -> Result<(), StorageError> {
+    fn insert(&self, is: &[Item]) -> Result<(), StorageError> {
         let set = (&*self.set.load_full()).clone();
         let set = is.iter().fold(set, |s, i| s.insert(i.to_owned()));
         self.set.swap(Arc::new(set));

@@ -39,12 +39,7 @@ impl Storage for SledStorage {
         ))
     }
 
-    fn insert(&self, i: Item) -> Result<(), StorageError> {
-        self.db.insert(i, vec![])?;
-        Ok(())
-    }
-
-    fn insert_many(&self, is: &[Item]) -> Result<(), StorageError> {
+    fn insert(&self, is: &[Item]) -> Result<(), StorageError> {
         self.db.transaction(|t| {
             for i in is {
                 t.insert(i.as_slice(), vec![])?;

@@ -145,9 +145,7 @@ impl<S: Storage> Connection<S> {
             t,
             timestamp: Utc::now(),
         }));
-        self.storage
-            .insert_many(&items)
-            .map_err(ConnectionError::from)?;
+        self.storage.insert(&items).map_err(ConnectionError::from)?;
         Ok(TransactionResult {
             connection: self,
             before,
