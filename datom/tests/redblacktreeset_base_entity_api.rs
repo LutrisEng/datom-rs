@@ -8,20 +8,20 @@ mod common;
 
 use common::{
     data::{transact_users, users_transacted_properly},
-    schema::{connection_with_schema, schema_transacted_properly},
+    schema::{redblacktreeset_connection_with_schema, schema_transacted_properly},
 };
 use datom::{EntityResult, Transaction, TransactionError, EID};
 
 #[test]
 fn schema_only() -> Result<(), Box<dyn std::error::Error>> {
-    let conn = connection_with_schema()?;
+    let conn = redblacktreeset_connection_with_schema()?;
     schema_transacted_properly(&conn)?;
     Ok(())
 }
 
 #[test]
 fn users() -> Result<(), Box<dyn std::error::Error>> {
-    let conn = connection_with_schema()?;
+    let conn = redblacktreeset_connection_with_schema()?;
     schema_transacted_properly(&conn)?;
     transact_users(&conn)?;
     users_transacted_properly(&conn)?;
@@ -30,7 +30,7 @@ fn users() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn retract_repeated_value() -> Result<(), Box<dyn std::error::Error>> {
-    let conn = connection_with_schema()?;
+    let conn = redblacktreeset_connection_with_schema()?;
     schema_transacted_properly(&conn)?;
     transact_users(&conn)?;
     users_transacted_properly(&conn)?;

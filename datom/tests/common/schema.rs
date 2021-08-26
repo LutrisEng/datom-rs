@@ -5,8 +5,9 @@
 use std::lazy::SyncLazy;
 
 use datom::{
-    backends::SledStorage, builtin_idents, new_dynamic_connection, AttributeSchema, AttributeType,
-    DynamicConnection, EntityResult, Transaction,
+    backends::{RedBlackTreeSetStorage, SledStorage},
+    builtin_idents, new_dynamic_connection, AttributeSchema, AttributeType, DynamicConnection,
+    EntityResult, Transaction,
 };
 
 static ATTRIBUTES: SyncLazy<Vec<AttributeSchema>> = SyncLazy::new(|| {
@@ -45,8 +46,16 @@ pub fn transact_schema(conn: &DynamicConnection) -> Result<(), Box<dyn std::erro
     Ok(())
 }
 
-pub fn connection_with_schema() -> Result<DynamicConnection, Box<dyn std::error::Error>> {
+pub fn sled_connection_with_schema() -> Result<DynamicConnection, Box<dyn std::error::Error>> {
     let storage = SledStorage::connect_temp()?;
+    let conn = new_dynamic_connection(storage);
+    transact_schema(&conn)?;
+    Ok(conn)
+}
+
+pub fn redblacktreeset_connection_with_schema(
+) -> Result<DynamicConnection, Box<dyn std::error::Error>> {
+    let storage = RedBlackTreeSetStorage::new();
     let conn = new_dynamic_connection(storage);
     transact_schema(&conn)?;
     Ok(conn)

@@ -7,7 +7,7 @@ mod sled;
 #[cfg(feature = "sled")]
 pub use self::sled::SledStorage;
 
-#[cfg(feature = "btreeset")]
-mod btreeset;
-#[cfg(feature = "sled")]
-pub use self::btreeset::BTreeSetStorage;
+#[cfg(feature = "redblacktreeset")]
+mod redblacktreeset;
+#[cfg(feature = "redblacktreeset")]
+pub use self::redblacktreeset::RedBlackTreeSetStorage;
