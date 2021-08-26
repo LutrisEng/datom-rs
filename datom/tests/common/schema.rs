@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::lazy::SyncLazy;
-
 #[cfg(feature = "redblacktreeset")]
 use datom::backends::RedBlackTreeSetStorage;
 #[cfg(feature = "sled")]
@@ -12,8 +10,9 @@ use datom::{
     backends::TieredStorage, builtin_idents, new_dynamic_connection, AttributeSchema,
     AttributeType, DynamicConnection, EntityResult, Transaction,
 };
+use once_cell::sync::Lazy;
 
-static ATTRIBUTES: SyncLazy<Vec<AttributeSchema>> = SyncLazy::new(|| {
+static ATTRIBUTES: Lazy<Vec<AttributeSchema>> = Lazy::new(|| {
     [
         AttributeSchema::new()
             .ident("user/username".into())
