@@ -5,5 +5,6 @@
 #![feature(try_blocks)]
 
 pub mod connection;
+pub mod misc;
 pub mod sled;
 pub mod structs;

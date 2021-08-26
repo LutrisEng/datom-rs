@@ -7,15 +7,15 @@ use datom::{new_dynamic_connection, ConnectionError};
 use crate::structs::{Connection, Database, Storage};
 
 #[no_mangle]
-pub extern "C" fn connect(storage: Box<Storage>) -> Box<Connection> {
+pub extern "C" fn datom_connect(storage: Box<Storage>) -> Box<Connection> {
     Box::new(new_dynamic_connection(storage.s).into())
 }
 
 #[no_mangle]
-pub extern "C" fn disconnect(_: Box<Connection>) {}
+pub extern "C" fn datom_disconnect(_: Box<Connection>) {}
 
 #[no_mangle]
-pub extern "C" fn db(conn: &'_ Connection) -> Option<Box<Database<'_>>> {
+pub extern "C" fn datom_db(conn: &'_ Connection) -> Option<Box<Database<'_>>> {
     let res: Result<Box<Database>, ConnectionError> = try {
         let db = conn.c.db()?;
         Box::new(db.into())

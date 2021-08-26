@@ -4,6 +4,28 @@
 
 use datom::DynamicConnection;
 
+pub struct Str {
+    pub(crate) s: String,
+}
+
+impl From<String> for Str {
+    fn from(s: String) -> Self {
+        Str { s }
+    }
+}
+
+impl From<Str> for String {
+    fn from(s: Str) -> Self {
+        s.s
+    }
+}
+
+impl<'a> From<&'a Str> for &'a str {
+    fn from(s: &'a Str) -> Self {
+        s.s.as_str()
+    }
+}
+
 pub struct Storage {
     pub(crate) s: Box<dyn datom::storage::Storage>,
 }
