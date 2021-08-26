@@ -2,15 +2,18 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use datom::backends::SledStorage;
+use datom::{backends::SledStorage, StorageError};
 
 use crate::structs::{Storage, Str};
 
 #[no_mangle]
 pub extern "C" fn datom_sled_connect(path: Box<Str>) -> Option<Box<Storage>> {
-    let maybe_storage = SledStorage::connect(&path.s);
-    match maybe_storage {
-        Ok(storage) => Some(Box::new(storage.into())),
+    let res: Result<Box<Storage>, StorageError> = try {
+        let storage = SledStorage::connect(&path.s)?;
+        Box::new(storage.into())
+    };
+    match res {
+        Ok(s) => Some(s),
         Err(_) => {
             // update_last_storage_error(e.into())
             None

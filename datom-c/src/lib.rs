@@ -3,8 +3,9 @@
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
 #![feature(try_blocks)]
-
+#[allow(clippy::upper_case_acronyms)]
 pub mod connection;
+pub mod database;
 pub mod misc;
 pub mod sled;
 pub mod structs;
