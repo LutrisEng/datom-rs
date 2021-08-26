@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-#![feature(once_cell)]
-
 mod common;
 
 use common::{

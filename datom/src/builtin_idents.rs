@@ -70,136 +70,113 @@ pub type BuiltinEntitiesByIdent = HashMap<String, BuiltinEntity>;
 
 /// The data behind all built-in entities
 pub static BUILTIN_ENTITIES: Lazy<BuiltinEntities> = Lazy::new(|| {
-    [
-        (
-            ID,
-            [
-                (ID, ID.into()),
-                (IDENT, Value::from("db/id")),
-                (VALUE_TYPE, Value::from(TYPE_ID)),
-                (CARDINALITY, Value::from(CARDINALITY_ONE)),
-            ]
-            .into(),
-        ),
-        (
-            IDENT,
-            [
-                (ID, IDENT.into()),
-                (IDENT, Value::from("db/ident")),
-                (UNIQUE, Value::from(true)),
-                (VALUE_TYPE, Value::from(TYPE_STRING)),
-                (CARDINALITY, Value::from(CARDINALITY_ONE)),
-            ]
-            .into(),
-        ),
-        (
-            CARDINALITY,
-            [
-                (ID, CARDINALITY.into()),
-                (IDENT, Value::from("db/cardinality")),
-                (VALUE_TYPE, Value::from(TYPE_REF)),
-                (CARDINALITY, Value::from(CARDINALITY_ONE)),
-            ]
-            .into(),
-        ),
-        (
-            VALUE_TYPE,
-            [
-                (ID, VALUE_TYPE.into()),
-                (IDENT, Value::from("db/value-type")),
-                (VALUE_TYPE, Value::from(TYPE_REF)),
-                (CARDINALITY, Value::from(CARDINALITY_ONE)),
-            ]
-            .into(),
-        ),
-        (
-            DOC,
-            [
-                (ID, DOC.into()),
-                (IDENT, Value::from("db/doc")),
-                (VALUE_TYPE, Value::from(TYPE_STRING)),
-                (CARDINALITY, Value::from(CARDINALITY_ONE)),
-            ]
-            .into(),
-        ),
-        (
-            UNIQUE,
-            [
-                (ID, UNIQUE.into()),
-                (IDENT, Value::from("db/unique")),
-                (VALUE_TYPE, Value::from(TYPE_BOOLEAN)),
-                (CARDINALITY, Value::from(CARDINALITY_ONE)),
-            ]
-            .into(),
-        ),
-        (
-            IS_COMPONENT,
-            [
-                (ID, IS_COMPONENT.into()),
-                (IDENT, Value::from("db/is-component")),
-                (VALUE_TYPE, Value::from(TYPE_BOOLEAN)),
-                (CARDINALITY, Value::from(CARDINALITY_ONE)),
-            ]
-            .into(),
-        ),
-        (
-            CARDINALITY_ONE,
-            [
-                (ID, CARDINALITY_ONE.into()),
-                (IDENT, Value::from("db.cardinality/one")),
-            ]
-            .into(),
-        ),
-        (
-            CARDINALITY_MANY,
-            [
-                (ID, CARDINALITY_MANY.into()),
-                (IDENT, Value::from("db.cardinality/many")),
-            ]
-            .into(),
-        ),
-        (
-            TYPE_STRING,
-            [
-                (ID, TYPE_STRING.into()),
-                (IDENT, Value::from("db.type/string")),
-            ]
-            .into(),
-        ),
-        (
-            TYPE_INTEGER,
-            [
-                (ID, TYPE_INTEGER.into()),
-                (IDENT, Value::from("db.type/integer")),
-            ]
-            .into(),
-        ),
-        (
-            TYPE_DECIMAL,
-            [
-                (ID, TYPE_DECIMAL.into()),
-                (IDENT, Value::from("db.type/decimal")),
-            ]
-            .into(),
-        ),
-        (
-            TYPE_ID,
-            [(ID, TYPE_ID.into()), (IDENT, Value::from("db.type/id"))].into(),
-        ),
-        (
-            TYPE_REF,
-            [(ID, TYPE_REF.into()), (IDENT, Value::from("db.type/ref"))].into(),
-        ),
-        (
-            TYPE_BOOLEAN,
-            [
-                (ID, TYPE_BOOLEAN.into()),
-                (IDENT, Value::from("db.type/boolean")),
-            ]
-            .into(),
-        ),
-    ]
-    .into()
+    let mut entities = BuiltinEntities::new();
+    entities.insert(ID, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, ID.into());
+        entity.insert(IDENT, Value::from("db/id"));
+        entity.insert(VALUE_TYPE, Value::from(TYPE_ID));
+        entity.insert(CARDINALITY, Value::from(CARDINALITY_ONE));
+        entity
+    });
+    entities.insert(IDENT, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, IDENT.into());
+        entity.insert(IDENT, Value::from("db/ident"));
+        entity.insert(UNIQUE, Value::from(true));
+        entity.insert(VALUE_TYPE, Value::from(TYPE_STRING));
+        entity.insert(CARDINALITY, Value::from(CARDINALITY_ONE));
+        entity
+    });
+    entities.insert(CARDINALITY, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, CARDINALITY.into());
+        entity.insert(IDENT, Value::from("db/cardinality"));
+        entity.insert(VALUE_TYPE, Value::from(TYPE_REF));
+        entity.insert(CARDINALITY, Value::from(CARDINALITY_ONE));
+        entity
+    });
+    entities.insert(VALUE_TYPE, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, VALUE_TYPE.into());
+        entity.insert(IDENT, Value::from("db/value-type"));
+        entity.insert(VALUE_TYPE, Value::from(TYPE_REF));
+        entity.insert(CARDINALITY, Value::from(CARDINALITY_ONE));
+        entity
+    });
+    entities.insert(DOC, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, DOC.into());
+        entity.insert(IDENT, Value::from("db/doc"));
+        entity.insert(VALUE_TYPE, Value::from(TYPE_STRING));
+        entity.insert(CARDINALITY, Value::from(CARDINALITY_ONE));
+        entity
+    });
+    entities.insert(UNIQUE, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, UNIQUE.into());
+        entity.insert(IDENT, Value::from("db/unique"));
+        entity.insert(VALUE_TYPE, Value::from(TYPE_BOOLEAN));
+        entity.insert(CARDINALITY, Value::from(CARDINALITY_ONE));
+        entity
+    });
+    entities.insert(IS_COMPONENT, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, IS_COMPONENT.into());
+        entity.insert(IDENT, Value::from("db/is-component"));
+        entity.insert(VALUE_TYPE, Value::from(TYPE_BOOLEAN));
+        entity.insert(CARDINALITY, Value::from(CARDINALITY_ONE));
+        entity
+    });
+    entities.insert(CARDINALITY_ONE, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, CARDINALITY_ONE.into());
+        entity.insert(IDENT, Value::from("db.cardinality/one"));
+        entity
+    });
+    entities.insert(CARDINALITY_MANY, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, CARDINALITY_MANY.into());
+        entity.insert(IDENT, Value::from("db.cardinality/many"));
+        entity
+    });
+    entities.insert(TYPE_STRING, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, TYPE_STRING.into());
+        entity.insert(IDENT, Value::from("db.type/string"));
+        entity
+    });
+    entities.insert(TYPE_INTEGER, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, TYPE_INTEGER.into());
+        entity.insert(IDENT, Value::from("db.type/integer"));
+        entity
+    });
+    entities.insert(TYPE_DECIMAL, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, TYPE_DECIMAL.into());
+        entity.insert(IDENT, Value::from("db.type/decimal"));
+        entity
+    });
+    entities.insert(TYPE_ID, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, TYPE_ID.into());
+        entity.insert(IDENT, Value::from("db.type/id"));
+        entity
+    });
+    entities.insert(TYPE_REF, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, TYPE_REF.into());
+        entity.insert(IDENT, Value::from("db.type/ref"));
+        entity
+    });
+    entities.insert(TYPE_BOOLEAN, {
+        let mut entity = BuiltinEntity::new();
+        entity.insert(ID, TYPE_BOOLEAN.into());
+        entity.insert(IDENT, Value::from("db.type/boolean"));
+        entity
+    });
+    entities
 });
 
 /// The data behind all built-in entities, by ident
