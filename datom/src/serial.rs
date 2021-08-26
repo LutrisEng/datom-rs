@@ -164,22 +164,6 @@ pub fn eavt_entity_attribute_range(eid: ID, aid: ID) -> Range<[u8; 33]> {
 }
 
 /// Create a range encompassing every possible datom for a given
-/// attribute in the [AVET index](crate::Index::AVET)
-pub fn avet_attribute_range(eid: ID) -> Range<[u8; 17]> {
-    let mut from = [0; 17];
-    let mut to = [0; 17];
-    from[0] = Index::AVET.byte();
-    to[0] = Index::AVET.byte();
-    let eid_bytes: [u8; 16] = eid.into();
-    let eid_u128 = u128::from_be_bytes(eid_bytes);
-    let to_u128 = eid_u128 + 1;
-    let to_bytes = to_u128.to_be_bytes();
-    from[1..].copy_from_slice(&eid_bytes);
-    to[1..].copy_from_slice(&to_bytes);
-    from..to
-}
-
-/// Create a range encompassing every possible datom for a given
 /// attribute and value in the [AVET index](crate::Index::AVET)
 pub fn avet_attribute_value_range(eid: ID, val: Value) -> Range<Vec<u8>> {
     let mut val_serialized = serialize_v(&val);
