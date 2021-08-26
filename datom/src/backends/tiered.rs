@@ -65,15 +65,9 @@ impl<A: Storage, B: Storage> Storage for TieredStorage<A, B> {
         Ok(Box::new(merged.map(|x| x.0)))
     }
 
-    fn insert(&self, i: Item) -> Result<(), StorageError> {
-        self.a.insert(i.clone())?;
-        self.b.insert(i)?;
-        Ok(())
-    }
-
-    fn insert_many(&self, is: &[Item]) -> Result<(), StorageError> {
-        self.a.insert_many(is)?;
-        self.b.insert_many(is)?;
+    fn insert(&self, is: &[Item]) -> Result<(), StorageError> {
+        self.a.insert(is)?;
+        self.b.insert(is)?;
         Ok(())
     }
 
