@@ -4,8 +4,8 @@
 
 use crate::{
     serial::{
-        avet_attribute_range, avet_attribute_value_range, eavt_entity_attribute_range,
-        eavt_entity_range, index_range, range_slice, vaet_value_attribute_range, vec_range_slice,
+        avet_attribute_value_range, eavt_entity_attribute_range, eavt_entity_range, index_range,
+        range_slice, vaet_value_attribute_range, vec_range_slice,
     },
     storage::Storage,
     Connection, DatomIterator, Entity, Index, QueryError, Value, EID, ID,
@@ -52,20 +52,6 @@ impl<'connection, S: Storage> Database<'connection, S> {
             self.connection
                 .storage
                 .range(range_slice(&eavt_entity_attribute_range(entity, attribute)))?,
-            self.t,
-        ))
-    }
-
-    /// Get all [datoms](crate::Datom) in the
-    /// [AVET index](crate::Index::AVET) for the given attribute
-    pub fn datoms_for_attribute(
-        &self,
-        attribute: ID,
-    ) -> Result<DatomIterator<'connection>, QueryError> {
-        Ok(DatomIterator::new(
-            self.connection
-                .storage
-                .range(range_slice(&avet_attribute_range(attribute)))?,
             self.t,
         ))
     }
