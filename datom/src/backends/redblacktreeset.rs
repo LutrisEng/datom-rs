@@ -5,7 +5,7 @@
 use std::{ops::Range, sync::Arc};
 
 use arc_swap::ArcSwap;
-use rpds::RedBlackTreeSet;
+use rpds::RedBlackTreeSetSync;
 
 use crate::{
     storage::{Item, ItemIterator, Storage},
@@ -14,12 +14,12 @@ use crate::{
 
 /// A storage backend backed by a [RedBlackTreeSet]
 pub struct RedBlackTreeSetStorage {
-    set: ArcSwap<RedBlackTreeSet<Item>>,
+    set: ArcSwap<RedBlackTreeSetSync<Item>>,
     id: ID,
 }
 
 struct RedBlackTreeSetRangeIter {
-    set: RedBlackTreeSet<Item>,
+    set: RedBlackTreeSetSync<Item>,
     last_front: Option<Item>,
     last_back: Option<Item>,
     start: Item,
@@ -108,7 +108,7 @@ impl RedBlackTreeSetStorage {
     /// Create a new empty [RedBlackTreeSetStorage]
     pub fn new() -> Self {
         Self {
-            set: ArcSwap::from_pointee(RedBlackTreeSet::new()),
+            set: ArcSwap::from_pointee(RedBlackTreeSetSync::new_sync()),
             id: ID::new(),
         }
     }
