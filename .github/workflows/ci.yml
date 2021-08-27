@@ -138,14 +138,13 @@ jobs:
       - run: cargo test --verbose -p datom -- --nocapture
         env:
           CARGO_INCREMENTAL: "0"
-          RUSTFLAGS: "-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort"
-          RUSTDOCFLAGS: "-Cpanic=abort"
+          RUSTFLAGS: "-Zinstrument-coverage"
+          LLVM_PROFILE_FILE: "datom-%p-%m.profraw"
       - id: coverage
         uses: actions-rs/grcov@v0.1
-      - uses: coverallsapp/github-action@master
+      - uses: codecov/codecov-action@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: ${{ steps.coverage.outputs.report }}
+          files: ${{ steps.coverage.outputs.report }}
 
   test:
     name: Test on ${{ matrix.os }} with Rust ${{ matrix.rust }}
