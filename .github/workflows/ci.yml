@@ -133,10 +133,13 @@ jobs:
           java-version: "11"
           cache: "gradle"
       - uses: Swatinem/rust-cache@v1
+        with:
+          key: coverage
       - run: cargo test --verbose -p datom -- --nocapture
         env:
           CARGO_INCREMENTAL: "0"
           RUSTFLAGS: "-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort"
+          RUSTDOCFLAGS: "-Cpanic=abort"
       - id: coverage
         uses: actions-rs/grcov@v0.1
       - uses: coverallsapp/github-action@master
