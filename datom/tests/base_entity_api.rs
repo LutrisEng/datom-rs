@@ -72,6 +72,12 @@ fn database_is_persistent() -> Result<(), Box<dyn std::error::Error>> {
         let before = conn.db()?;
         db_users_transacted_properly(&before)?;
 
+        let user = before.entity(EID::unique("user/username".into(), "pmc".into()))?;
+        assert_eq!(
+            user.get("user/admin?".into())?,
+            EntityResult::Value(true.into())
+        );
+
         let mut tx = Transaction::new();
         tx.add(
             EID::unique("user/username".into(), "pmc".into()),
@@ -82,6 +88,12 @@ fn database_is_persistent() -> Result<(), Box<dyn std::error::Error>> {
 
         let after = conn.db()?;
         db_users_transacted_properly(&before)?;
+
+        let user = before.entity(EID::unique("user/username".into(), "pmc".into()))?;
+        assert_eq!(
+            user.get("user/admin?".into())?,
+            EntityResult::Value(true.into())
+        );
 
         let user = after.entity(EID::unique("user/username".into(), "pmc".into()))?;
         assert_eq!(
