@@ -91,3 +91,151 @@ impl<'c, 'a> From<&'a Database<'c>> for &'a datom::Database<'c, Box<dyn datom::s
         &d.d
     }
 }
+
+pub struct Transaction {
+    pub(crate) t: datom::Transaction,
+}
+
+impl From<datom::Transaction> for Transaction {
+    fn from(t: datom::Transaction) -> Self {
+        Transaction { t }
+    }
+}
+
+impl From<Transaction> for datom::Transaction {
+    fn from(t: Transaction) -> Self {
+        t.t
+    }
+}
+
+impl<'a> From<&'a Transaction> for &'a datom::Transaction {
+    fn from(t: &'a Transaction) -> Self {
+        &t.t
+    }
+}
+
+pub struct TransactionResult<'s> {
+    pub(crate) r: datom::TransactionResult<'s, Box<dyn datom::storage::Storage>>,
+}
+
+impl<'s> From<datom::TransactionResult<'s, Box<dyn datom::storage::Storage>>>
+    for TransactionResult<'s>
+{
+    fn from(r: datom::TransactionResult<'s, Box<dyn datom::storage::Storage>>) -> Self {
+        TransactionResult { r }
+    }
+}
+
+impl<'s> From<TransactionResult<'s>>
+    for datom::TransactionResult<'s, Box<dyn datom::storage::Storage>>
+{
+    fn from(r: TransactionResult<'s>) -> Self {
+        r.r
+    }
+}
+
+impl<'s, 'a> From<&'a TransactionResult<'s>>
+    for &'a datom::TransactionResult<'s, Box<dyn datom::storage::Storage>>
+{
+    fn from(r: &'a TransactionResult<'s>) -> Self {
+        &r.r
+    }
+}
+
+pub struct Datoms<'s> {
+    pub(crate) d: datom::DatomIterator<'s>,
+}
+
+impl<'s> From<datom::DatomIterator<'s>> for Datoms<'s> {
+    fn from(d: datom::DatomIterator<'s>) -> Self {
+        Datoms { d }
+    }
+}
+
+impl<'s> From<Datoms<'s>> for datom::DatomIterator<'s> {
+    fn from(d: Datoms<'s>) -> Self {
+        d.d
+    }
+}
+
+impl<'s, 'a> From<&'a Datoms<'s>> for &'a datom::DatomIterator<'s> {
+    fn from(d: &'a Datoms<'s>) -> Self {
+        &d.d
+    }
+}
+
+#[repr(C)]
+pub enum Index {
+    EAVT,
+    AEVT,
+    AVET,
+    VAET,
+}
+
+impl From<datom::Index> for Index {
+    fn from(i: datom::Index) -> Self {
+        use datom::Index as DIndex;
+        match i {
+            DIndex::EAVT => Index::EAVT,
+            DIndex::AEVT => Index::AEVT,
+            DIndex::AVET => Index::AVET,
+            DIndex::VAET => Index::VAET,
+        }
+    }
+}
+
+impl From<Index> for datom::Index {
+    fn from(i: Index) -> Self {
+        use datom::Index as DIndex;
+        match i {
+            Index::EAVT => DIndex::EAVT,
+            Index::AEVT => DIndex::AEVT,
+            Index::AVET => DIndex::AVET,
+            Index::VAET => DIndex::VAET,
+        }
+    }
+}
+
+pub struct Entity<'c> {
+    pub(crate) e: datom::Entity<'c, Box<dyn datom::storage::Storage>>,
+}
+
+impl<'c> From<datom::Entity<'c, Box<dyn datom::storage::Storage>>> for Entity<'c> {
+    fn from(e: datom::Entity<'c, Box<dyn datom::storage::Storage>>) -> Self {
+        Entity { e }
+    }
+}
+
+impl<'c> From<Entity<'c>> for datom::Entity<'c, Box<dyn datom::storage::Storage>> {
+    fn from(e: Entity<'c>) -> Self {
+        e.e
+    }
+}
+
+impl<'c, 'a> From<&'a Entity<'c>> for &'a datom::Entity<'c, Box<dyn datom::storage::Storage>> {
+    fn from(e: &'a Entity<'c>) -> Self {
+        &e.e
+    }
+}
+
+pub struct ID {
+    pub(crate) i: datom::ID,
+}
+
+impl From<datom::ID> for ID {
+    fn from(i: datom::ID) -> Self {
+        ID { i }
+    }
+}
+
+impl From<ID> for datom::ID {
+    fn from(i: ID) -> Self {
+        i.i
+    }
+}
+
+impl<'a> From<&'a ID> for &'a datom::ID {
+    fn from(i: &'a ID) -> Self {
+        &i.i
+    }
+}

@@ -5,7 +5,7 @@
 mod common;
 
 use common::{
-    data::{transact_users, users_transacted_properly},
+    data::{db_users_transacted_properly, transact_users, users_transacted_properly},
     schema::{schema_transacted_properly, with_connection},
 };
 use datom::{EntityResult, Transaction, TransactionError, EID};
@@ -57,6 +57,49 @@ fn retract_repeated_value() -> Result<(), Box<dyn std::error::Error>> {
         } else {
             panic!();
         }
+
+        Ok(())
+    })
+}
+
+#[test]
+fn database_is_persistent() -> Result<(), Box<dyn std::error::Error>> {
+    with_connection(|conn| {
+        schema_transacted_properly(&conn)?;
+        transact_users(&conn)?;
+        users_transacted_properly(&conn)?;
+
+        let before = conn.db()?;
+        db_users_transacted_properly(&before)?;
+
+        let user = before.entity(EID::unique("user/username".into(), "pmc".into()))?;
+        assert_eq!(
+            user.get("user/admin?".into())?,
+            EntityResult::Value(true.into())
+        );
+
+        let mut tx = Transaction::new();
+        tx.add(
+            EID::unique("user/username".into(), "pmc".into()),
+            "user/admin?".into(),
+            false.into(),
+        );
+        conn.transact(tx)?;
+
+        let after = conn.db()?;
+        db_users_transacted_properly(&before)?;
+
+        let user = before.entity(EID::unique("user/username".into(), "pmc".into()))?;
+        assert_eq!(
+            user.get("user/admin?".into())?,
+            EntityResult::Value(true.into())
+        );
+
+        let user = after.entity(EID::unique("user/username".into(), "pmc".into()))?;
+        assert_eq!(
+            user.get("user/admin?".into())?,
+            EntityResult::Value(false.into())
+        );
 
         Ok(())
     })

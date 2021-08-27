@@ -105,9 +105,9 @@ jobs:
           user_email: "github-actions[bot]@users.noreply.github.com"
           commit_message: Auto-generated documentation
 
-  test:
-    name: Test on ${{ matrix.os }} with Rust ${{ matrix.rust }}
-    runs-on: ${{ matrix.os }}
+  coverage:
+    name: Test with coverage
+    runs-on: ubuntu-latest
     needs:
       - check
       - fmt
@@ -115,6 +115,43 @@ jobs:
       - reuse
       - validate_citation
       - docs
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          profile: minimal
+          override: true
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          cache: "npm"
+          cache-dependency-path: "datom-node/package-lock.json"
+      - uses: actions/setup-java@v2
+        with:
+          distribution: "adopt"
+          java-version: "11"
+          cache: "gradle"
+      - uses: Swatinem/rust-cache@v1
+        with:
+          key: coverage
+      - run: cargo test --verbose -p datom -- --nocapture
+        env:
+          CARGO_INCREMENTAL: "0"
+          RUSTFLAGS: "-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort"
+          RUSTDOCFLAGS: "-Cpanic=abort"
+      - id: coverage
+        uses: actions-rs/grcov@v0.1
+      - uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ${{ steps.coverage.outputs.report }}
+
+  test:
+    name: Test on ${{ matrix.os }} with Rust ${{ matrix.rust }}
+    runs-on: ${{ matrix.os }}
+    needs:
+      - coverage
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -145,21 +182,4 @@ jobs:
           java-version: "11"
           cache: "gradle"
       - uses: Swatinem/rust-cache@v1
-      - name: Run tests without coverage
-        run: cargo test --all --verbose -- --nocapture
-        if: matrix.os != 'ubuntu-latest' || matrix.rust != 'nightly'
-      - name: Run tests with coverage
-        run: cargo test --all --verbose -- --nocapture
-        if: matrix.os == 'ubuntu-latest' && matrix.rust == 'nightly'
-        env:
-          CARGO_INCREMENTAL: "0"
-          RUSTFLAGS: "-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests"
-          RUSTDOCFLAGS: "-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests"
-      - id: coverage
-        uses: actions-rs/grcov@v0.1
-        if: matrix.os == 'ubuntu-latest' && matrix.rust == 'nightly'
-      - uses: coverallsapp/github-action@master
-        if: matrix.os == 'ubuntu-latest' && matrix.rust == 'nightly'
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: ${{ steps.coverage.outputs.report }}
+      - run: cargo test --all --verbose -- --nocapture
