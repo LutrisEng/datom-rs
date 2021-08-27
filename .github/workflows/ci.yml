@@ -125,9 +125,11 @@ jobs:
       - uses: Swatinem/rust-cache@v1
         with:
           key: coverage
+      - run: cargo build --verbose -p datom
+        env:
+          RUSTFLAGS: "-Zinstrument-coverage"
       - run: cargo test --verbose -p datom -- --nocapture
         env:
-          CARGO_INCREMENTAL: "0"
           RUSTFLAGS: "-Zinstrument-coverage"
           LLVM_PROFILE_FILE: "datom-%p-%m.profraw"
       - id: coverage
