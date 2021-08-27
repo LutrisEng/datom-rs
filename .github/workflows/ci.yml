@@ -183,6 +183,12 @@ jobs:
     name: Good to go!
     runs-on: ubuntu-latest
     needs:
+      - check
+      - lint
+      - security_audit
+      - reuse
+      - validate_citation
+      - docs
       - test
       - miri
     steps:
