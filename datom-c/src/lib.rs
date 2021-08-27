@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-#![feature(try_blocks)]
 #[allow(clippy::upper_case_acronyms)]
 pub mod connection;
 pub mod database;

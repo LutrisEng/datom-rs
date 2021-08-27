@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::ops::Range;
+use std::{convert::TryInto, ops::Range};
 
 use chrono::{TimeZone, Utc};
 
@@ -160,22 +160,6 @@ pub fn eavt_entity_attribute_range(eid: ID, aid: ID) -> Range<[u8; 33]> {
     from[17..].copy_from_slice(&aid_bytes);
     let mut to = base;
     to[17..].copy_from_slice(&to_bytes);
-    from..to
-}
-
-/// Create a range encompassing every possible datom for a given
-/// attribute in the [AVET index](crate::Index::AVET)
-pub fn avet_attribute_range(eid: ID) -> Range<[u8; 17]> {
-    let mut from = [0; 17];
-    let mut to = [0; 17];
-    from[0] = Index::AVET.byte();
-    to[0] = Index::AVET.byte();
-    let eid_bytes: [u8; 16] = eid.into();
-    let eid_u128 = u128::from_be_bytes(eid_bytes);
-    let to_u128 = eid_u128 + 1;
-    let to_bytes = to_u128.to_be_bytes();
-    from[1..].copy_from_slice(&eid_bytes);
-    to[1..].copy_from_slice(&to_bytes);
     from..to
 }
 

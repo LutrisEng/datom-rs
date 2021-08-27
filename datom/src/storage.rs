@@ -17,11 +17,8 @@ pub trait Storage: Send + Sync {
     /// Get all items within this range
     fn range(&self, r: Range<&[u8]>) -> Result<ItemIterator<'_>, StorageError>;
 
-    /// Insert a new item into the backend
-    fn insert(&self, i: Item) -> Result<(), StorageError>;
-
     /// Insert many new items into the backend (in one transaction, if possible)
-    fn insert_many(&self, is: &[Item]) -> Result<(), StorageError>;
+    fn insert(&self, is: &[Item]) -> Result<(), StorageError>;
 
     /// Get a unique ID for this instance
     fn id(&self) -> ID;
@@ -32,12 +29,8 @@ impl<S: Storage + ?Sized> Storage for Box<S> {
         (**self).range(r)
     }
 
-    fn insert(&self, i: Item) -> Result<(), StorageError> {
-        (**self).insert(i)
-    }
-
-    fn insert_many(&self, is: &[Item]) -> Result<(), StorageError> {
-        (**self).insert_many(is)
+    fn insert(&self, is: &[Item]) -> Result<(), StorageError> {
+        (**self).insert(is)
     }
 
     fn id(&self) -> ID {

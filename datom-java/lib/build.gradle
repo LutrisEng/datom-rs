@@ -10,9 +10,18 @@ repositories {
     mavenCentral()
 }
 
-tasks.register('cargo', Exec) {
-    commandLine 'cargo', 'build', '-Z', 'unstable-options', '--out-dir', "${buildDir}/cargo"
-    ext.out = "${buildDir}/cargo"
+tasks.register('cargo-build', Exec) {
+    commandLine 'cargo', 'build'
+}
+
+tasks.register('cargo', Copy) {
+    dependsOn tasks.named('cargo-build')
+    from('../../target/debug') {
+        include '*datom_java.so'
+        include '*datom_java.dylib'
+        include '*datom_java.dll'
+    }
+    into "${buildDir}/native"
 }
 
 dependencies {
@@ -28,7 +37,7 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
     dependsOn tasks.named('cargo')
-    systemProperty "java.library.path", file("${buildDir}/cargo").absolutePath
+    systemProperty "java.library.path", file("${buildDir}/native").absolutePath
 }
 
 compileJava {

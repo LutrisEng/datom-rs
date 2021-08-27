@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::{collections::HashSet, lazy::SyncLazy};
+use std::collections::HashSet;
 
 use datom::{
     builtin_idents, DynamicConnection, EntityResult, Transactable, Transaction, Value, ID,
 };
 use num_bigint::BigInt;
+use once_cell::sync::Lazy;
 
 struct User {
     id: ID,
@@ -41,7 +42,7 @@ impl Transactable for &User {
     }
 }
 
-static USERS: SyncLazy<Vec<User>> = SyncLazy::new(|| {
+static USERS: Lazy<Vec<User>> = Lazy::new(|| {
     [User {
         id: ID::new(),
         username: Some("pmc".into()),

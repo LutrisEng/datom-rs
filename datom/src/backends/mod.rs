@@ -11,3 +11,6 @@ pub use self::sled::SledStorage;
 mod redblacktreeset;
 #[cfg(feature = "redblacktreeset")]
 pub use self::redblacktreeset::RedBlackTreeSetStorage;
+
+mod tiered;
+pub use self::tiered::TieredStorage;
