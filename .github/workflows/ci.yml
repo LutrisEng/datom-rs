@@ -184,6 +184,8 @@ jobs:
           components: miri
       - uses: Swatinem/rust-cache@v1
       - run: cargo miri test -p datom
+        env:
+          MIRIFLAGS: -Zmiri-disable-isolation
 
   ok:
     name: Good to go!
