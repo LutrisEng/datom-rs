@@ -122,16 +122,6 @@ jobs:
           toolchain: nightly
           profile: minimal
           override: true
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-          cache: "npm"
-          cache-dependency-path: "datom-node/package-lock.json"
-      - uses: actions/setup-java@v2
-        with:
-          distribution: "adopt"
-          java-version: "11"
-          cache: "gradle"
       - uses: Swatinem/rust-cache@v1
         with:
           key: coverage
@@ -142,6 +132,10 @@ jobs:
           LLVM_PROFILE_FILE: "datom-%p-%m.profraw"
       - id: coverage
         uses: actions-rs/grcov@v0.1
+      - uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: ${{ steps.coverage.outputs.report }}
       - uses: codecov/codecov-action@v2
         with:
           files: ${{ steps.coverage.outputs.report }}
