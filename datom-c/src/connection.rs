@@ -31,10 +31,10 @@ pub extern "C" fn datom_db(conn: &'_ Connection) -> Option<Box<Database<'_>>> {
 
 #[no_mangle]
 pub extern "C" fn datom_as_of(conn: &'_ Connection, t: u64) -> Option<Box<Database<'_>>> {
-    let res: Result<Box<Database>, ConnectionError> = try {
+    let res: Result<Box<Database>, ConnectionError> = (|| {
         let db = conn.c.as_of(t)?;
-        Box::new(db.into())
-    };
+        Ok(Box::new(db.into()))
+    })();
     match res {
         Ok(d) => Some(d),
         Err(_) => {
@@ -61,10 +61,10 @@ pub extern "C" fn datom_transact(
     conn: &Connection,
     tx: Box<Transaction>,
 ) -> Option<Box<TransactionResult>> {
-    let res: Result<Box<TransactionResult>, TransactionError> = try {
+    let res: Result<Box<TransactionResult>, TransactionError> = (|| {
         let r = conn.c.transact_tx(tx.t)?;
-        Box::new(r.into())
-    };
+        Ok(Box::new(r.into()))
+    })();
     match res {
         Ok(r) => Some(r),
         Err(_) => {

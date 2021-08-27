@@ -8,10 +8,10 @@ use crate::structs::{Storage, Str};
 
 #[no_mangle]
 pub extern "C" fn datom_sled_connect(path: Box<Str>) -> Option<Box<Storage>> {
-    let res: Result<Box<Storage>, StorageError> = try {
+    let res: Result<Box<Storage>, StorageError> = (|| {
         let storage = SledStorage::connect(&path.s)?;
-        Box::new(storage.into())
-    };
+        Ok(Box::new(storage.into()))
+    })();
     match res {
         Ok(s) => Some(s),
         Err(_) => {

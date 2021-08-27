@@ -11,10 +11,10 @@ pub extern "C" fn datom_datoms<'s>(
     database: &'s Database,
     index: Index,
 ) -> Option<Box<Datoms<'s>>> {
-    let res: Result<Box<Datoms<'s>>, QueryError> = try {
+    let res: Result<Box<Datoms<'s>>, QueryError> = (|| {
         let iter = database.d.datoms(index.into())?;
-        Box::new(iter.into())
-    };
+        Ok(Box::new(iter.into()))
+    })();
     match res {
         Ok(d) => Some(d),
         Err(_) => {
@@ -29,10 +29,10 @@ pub extern "C" fn datom_entity<'s>(
     database: &'s Database,
     entity: Box<ID>,
 ) -> Option<Box<Entity<'s>>> {
-    let res: Result<Box<Entity<'s>>, QueryError> = try {
+    let res: Result<Box<Entity<'s>>, QueryError> = (|| {
         let e = database.d.entity(entity.i.into())?;
-        Box::new(e.into())
-    };
+        Ok(Box::new(e.into()))
+    })();
     match res {
         Ok(d) => Some(d),
         Err(_) => {
