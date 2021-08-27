@@ -5,7 +5,8 @@
 use std::collections::HashSet;
 
 use datom::{
-    builtin_idents, DynamicConnection, EntityResult, Transactable, Transaction, Value, ID,
+    builtin_idents, storage::Storage, Connection, Database, DynamicConnection, EntityResult,
+    Transactable, Transaction, Value, ID,
 };
 use num_bigint::BigInt;
 use once_cell::sync::Lazy;
@@ -63,10 +64,9 @@ pub fn transact_users(conn: &DynamicConnection) -> Result<(), Box<dyn std::error
     Ok(())
 }
 
-pub fn users_transacted_properly(
-    conn: &DynamicConnection,
+pub fn db_users_transacted_properly<S: Storage>(
+    db: &Database<'_, S>,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let db = conn.db()?;
     for user in USERS.iter() {
         let user_ent = db.entity(user.id.into())?;
         assert_eq!(user_ent.id(), &user.id);
@@ -119,4 +119,11 @@ pub fn users_transacted_properly(
         }
     }
     Ok(())
+}
+
+pub fn users_transacted_properly<S: Storage>(
+    conn: &Connection<S>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let db = conn.db()?;
+    db_users_transacted_properly(&db)
 }
