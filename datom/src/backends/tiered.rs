@@ -6,7 +6,7 @@ use std::{cmp::Ordering, ops::Range};
 
 use crate::{
     merge_iters::MergeIters,
-    storage::{Item, ItemIterator, Storage},
+    storage::{DurableStorage, Item, ItemIterator, Storage},
     StorageError, ID,
 };
 
@@ -75,3 +75,5 @@ impl<A: Storage, B: Storage> Storage for TieredStorage<A, B> {
         self.id
     }
 }
+
+impl<A: Storage, B: DurableStorage> DurableStorage for TieredStorage<A, B> {}
