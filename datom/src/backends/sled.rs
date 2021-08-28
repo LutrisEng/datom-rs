@@ -8,7 +8,7 @@ use sled::{transaction::ConflictableTransactionError, Config, Db};
 use uuid::Uuid;
 
 use crate::{
-    storage::{Item, ItemIterator, Storage},
+    storage::{DurableStorage, Item, ItemIterator, Storage},
     StorageError, ID,
 };
 
@@ -53,6 +53,8 @@ impl Storage for SledStorage {
         self.id
     }
 }
+
+impl DurableStorage for SledStorage {}
 
 impl SledStorage {
     /// Create a connection to a temporary database. When the

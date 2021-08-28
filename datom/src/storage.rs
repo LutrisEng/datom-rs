@@ -37,3 +37,7 @@ impl<S: Storage + ?Sized> Storage for Box<S> {
         (**self).id()
     }
 }
+
+/// A storage backend which persists its state. This may take the form
+/// of a file on disk, a remote database, or something else.
+pub trait DurableStorage: Storage {}
