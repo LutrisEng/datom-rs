@@ -2,46 +2,35 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::{error::Error, fmt};
+#![allow(missing_docs)]
+
+use miette::Diagnostic;
+use thiserror::Error;
 
 use crate::{ConnectionError, QueryError, EID, ID};
 
 /// Errors during a [Transaction](crate::Transaction)
-#[derive(Debug)]
+#[derive(Error, Debug, Diagnostic)]
 pub enum TransactionError {
-    /// The given attribute doesn't have a value, and cannot be
-    /// retracted
+    #[error(
+        "the given attribute {1:?} doesn't have a value for entity {0:?}, and cannot be retracted"
+    )]
+    #[diagnostic(code(datom::transaction::retract_nonexistent_attribute))]
     FailedToRetractNonexistentAttribute(ID, ID),
-    /// The given attribute is repeated, and cannot be retracted without
-    /// specifying a specific value to retract.
+
+    #[error("the given attribute {1:?} is repeated, and cannot be retracted without specifying a specific value to retract")]
+    #[diagnostic(code(datom::transaction::retract_repeated_attribute))]
     FailedToRetractRepeatedAttribute(ID, ID),
-    /// The given EID doesn't resolve to an entity
+
+    #[error("the given EID {0:?} doesn't resolve to an entity")]
+    #[diagnostic(code(datom::transaction::unresolved_eid))]
     UnresolvedEID(EID),
-    /// A query executed during this transaction failed
-    QueryError(QueryError),
-    /// There was an error with the underlying connection
-    ConnectionError(ConnectionError),
-}
 
-impl fmt::Display for TransactionError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&self, f)
-    }
-}
+    #[error("a query executed during this transaction failed")]
+    #[diagnostic(code(datom::query))]
+    QueryError(#[from] QueryError),
 
-impl Error for TransactionError {}
-
-impl From<QueryError> for TransactionError {
-    fn from(qe: QueryError) -> Self {
-        match qe {
-            QueryError::UnresolvedEID(eid) => Self::UnresolvedEID(eid),
-            _ => Self::QueryError(qe),
-        }
-    }
-}
-
-impl From<ConnectionError> for TransactionError {
-    fn from(ce: ConnectionError) -> Self {
-        Self::ConnectionError(ce)
-    }
+    #[error("there was an error with the underlying connection")]
+    #[diagnostic(code(datom::connection))]
+    ConnectionError(#[from] ConnectionError),
 }

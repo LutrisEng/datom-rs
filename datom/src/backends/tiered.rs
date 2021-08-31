@@ -50,12 +50,17 @@ impl PartialOrd for StorageError {
 
 impl Ord for StorageError {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        match (self, other) {
-            (StorageError::ConcurrencyError, StorageError::ConcurrencyError) => Ordering::Equal,
-            (StorageError::ConcurrencyError, StorageError::Miscellaneous(_)) => Ordering::Less,
-            (StorageError::Miscellaneous(_), StorageError::ConcurrencyError) => Ordering::Greater,
-            (StorageError::Miscellaneous(_), StorageError::Miscellaneous(_)) => Ordering::Equal,
-        }
+        let s = match *self {
+            StorageError::ConcurrencyError => 0,
+            StorageError::IOError(_) => 1,
+            StorageError::Miscellaneous(_) => 2,
+        };
+        let o = match *other {
+            StorageError::ConcurrencyError => 0,
+            StorageError::IOError(_) => 1,
+            StorageError::Miscellaneous(_) => 2,
+        };
+        s.cmp(&o)
     }
 }
 

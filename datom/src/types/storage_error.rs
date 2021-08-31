@@ -2,27 +2,25 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::{error::Error, fmt, io};
+#![allow(missing_docs)]
+
+use std::{error, io};
+
+use miette::Diagnostic;
+use thiserror::Error;
 
 /// An error in the underlying storage backend
-#[derive(Debug)]
+#[derive(Error, Debug, Diagnostic)]
 pub enum StorageError {
-    /// An issue occurred related to concurrency.
+    #[error("an error occurred related to concurrency")]
+    #[diagnostic(code(datom::storage::concurrency))]
     ConcurrencyError,
-    /// Another error, caused by an error in the backend
-    Miscellaneous(Box<dyn Error>),
-}
 
-impl From<io::Error> for StorageError {
-    fn from(e: io::Error) -> Self {
-        Self::Miscellaneous(Box::new(e))
-    }
-}
+    #[error("an I/O error occurred")]
+    #[diagnostic(code(datom::storage::io))]
+    IOError(#[from] io::Error),
 
-impl fmt::Display for StorageError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&self, f)
-    }
+    #[error("an unknown error occurred")]
+    #[diagnostic(code(datom::storage::misc))]
+    Miscellaneous(#[from] Box<dyn error::Error + Send + Sync + 'static>),
 }
-
-impl Error for StorageError {}
