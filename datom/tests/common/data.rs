@@ -8,6 +8,7 @@ use datom::{
     builtin_idents, storage::Storage, Connection, Database, DynamicConnection, EntityResult,
     Transactable, Transaction, Value, ID,
 };
+use miette::DiagnosticResult;
 use num_bigint::BigInt;
 use once_cell::sync::Lazy;
 
@@ -55,7 +56,7 @@ static USERS: Lazy<Vec<User>> = Lazy::new(|| {
     .into()
 });
 
-pub fn transact_users(conn: &DynamicConnection) -> Result<(), Box<dyn std::error::Error>> {
+pub fn transact_users(conn: &DynamicConnection) -> DiagnosticResult<()> {
     let mut tx = Transaction::new();
     for user in USERS.iter() {
         tx.append(user);
@@ -64,9 +65,7 @@ pub fn transact_users(conn: &DynamicConnection) -> Result<(), Box<dyn std::error
     Ok(())
 }
 
-pub fn db_users_transacted_properly<S: Storage>(
-    db: &Database<'_, S>,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub fn db_users_transacted_properly<S: Storage>(db: &Database<'_, S>) -> DiagnosticResult<()> {
     for user in USERS.iter() {
         let user_ent = db.entity(user.id.into())?;
         assert_eq!(user_ent.id(), &user.id);
@@ -121,9 +120,7 @@ pub fn db_users_transacted_properly<S: Storage>(
     Ok(())
 }
 
-pub fn users_transacted_properly<S: Storage>(
-    conn: &Connection<S>,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub fn users_transacted_properly<S: Storage>(conn: &Connection<S>) -> DiagnosticResult<()> {
     let db = conn.db()?;
     db_users_transacted_properly(&db)
 }

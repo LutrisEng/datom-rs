@@ -2,36 +2,21 @@
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
-use std::{error::Error, fmt};
+#![allow(missing_docs)]
+
+use miette::Diagnostic;
+use thiserror::Error;
 
 use crate::StorageError;
 
 /// Network/disk errors
-#[derive(Debug)]
+#[derive(Error, Debug, Diagnostic)]
 pub enum ConnectionError {
-    /// There was invalid data in the data store
+    #[error("there was invalid data in the data store")]
+    #[diagnostic(code(datom::connection::invalid_data), url(docsrs))]
     InvalidData,
-    /// There was an error in the underlying storage backend
-    Storage(StorageError),
-}
 
-impl fmt::Display for ConnectionError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&self, f)
-    }
-}
-
-impl Error for ConnectionError {
-    fn source(&self) -> Option<&(dyn Error + 'static)> {
-        match self {
-            ConnectionError::Storage(e) => Some(e),
-            _ => None,
-        }
-    }
-}
-
-impl From<StorageError> for ConnectionError {
-    fn from(e: StorageError) -> Self {
-        Self::Storage(e)
-    }
+    #[error("there was an error in the underlying storage backend")]
+    #[diagnostic(code(datom::storage), url(docsrs))]
+    Storage(#[from] StorageError),
 }

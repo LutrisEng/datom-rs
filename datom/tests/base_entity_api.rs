@@ -9,14 +9,15 @@ use common::{
     schema::{schema_transacted_properly, with_connection},
 };
 use datom::{EntityResult, Transaction, TransactionError, EID};
+use miette::DiagnosticResult;
 
 #[test]
-fn schema_only() -> Result<(), Box<dyn std::error::Error>> {
+fn schema_only() -> DiagnosticResult<()> {
     with_connection(|conn| schema_transacted_properly(&conn))
 }
 
 #[test]
-fn users() -> Result<(), Box<dyn std::error::Error>> {
+fn users() -> DiagnosticResult<()> {
     with_connection(|conn| {
         schema_transacted_properly(&conn)?;
         transact_users(&conn)?;
@@ -26,7 +27,7 @@ fn users() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn retract_repeated_value() -> Result<(), Box<dyn std::error::Error>> {
+fn retract_repeated_value() -> DiagnosticResult<()> {
     with_connection(|conn| {
         schema_transacted_properly(&conn)?;
         transact_users(&conn)?;
@@ -63,7 +64,7 @@ fn retract_repeated_value() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn database_is_persistent() -> Result<(), Box<dyn std::error::Error>> {
+fn database_is_persistent() -> DiagnosticResult<()> {
     with_connection(|conn| {
         schema_transacted_properly(&conn)?;
         transact_users(&conn)?;

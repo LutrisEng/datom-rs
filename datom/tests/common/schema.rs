@@ -10,6 +10,7 @@ use datom::{
     backends::TieredStorage, builtin_idents, new_dynamic_connection, AttributeSchema,
     AttributeType, DynamicConnection, EntityResult, Transaction,
 };
+use miette::DiagnosticResult;
 use once_cell::sync::Lazy;
 
 static ATTRIBUTES: Lazy<Vec<AttributeSchema>> = Lazy::new(|| {
@@ -39,7 +40,7 @@ static ATTRIBUTES: Lazy<Vec<AttributeSchema>> = Lazy::new(|| {
     .into()
 });
 
-pub fn transact_schema(conn: &DynamicConnection) -> Result<(), Box<dyn std::error::Error>> {
+pub fn transact_schema(conn: &DynamicConnection) -> DiagnosticResult<()> {
     let mut tx = Transaction::new();
     for attr in ATTRIBUTES.iter() {
         tx.append(attr.to_owned());
@@ -49,16 +50,17 @@ pub fn transact_schema(conn: &DynamicConnection) -> Result<(), Box<dyn std::erro
 }
 
 #[cfg(feature = "sled")]
-pub fn sled_connection_with_schema() -> Result<DynamicConnection, Box<dyn std::error::Error>> {
-    let storage = SledStorage::connect_temp()?;
+pub fn sled_connection_with_schema() -> DiagnosticResult<DynamicConnection> {
+    use miette::IntoDiagnostic;
+
+    let storage = SledStorage::connect_temp().into_diagnostic("datom::sled")?;
     let conn = new_dynamic_connection(storage);
     transact_schema(&conn)?;
     Ok(conn)
 }
 
 #[cfg(feature = "redblacktreeset")]
-pub fn redblacktreeset_connection_with_schema(
-) -> Result<DynamicConnection, Box<dyn std::error::Error>> {
+pub fn redblacktreeset_connection_with_schema() -> DiagnosticResult<DynamicConnection> {
     let storage = RedBlackTreeSetStorage::new();
     let conn = new_dynamic_connection(storage);
     transact_schema(&conn)?;
@@ -66,8 +68,10 @@ pub fn redblacktreeset_connection_with_schema(
 }
 
 #[cfg(all(feature = "sled", feature = "redblacktreeset"))]
-pub fn tiered_connection_with_schema() -> Result<DynamicConnection, Box<dyn std::error::Error>> {
-    let a = SledStorage::connect_temp()?;
+pub fn tiered_connection_with_schema() -> DiagnosticResult<DynamicConnection> {
+    use miette::IntoDiagnostic;
+
+    let a = SledStorage::connect_temp().into_diagnostic("datom::sled")?;
     let b = RedBlackTreeSetStorage::new();
     let storage = TieredStorage::new(a, b);
     let conn = new_dynamic_connection(storage);
@@ -75,9 +79,9 @@ pub fn tiered_connection_with_schema() -> Result<DynamicConnection, Box<dyn std:
     Ok(conn)
 }
 
-pub fn with_connection<F: Fn(DynamicConnection) -> Result<(), Box<dyn std::error::Error>>>(
+pub fn with_connection<F: Fn(DynamicConnection) -> DiagnosticResult<()>>(
     f: F,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> DiagnosticResult<()> {
     #[cfg(feature = "sled")]
     f(sled_connection_with_schema()?)?;
     #[cfg(feature = "redblacktreeset")]
@@ -87,9 +91,7 @@ pub fn with_connection<F: Fn(DynamicConnection) -> Result<(), Box<dyn std::error
     Ok(())
 }
 
-pub fn schema_transacted_properly(
-    conn: &DynamicConnection,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub fn schema_transacted_properly(conn: &DynamicConnection) -> DiagnosticResult<()> {
     let db = conn.db()?;
     for attr in ATTRIBUTES.iter() {
         let attr_ent = db.entity(attr.id.into())?;
