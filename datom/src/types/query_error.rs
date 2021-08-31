@@ -13,11 +13,11 @@ use crate::{ConnectionError, StorageError, EID};
 #[derive(Error, Debug, Diagnostic)]
 pub enum QueryError {
     #[error("the given EID `{0:?}` doesn't resolve to an entity")]
-    #[diagnostic(code(datom::query::unresolved_eid))]
+    #[diagnostic(code(datom::query::unresolved_eid), url(docsrs))]
     UnresolvedEID(EID),
 
     #[error("there was an error with the underlying connection")]
-    #[diagnostic(code(datom::connection))]
+    #[diagnostic(code(datom::connection), url(docsrs))]
     ConnectionError(#[from] ConnectionError),
 }
 

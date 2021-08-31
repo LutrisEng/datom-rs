@@ -13,10 +13,10 @@ use crate::StorageError;
 #[derive(Error, Debug, Diagnostic)]
 pub enum ConnectionError {
     #[error("there was invalid data in the data store")]
-    #[diagnostic(code(datom::connection::invalid_data))]
+    #[diagnostic(code(datom::connection::invalid_data), url(docsrs))]
     InvalidData,
 
     #[error("there was an error in the underlying storage backend")]
-    #[diagnostic(code(datom::storage))]
+    #[diagnostic(code(datom::storage), url(docsrs))]
     Storage(#[from] StorageError),
 }

@@ -15,22 +15,22 @@ pub enum TransactionError {
     #[error(
         "the given attribute {1:?} doesn't have a value for entity {0:?}, and cannot be retracted"
     )]
-    #[diagnostic(code(datom::transaction::retract_nonexistent_attribute))]
+    #[diagnostic(code(datom::transaction::retract_nonexistent_attribute), url(docsrs))]
     FailedToRetractNonexistentAttribute(ID, ID),
 
     #[error("the given attribute {1:?} is repeated, and cannot be retracted without specifying a specific value to retract")]
-    #[diagnostic(code(datom::transaction::retract_repeated_attribute))]
+    #[diagnostic(code(datom::transaction::retract_repeated_attribute), url(docsrs))]
     FailedToRetractRepeatedAttribute(ID, ID),
 
     #[error("the given EID {0:?} doesn't resolve to an entity")]
-    #[diagnostic(code(datom::transaction::unresolved_eid))]
+    #[diagnostic(code(datom::transaction::unresolved_eid), url(docsrs))]
     UnresolvedEID(EID),
 
     #[error("a query executed during this transaction failed")]
-    #[diagnostic(code(datom::query))]
+    #[diagnostic(code(datom::query), url(docsrs))]
     QueryError(#[from] QueryError),
 
     #[error("there was an error with the underlying connection")]
-    #[diagnostic(code(datom::connection))]
+    #[diagnostic(code(datom::connection), url(docsrs))]
     ConnectionError(#[from] ConnectionError),
 }

@@ -13,14 +13,14 @@ use thiserror::Error;
 #[derive(Error, Debug, Diagnostic)]
 pub enum StorageError {
     #[error("an error occurred related to concurrency")]
-    #[diagnostic(code(datom::storage::concurrency))]
+    #[diagnostic(code(datom::storage::concurrency), url(docsrs))]
     ConcurrencyError,
 
     #[error("an I/O error occurred")]
-    #[diagnostic(code(datom::storage::io))]
+    #[diagnostic(code(datom::storage::io), url(docsrs))]
     IOError(#[from] io::Error),
 
     #[error("an unknown error occurred")]
-    #[diagnostic(code(datom::storage::misc))]
+    #[diagnostic(code(datom::storage::misc), url(docsrs))]
     Miscellaneous(#[from] Box<dyn error::Error + Send + Sync + 'static>),
 }
