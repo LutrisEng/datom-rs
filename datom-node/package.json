@@ -14,7 +14,7 @@
   "license": "BlueOak-1.0.0 OR BSD-2-Clause-Patent",
   "devDependencies": {
     "cargo-cp-artifact": "^0.1",
-    "jest": "^27.2.5"
+    "jest": "^27.4.6"
   },
   "repository": {
     "type": "git",
