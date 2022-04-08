@@ -93,7 +93,7 @@ impl<
 
 impl<T: Ord, A: Iterator<Item = T>, B: Iterator<Item = T>> MergeIters<T, A, B> {
     /// Merge n sorted iterators
-    pub fn new(a: A, b: B) -> Self {
+    pub const fn new(a: A, b: B) -> Self {
         Self {
             a,
             b,

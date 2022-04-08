@@ -57,7 +57,7 @@ datom = "0.1"
 
 ## MSRV
 
-datom-rs is supported with `rustc` 1.54 and newer.
+datom-rs is supported with `rustc` 1.60 and newer.
 
 ## Sponsors
 
@@ -82,4 +82,3 @@ datom-rs is supported with `rustc` 1.54 and newer.
         </tr>
     </tbody>
 </table>
-
