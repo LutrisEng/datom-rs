@@ -145,7 +145,7 @@ jobs:
           # Ensure nothing breaks in the current Rust release
           - stable
           # Ensure the MSRV doesn't break
-          - "1.54"
+          - "1.60"
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
