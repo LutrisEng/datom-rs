@@ -21,7 +21,7 @@ impl DatomType {
     }
 
     /// Map byte representation to a [DatomType]
-    pub fn from_byte(b: u8) -> Self {
+    pub const fn from_byte(b: u8) -> Self {
         match b {
             0 => Self::Addition,
             1 => Self::Retraction,
