@@ -105,7 +105,6 @@ jobs:
     needs:
       - check
       - fmt
-      - security_audit
       - reuse
       - validate_citation
       - docs
