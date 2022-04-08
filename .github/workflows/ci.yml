@@ -50,7 +50,7 @@ jobs:
           args: --all -- --check
       - uses: actions-rs/clippy-check@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
           args: --all
           name: Clippy
 
@@ -61,7 +61,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions-rs/audit-check@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
 
   reuse:
     name: REUSE
@@ -98,7 +98,7 @@ jobs:
       - uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/main'
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           publish_dir: ./target/doc
           force_orphan: true
           user_name: "github-actions[bot]"
@@ -134,7 +134,7 @@ jobs:
         uses: actions-rs/grcov@v0.1
       - uses: coverallsapp/github-action@master
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ github.token }}
           path-to-lcov: ${{ steps.coverage.outputs.report }}
 
   test:
