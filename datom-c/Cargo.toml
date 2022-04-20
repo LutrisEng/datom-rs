@@ -24,4 +24,4 @@ datom = { path = "../datom" }
 libc = "0.2"
 
 [build-dependencies]
-cbindgen = "0.20"
+cbindgen = "0.22"
