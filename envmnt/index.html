@@ -1,0 +1,306 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="envmnt"><meta name="keywords" content="rust, rustlang, rust-lang, envmnt"><title>envmnt - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../dark.css" disabled><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../storage.js"></script><script defer src="../crates.js"></script><script defer src="../main.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../favicon.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../envmnt/index.html"><div class="logo-container"><img class="rust-logo" src="../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../envmnt/index.html"><div class="logo-container"><img class="rust-logo" src="../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"><a href="#">Crate envmnt</a></h2><div class="sidebar-elems"><div class="block"><ul><li class="version">Version 0.10.0</li><li><a id="all-types" href="all.html">All Items</a></li></ul></div><section><div class="block"><ul><li><a href="#modules">Modules</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div></section></div></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../envmnt/index.html"><img class="rust-logo" src="../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1">
+                                <a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../wheel.svg"></a></div>
+                        </div></form></nav></div><section id="main-content" class="content"><div class="main-heading">
+    <h1 class="fqn"><span class="in-band">Crate <a class="mod" href="#">envmnt</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../src/envmnt/lib.rs.html#1-1357">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="envmnt"><a href="#envmnt">envmnt</a></h2>
+<p>Environment variables utility functions.</p>
+<p>This library has many helper functions to access/modify/check environment variables.</p>
+<h2 id="examples"><a href="#examples">Examples</a></h2><h3 id="getsetremove-environment-variables"><a href="#getsetremove-environment-variables">Get/Set/Remove environment variables</a></h3>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">envmnt</span>::{<span class="ident">ExpandOptions</span>, <span class="ident">ExpansionType</span>};
+
+<span class="kw">fn</span> <span class="ident">main</span>() {
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">envmnt::exists</span>(<span class="string">&quot;MY_ENV_VAR&quot;</span>) {
+        <span class="ident">envmnt::set</span>(<span class="string">&quot;MY_ENV_VAR&quot;</span>, <span class="string">&quot;SOME VALUE&quot;</span>);
+    }
+
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">envmnt::get_or</span>(<span class="string">&quot;MY_ENV_VAR&quot;</span>, <span class="string">&quot;DEFAULT_VALUE&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;Env Value: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>);
+
+    <span class="ident">value</span> <span class="op">=</span> <span class="ident">envmnt::get_or_panic</span>(<span class="string">&quot;MY_ENV_VAR&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;Env Value: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>);
+
+    <span class="kw">let</span> <span class="ident">pre_value</span> <span class="op">=</span> <span class="ident">envmnt::get_set</span>(<span class="string">&quot;MY_ENV_VAR&quot;</span>, <span class="string">&quot;SOME NEW VALUE&quot;</span>);
+
+    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">envmnt::get_or</span>(<span class="string">&quot;MY_ENV_VAR&quot;</span>, <span class="string">&quot;DEFAULT_VALUE&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;New Env Value: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;Previous Env Value: {:?}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">pre_value</span>);
+
+    <span class="kw">let</span> <span class="ident">var_was_set</span> <span class="op">=</span> <span class="ident">envmnt::set_optional</span>(<span class="string">&quot;MY_ENV_VAR&quot;</span>, <span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(<span class="string">&quot;OPTIONAL VALUE&quot;</span>));
+    <span class="macro">println!</span>(<span class="string">&quot;Env Was Modified: {}&quot;</span>, <span class="ident">var_was_set</span>);
+
+    <span class="kw">let</span> <span class="ident">all_vars</span> <span class="op">=</span> <span class="ident">envmnt::vars</span>(); <span class="comment">// returned as Vec&lt;(String, String)&gt;</span>
+
+    <span class="kw">for</span> (<span class="ident">key</span>, <span class="ident">value</span>) <span class="kw">in</span> <span class="ident">all_vars</span> {
+        <span class="macro">println!</span>(<span class="string">&quot;{}: {}&quot;</span>, <span class="ident">key</span>, <span class="ident">value</span>);
+    }
+
+    <span class="ident">envmnt::set</span>(<span class="string">&quot;MY_ENV_VAR2&quot;</span>, <span class="string">&quot;SOME VALUE2&quot;</span>);
+
+    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">envmnt::get_any</span>(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="string">&quot;MY_ENV_VAR1&quot;</span>, <span class="string">&quot;MY_ENV_VAR2&quot;</span>], <span class="string">&quot;default&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;MY_ENV_VAR1 exists: {}&quot;</span>, <span class="ident">envmnt::exists</span>(<span class="string">&quot;MY_ENV_VAR1&quot;</span>));
+    <span class="macro">println!</span>(<span class="string">&quot;MY_ENV_VAR2 exists: {}&quot;</span>, <span class="ident">envmnt::exists</span>(<span class="string">&quot;MY_ENV_VAR2&quot;</span>));
+    <span class="macro">println!</span>(<span class="string">&quot;Found value: {}&quot;</span>, <span class="ident">value</span>);
+
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">options</span> <span class="op">=</span> <span class="ident">ExpandOptions::new</span>();
+    <span class="ident">options</span>.<span class="ident">expansion_type</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">ExpansionType::Unix</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">envmnt::expand</span>(<span class="string">&quot;Env: MY_ENV value is: ${MY_ENV}&quot;</span>, <span class="prelude-val">Some</span>(<span class="ident">options</span>));
+    <span class="macro">println!</span>(<span class="string">&quot;Expanded: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>);
+    <span class="ident">options</span>.<span class="ident">expansion_type</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">ExpansionType::UnixBracketsWithDefaults</span>);
+    <span class="ident">value</span> <span class="op">=</span> <span class="ident">envmnt::expand</span>(
+        <span class="string">&quot;Env: MY_ENV_NOT_FOUND value is: ${MY_ENV_NOT_FOUND:default value}&quot;</span>,
+        <span class="prelude-val">Some</span>(<span class="ident">options</span>),
+    );
+    <span class="macro">println!</span>(<span class="string">&quot;Expanded: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>);
+}</code></pre></div>
+<h3 id="getset-boolean-environment-variables-and-other-comparisons"><a href="#getset-boolean-environment-variables-and-other-comparisons">Get/Set boolean environment variables and other comparisons</a></h3>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn</span> <span class="ident">main</span>() {
+    <span class="ident">envmnt::set_bool</span>(<span class="string">&quot;FLAG_VAR&quot;</span>, <span class="bool-val">true</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">flag_value</span> <span class="op">=</span> <span class="ident">envmnt::is_or</span>(<span class="string">&quot;FLAG_VAR&quot;</span>, <span class="bool-val">false</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;Bool Flag: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">flag_value</span>);
+
+    <span class="ident">flag_value</span> <span class="op">=</span> <span class="ident">envmnt::is</span>(<span class="string">&quot;FLAG_VAR&quot;</span>);
+    <span class="macro">assert!</span>(<span class="ident">flag_value</span>);
+
+    <span class="ident">envmnt::set_bool</span>(<span class="string">&quot;FLAG_VAR&quot;</span>, <span class="bool-val">true</span>);
+    <span class="macro">assert!</span>(<span class="ident">envmnt::is_equal</span>(<span class="string">&quot;FLAG_VAR&quot;</span>, <span class="string">&quot;true&quot;</span>));
+
+    <span class="ident">envmnt::set</span>(<span class="string">&quot;MY_ENV_VAR&quot;</span>, <span class="string">&quot;SOME VALUE&quot;</span>);
+    <span class="kw">let</span> <span class="ident">same</span> <span class="op">=</span> <span class="ident">envmnt::is_equal</span>(<span class="string">&quot;MY_ENV_VAR&quot;</span>, <span class="string">&quot;SOME VALUE&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;Value Is Same: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">same</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">contains</span> <span class="op">=</span> <span class="ident">envmnt::contains</span>(<span class="string">&quot;MY_ENV_VAR&quot;</span>, <span class="string">&quot;_ENV_&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;Value Contained: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">contains</span>);
+    <span class="ident">contains</span> <span class="op">=</span> <span class="ident">envmnt::contains_ignore_case</span>(<span class="string">&quot;MY_ENV_VAR&quot;</span>, <span class="string">&quot;_env_&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;Value Contained (case insensitive): {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">contains</span>);
+}</code></pre></div>
+<h3 id="getset-numeric-environment-variables"><a href="#getset-numeric-environment-variables">Get/Set numeric environment variables</a></h3>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn</span> <span class="ident">main</span>() {
+    <span class="comment">// all numeric data types: u8/i8/u16/i16/u32/i32/u64/i64/u128/i128/f32/f64/isize/usize</span>
+    <span class="comment">// are supported by specific set/get functions.</span>
+    <span class="ident">envmnt::set_u8</span>(<span class="string">&quot;U8_TEST_ENV&quot;</span>, <span class="number">50</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">value_u8</span> <span class="op">=</span> <span class="ident">envmnt::get_u8</span>(<span class="string">&quot;U8_TEST_ENV&quot;</span>, <span class="number">5</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;u8 value: {}&quot;</span>, <span class="ident">value_u8</span>);
+
+    <span class="ident">envmnt::set_isize</span>(<span class="string">&quot;ISIZE_TEST_ENV&quot;</span>, <span class="op">-</span><span class="number">50</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">value_isize</span> <span class="op">=</span> <span class="ident">envmnt::get_isize</span>(<span class="string">&quot;ISIZE_TEST_ENV&quot;</span>, <span class="number">5</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;isize value: {}&quot;</span>, <span class="ident">value_isize</span>);
+
+    <span class="comment">// increment/decrement values</span>
+    <span class="ident">value_isize</span> <span class="op">=</span> <span class="ident">envmnt::increment</span>(<span class="string">&quot;U8_TEST_ENV&quot;</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">value_isize</span>, <span class="number">51</span>);
+    <span class="ident">value_u8</span> <span class="op">=</span> <span class="ident">envmnt::get_u8</span>(<span class="string">&quot;U8_TEST_ENV&quot;</span>, <span class="number">5</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">value_u8</span>, <span class="number">51</span>);
+    <span class="ident">value_isize</span> <span class="op">=</span> <span class="ident">envmnt::decrement</span>(<span class="string">&quot;U8_TEST_ENV&quot;</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">value_isize</span>, <span class="number">50</span>);
+    <span class="ident">value_u8</span> <span class="op">=</span> <span class="ident">envmnt::get_u8</span>(<span class="string">&quot;U8_TEST_ENV&quot;</span>, <span class="number">5</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">value_u8</span>, <span class="number">50</span>);
+}</code></pre></div>
+<h3 id="get-and-parse-any-type-t-that-implements-fromstr"><a href="#get-and-parse-any-type-t-that-implements-fromstr">Get and parse any type T that implements FromStr</a></h3>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn</span> <span class="ident">main</span>() {
+    <span class="ident">envmnt::set</span>(<span class="string">&quot;ENV_VAR&quot;</span>, <span class="string">&quot;123&quot;</span>);
+
+    <span class="kw">let</span> <span class="ident">value</span>: <span class="ident">i16</span> <span class="op">=</span> <span class="ident">envmnt::get_parse</span>(<span class="string">&quot;ENV_VAR&quot;</span>).<span class="ident">unwrap</span>();
+    <span class="macro">assert_eq!</span>(<span class="ident">value</span>, <span class="number">123</span>);
+
+    <span class="kw">let</span> <span class="ident">value</span>: <span class="ident">String</span> <span class="op">=</span> <span class="ident">envmnt::get_parse</span>(<span class="string">&quot;ENV_VAR&quot;</span>).<span class="ident">unwrap</span>();
+    <span class="macro">assert_eq!</span>(<span class="ident">value</span>, <span class="string">&quot;123&quot;</span>);
+
+    <span class="kw">let</span> <span class="ident">value</span>: <span class="ident">i32</span> <span class="op">=</span> <span class="ident">envmnt::get_parse_or</span>(<span class="string">&quot;ENV_VAR&quot;</span>, <span class="number">123</span>).<span class="ident">unwrap</span>();
+    <span class="macro">assert_eq!</span>(<span class="ident">value</span>, <span class="number">123</span>);
+
+    <span class="kw">let</span> <span class="ident">value</span>: <span class="ident">i64</span> <span class="op">=</span> <span class="ident">envmnt::get_parse_or</span>(<span class="string">&quot;ENV_UNDEFINED&quot;</span>, <span class="number">321</span>).<span class="ident">unwrap</span>();
+    <span class="macro">assert_eq!</span>(<span class="ident">value</span>, <span class="number">321</span>);
+}</code></pre></div>
+<h3 id="getset-list-environment-variables"><a href="#getset-list-environment-variables">Get/Set list environment variables</a></h3>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn</span> <span class="ident">main</span>() {
+    <span class="ident">envmnt::set_list</span>(
+        <span class="string">&quot;LIST_TEST_ENV&quot;</span>,
+        <span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="string">&quot;1&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;2&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;3&quot;</span>.<span class="ident">to_string</span>()],
+    );
+
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">values</span> <span class="op">=</span> <span class="ident">envmnt::get_list</span>(<span class="string">&quot;LIST_TEST_ENV&quot;</span>).<span class="ident">unwrap</span>();
+    <span class="macro">println!</span>(<span class="string">&quot;List Values: {:?}&quot;</span>, <span class="ident">values</span>);
+
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">same</span> <span class="op">=</span> <span class="ident">envmnt::is_equal</span>(<span class="string">&quot;LIST_TEST_ENV&quot;</span>, <span class="string">&quot;1;2;3&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;Same: {}&quot;</span>, <span class="ident">same</span>);
+
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">options</span> <span class="op">=</span> <span class="ident">envmnt::ListOptions::new</span>();
+    <span class="ident">options</span>.<span class="ident">separator</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="string">&quot;,&quot;</span>.<span class="ident">to_string</span>());
+    <span class="ident">envmnt::set_list_with_options</span>(
+        <span class="string">&quot;LIST_TEST_ENV&quot;</span>,
+        <span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="string">&quot;1&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;2&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;3&quot;</span>.<span class="ident">to_string</span>()],
+        <span class="kw-2">&amp;</span><span class="ident">options</span>,
+    );
+
+    <span class="ident">values</span> <span class="op">=</span> <span class="ident">envmnt::get_list_with_options</span>(<span class="string">&quot;LIST_TEST_ENV&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">options</span>).<span class="ident">unwrap</span>();
+    <span class="macro">println!</span>(<span class="string">&quot;List Values: {:?}&quot;</span>, <span class="ident">values</span>);
+
+    <span class="ident">same</span> <span class="op">=</span> <span class="ident">envmnt::is_equal</span>(<span class="string">&quot;LIST_TEST_ENV&quot;</span>, <span class="string">&quot;1,2,3&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;Same: {}&quot;</span>, <span class="ident">same</span>);
+}</code></pre></div>
+<h3 id="bulk-operations"><a href="#bulk-operations">Bulk Operations</a></h3>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">indexmap::IndexMap</span>;
+
+<span class="kw">fn</span> <span class="ident">main</span>() {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">env</span>: <span class="ident">IndexMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">IndexMap::new</span>();
+    <span class="ident">env</span>.<span class="ident">insert</span>(<span class="string">&quot;ENV_VAR1&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;MY VALUE&quot;</span>.<span class="ident">to_string</span>());
+    <span class="ident">env</span>.<span class="ident">insert</span>(<span class="string">&quot;ENV_VAR2&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;MY VALUE2&quot;</span>.<span class="ident">to_string</span>());
+
+    <span class="ident">envmnt::set_all</span>(<span class="kw-2">&amp;</span><span class="ident">env</span>);
+
+    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">envmnt::get_or_panic</span>(<span class="string">&quot;ENV_VAR1&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;Value Is: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>);
+
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">found</span> <span class="op">=</span> <span class="ident">envmnt::is_any_exists</span>(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="string">&quot;ENV_VAR1&quot;</span>, <span class="string">&quot;ENV_VAR2&quot;</span>]);
+
+    <span class="macro">println!</span>(<span class="string">&quot;Any Found: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">found</span>);
+
+    <span class="ident">found</span> <span class="op">=</span> <span class="ident">envmnt::is_all_exists</span>(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="string">&quot;ENV_VAR1&quot;</span>, <span class="string">&quot;ENV_VAR2&quot;</span>]);
+
+    <span class="macro">println!</span>(<span class="string">&quot;All Found: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">found</span>);
+
+    <span class="ident">envmnt::remove_all</span>(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="string">&quot;ENV_VAR1&quot;</span>, <span class="string">&quot;ENV_VAR2&quot;</span>]);
+
+    <span class="ident">found</span> <span class="op">=</span> <span class="ident">envmnt::is_any_exists</span>(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="string">&quot;ENV_VAR1&quot;</span>, <span class="string">&quot;ENV_VAR2&quot;</span>]);
+
+    <span class="macro">println!</span>(<span class="string">&quot;Any Found: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">found</span>);
+
+    <span class="ident">env</span> <span class="op">=</span> <span class="ident">IndexMap::new</span>();
+    <span class="ident">env</span>.<span class="ident">insert</span>(<span class="string">&quot;ENV_VAR1&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;MY VALUE&quot;</span>.<span class="ident">to_string</span>());
+    <span class="ident">env</span>.<span class="ident">insert</span>(<span class="string">&quot;ENV_VAR2&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;MY VALUE2&quot;</span>.<span class="ident">to_string</span>());
+
+    <span class="kw">let</span> <span class="ident">eval_env</span> <span class="op">=</span> <span class="op">|</span><span class="ident">key</span>: <span class="ident">String</span>, <span class="ident">value</span>: <span class="ident">String</span><span class="op">|</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">updated_key</span> <span class="op">=</span> <span class="ident">String::from</span>(<span class="string">&quot;KEY-&quot;</span>);
+        <span class="ident">updated_key</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">updated_value</span> <span class="op">=</span> <span class="ident">String::from</span>(<span class="string">&quot;VALUE-&quot;</span>);
+        <span class="ident">updated_value</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="ident">value</span>);
+        <span class="prelude-val">Some</span>((<span class="ident">updated_key</span>, <span class="ident">updated_value</span>))
+    };
+
+    <span class="ident">envmnt::evaluate_and_set_all</span>(<span class="kw-2">&amp;</span><span class="ident">env</span>, <span class="ident">eval_env</span>);
+
+    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">envmnt::get_or_panic</span>(<span class="string">&quot;KEY-ENV_VAR1&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;Value Is: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>);
+}</code></pre></div>
+<h3 id="file-operations"><a href="#file-operations">File Operations</a></h3>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn</span> <span class="ident">main</span>() {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">output</span> <span class="op">=</span> <span class="ident">envmnt::load_file</span>(<span class="string">&quot;./src/test/var.env&quot;</span>);
+    <span class="macro">assert!</span>(<span class="ident">output</span>.<span class="ident">is_ok</span>());
+
+    <span class="kw">let</span> <span class="ident">eval_env</span> <span class="op">=</span> <span class="op">|</span><span class="ident">key</span>: <span class="ident">String</span>, <span class="ident">value</span>: <span class="ident">String</span><span class="op">|</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">updated_value</span> <span class="op">=</span> <span class="ident">String::from</span>(<span class="string">&quot;PREFIX-&quot;</span>);
+        <span class="ident">updated_value</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="ident">value</span>);
+        <span class="prelude-val">Some</span>((<span class="ident">key</span>, <span class="ident">updated_value</span>))
+    };
+
+    <span class="ident">output</span> <span class="op">=</span> <span class="ident">envmnt::evaluate_and_load_file</span>(<span class="string">&quot;./src/test/var.env&quot;</span>, <span class="ident">eval_env</span>);
+    <span class="macro">assert!</span>(<span class="ident">output</span>.<span class="ident">is_ok</span>());
+}</code></pre></div>
+<h2 id="installation"><a href="#installation">Installation</a></h2>
+<p>In order to use this library, just add it as a dependency:</p>
+<div class="example-wrap"><pre class="language-ini"><code>[dependencies]
+envmnt = &quot;*&quot;</code></pre></div><h2 id="contributing"><a href="#contributing">Contributing</a></h2>
+<p>See <a href="https://github.com/sagiegurari/envmnt/blob/master/.github/CONTRIBUTING.md">contributing guide</a></p>
+<h2 id="license"><a href="#license">License</a></h2>
+<p>Developed by Sagie Gur-Ari and licensed under the
+<a href="https://github.com/sagiegurari/envmnt/blob/master/LICENSE">Apache 2</a> open source license.</p>
+</div></details><h2 id="modules" class="small-section-header"><a href="#modules">Modules</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="mod" href="errors/index.html" title="envmnt::errors mod">errors</a></div><div class="item-right docblock-short"><p>errors</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="mod" href="types/index.html" title="envmnt::types mod">types</a></div><div class="item-right docblock-short"><p>types</p>
+</div></div></div><h2 id="functions" class="small-section-header"><a href="#functions">Functions</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.contains.html" title="envmnt::contains fn">contains</a></div><div class="item-right docblock-short"><p>Returns true if the provided environment variable is defined and contains the provided value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.contains_ignore_case.html" title="envmnt::contains_ignore_case fn">contains_ignore_case</a></div><div class="item-right docblock-short"><p>Returns true if the provided environment variable is defined and contains the provided value regardless of the case.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.decrement.html" title="envmnt::decrement fn">decrement</a></div><div class="item-right docblock-short"><p>Decrements and returns the new value stored by the given environment variable key.
+In case the variable does not exist, it will decrement to -1.
+The updated value will be returned.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.evaluate_and_load_file.html" title="envmnt::evaluate_and_load_file fn">evaluate_and_load_file</a></div><div class="item-right docblock-short"><p>Parses the provided env file and loads all environment variables.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.evaluate_and_set_all.html" title="envmnt::evaluate_and_set_all fn">evaluate_and_set_all</a></div><div class="item-right docblock-short"><p>Sets all the provided env key/value pairs.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.exists.html" title="envmnt::exists fn">exists</a></div><div class="item-right docblock-short"><p>Returns true environment variable is defined.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.expand.html" title="envmnt::expand fn">expand</a></div><div class="item-right docblock-short"><p>Expands the provided string value by replacing the environment variables defined in it.
+The syntax of the environment variables is based on the type requested.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_any.html" title="envmnt::get_any fn">get_any</a></div><div class="item-right docblock-short"><p>Returns the first environment variable found.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_f32.html" title="envmnt::get_f32 fn">get_f32</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or a default value
+in case the variable is not defined or cannot be parsed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_f64.html" title="envmnt::get_f64 fn">get_f64</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or a default value
+in case the variable is not defined or cannot be parsed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_i8.html" title="envmnt::get_i8 fn">get_i8</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or a default value
+in case the variable is not defined or cannot be parsed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_i16.html" title="envmnt::get_i16 fn">get_i16</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or a default value
+in case the variable is not defined or cannot be parsed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_i32.html" title="envmnt::get_i32 fn">get_i32</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or a default value
+in case the variable is not defined or cannot be parsed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_i64.html" title="envmnt::get_i64 fn">get_i64</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or a default value
+in case the variable is not defined or cannot be parsed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_i128.html" title="envmnt::get_i128 fn">get_i128</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or a default value
+in case the variable is not defined or cannot be parsed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_isize.html" title="envmnt::get_isize fn">get_isize</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or a default value
+in case the variable is not defined or cannot be parsed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_list.html" title="envmnt::get_list fn">get_list</a></div><div class="item-right docblock-short"><p>Returns the requested environment variable as a string vector.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_list_with_options.html" title="envmnt::get_list_with_options fn">get_list_with_options</a></div><div class="item-right docblock-short"><p>Returns the requested environment variable as a string vector.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_or.html" title="envmnt::get_or fn">get_or</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or if is not defined, the default value will be returned.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_or_panic.html" title="envmnt::get_or_panic fn">get_or_panic</a></div><div class="item-right docblock-short"><p>Returns the environment variable value.
+If the variable is not defined, this function will panic.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_parse.html" title="envmnt::get_parse fn">get_parse</a></div><div class="item-right docblock-short"><p>Returns the parsed environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_parse_or.html" title="envmnt::get_parse_or fn">get_parse_or</a></div><div class="item-right docblock-short"><p>Returns the parsed environment variable value or if is not defined, the default value will be returned.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_remove.html" title="envmnt::get_remove fn">get_remove</a></div><div class="item-right docblock-short"><p>Removes the provided environment variable and returns its previous value (if any).</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_set.html" title="envmnt::get_set fn">get_set</a></div><div class="item-right docblock-short"><p>Sets the environment variable value and returns the previous value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_u8.html" title="envmnt::get_u8 fn">get_u8</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or a default value
+in case the variable is not defined or cannot be parsed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_u16.html" title="envmnt::get_u16 fn">get_u16</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or a default value
+in case the variable is not defined or cannot be parsed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_u32.html" title="envmnt::get_u32 fn">get_u32</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or a default value
+in case the variable is not defined or cannot be parsed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_u64.html" title="envmnt::get_u64 fn">get_u64</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or a default value
+in case the variable is not defined or cannot be parsed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_u128.html" title="envmnt::get_u128 fn">get_u128</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or a default value
+in case the variable is not defined or cannot be parsed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.get_usize.html" title="envmnt::get_usize fn">get_usize</a></div><div class="item-right docblock-short"><p>Returns the environment variable value or a default value
+in case the variable is not defined or cannot be parsed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.increment.html" title="envmnt::increment fn">increment</a></div><div class="item-right docblock-short"><p>Increments and returns the new value stored by the given environment variable key.
+In case the variable does not exist, it will increment to 1.
+The updated value will be returned.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.is.html" title="envmnt::is fn">is</a></div><div class="item-right docblock-short"><p>Returns false if environment variable value if falsy.
+The value is falsy if it is one of the following:</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.is_all_exists.html" title="envmnt::is_all_exists fn">is_all_exists</a></div><div class="item-right docblock-short"><p>Returns true if all of environment variables are defined.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.is_any_exists.html" title="envmnt::is_any_exists fn">is_any_exists</a></div><div class="item-right docblock-short"><p>Returns true if any of environment variables is defined.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.is_equal.html" title="envmnt::is_equal fn">is_equal</a></div><div class="item-right docblock-short"><p>Returns true if the provided environment variable is defined and equals the provided value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.is_or.html" title="envmnt::is_or fn">is_or</a></div><div class="item-right docblock-short"><p>Returns false if environment variable value if falsy.<br>
+Any other value is returned as true.<br>
+The value is falsy if it is one of the following:</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.load_file.html" title="envmnt::load_file fn">load_file</a></div><div class="item-right docblock-short"><p>Parses the provided env file and loads all environment variables.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.parse_env_file_content.html" title="envmnt::parse_env_file_content fn">parse_env_file_content</a></div><div class="item-right docblock-short"><p>Parses the provided content as a map of key/value.
+The content should be in the form of an env file format.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.parse_file.html" title="envmnt::parse_file fn">parse_file</a></div><div class="item-right docblock-short"><p>Parses the provided env file and returns its content as a map of key/value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.remove.html" title="envmnt::remove fn">remove</a></div><div class="item-right docblock-short"><p>Removes the provided environment variable.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.remove_all.html" title="envmnt::remove_all fn">remove_all</a></div><div class="item-right docblock-short"><p>Removes all provided environment variables.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set.html" title="envmnt::set fn">set</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_all.html" title="envmnt::set_all fn">set_all</a></div><div class="item-right docblock-short"><p>Sets all the provided env key/value pairs.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_bool.html" title="envmnt::set_bool fn">set_bool</a></div><div class="item-right docblock-short"><p>Sets the environment variable with a true/false value as string.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_f32.html" title="envmnt::set_f32 fn">set_f32</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_f64.html" title="envmnt::set_f64 fn">set_f64</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_i8.html" title="envmnt::set_i8 fn">set_i8</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_i16.html" title="envmnt::set_i16 fn">set_i16</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_i32.html" title="envmnt::set_i32 fn">set_i32</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_i64.html" title="envmnt::set_i64 fn">set_i64</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_i128.html" title="envmnt::set_i128 fn">set_i128</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_isize.html" title="envmnt::set_isize fn">set_isize</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_list.html" title="envmnt::set_list fn">set_list</a></div><div class="item-right docblock-short"><p>Sets the provided string vector as an environment variable.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_list_with_options.html" title="envmnt::set_list_with_options fn">set_list_with_options</a></div><div class="item-right docblock-short"><p>Sets the provided string vector as an environment variable.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_optional.html" title="envmnt::set_optional fn">set_optional</a></div><div class="item-right docblock-short"><p>Sets the environment variable if the provided option contains a value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_or_remove.html" title="envmnt::set_or_remove fn">set_or_remove</a></div><div class="item-right docblock-short"><p>Sets the environment variable if the provided option contains a value.
+If no value was provided, the environment variable will be removed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_u8.html" title="envmnt::set_u8 fn">set_u8</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_u16.html" title="envmnt::set_u16 fn">set_u16</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_u32.html" title="envmnt::set_u32 fn">set_u32</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_u64.html" title="envmnt::set_u64 fn">set_u64</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_u128.html" title="envmnt::set_u128 fn">set_u128</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_usize.html" title="envmnt::set_usize fn">set_usize</a></div><div class="item-right docblock-short"><p>Sets the environment variable value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.vars.html" title="envmnt::vars fn">vars</a></div><div class="item-right docblock-short"><p>Returns all environment variables as a vector.</p>
+</div></div></div><h2 id="types" class="small-section-header"><a href="#types">Type Definitions</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="type" href="type.ExpandOptions.html" title="envmnt::ExpandOptions type">ExpandOptions</a></div><div class="item-right docblock-short"><p>Expand options</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="type" href="type.ExpansionType.html" title="envmnt::ExpansionType type">ExpansionType</a></div><div class="item-right docblock-short"><p>Expansion Type - unix/windows style</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="type" href="type.ListOptions.html" title="envmnt::ListOptions type">ListOptions</a></div><div class="item-right docblock-short"><p>Get/Set list options</p>
+</div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="envmnt" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (62b272d25 2022-07-21)" ></div>
+</body></html>

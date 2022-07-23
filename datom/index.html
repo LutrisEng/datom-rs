@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="An open-source database inspired by Datomic."><meta name="keywords" content="rust, rustlang, rust-lang, datom"><title>datom - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../dark.css" disabled><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../storage.js"></script><script defer src="../crates.js"></script><script defer src="../main.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="icon" href="https://lutris.engineering/favicon-32x32.png"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../datom/index.html"><div class="logo-container"><img src="https://avatars.githubusercontent.com/u/85201395?s=200&amp;v=4" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../datom/index.html"><div class="logo-container">
+                    <img src="https://avatars.githubusercontent.com/u/85201395?s=200&amp;v=4" alt="logo"></div>
+        </a><h2 class="location"><a href="#">Crate datom</a></h2><div class="sidebar-elems"><div class="block"><ul><li class="version">Version 0.1.1-pre4</li><li><a id="all-types" href="all.html">All Items</a></li></ul></div><section><div class="block"><ul><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div></section></div></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../datom/index.html">
+                        <img src="https://avatars.githubusercontent.com/u/85201395?s=200&amp;v=4" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1">
+                                <a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../wheel.svg"></a></div>
+                        </div></form></nav></div><section id="main-content" class="content"><div class="main-heading">
+    <h1 class="fqn"><span class="in-band">Crate <a class="mod" href="#">datom</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../src/datom/lib.rs.html#5-77">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>An open-source database inspired by Datomic.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc</span>
+<span class="comment">// SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent</span>
+<span class="comment">// SPDX-FileContributor: Piper McCorkle &lt;piper@lutris.engineering&gt;</span></code></pre></div>
+<p>Currently built on top of <a href="https://sled.rs">sled</a>, a modern embedded database, and is
+only suitable for embedded usage. Future multi-peer support is
+planned.</p>
+<p>If you aren’t already familiar with Datomic, it might help to look
+over <a href="https://docs.datomic.com/on-prem/overview/architecture.html">Datomic’s excellent documentation</a>. To the user, datom-rs
+functions extremely similarly to Datomic.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">datom</span>::{<span class="ident">backends::SledStorage</span>, <span class="ident">Connection</span>, <span class="ident">EntityResult</span>, <span class="ident">Transaction</span>, <span class="ident">Value</span>, <span class="ident">ID</span>};
+
+<span class="comment">// Use the sled storage backend to create a temporary database</span>
+<span class="kw">let</span> <span class="ident">storage</span> <span class="op">=</span> <span class="ident">SledStorage::connect_temp</span>()<span class="question-mark">?</span>;
+
+<span class="comment">// Create a connection from that backend</span>
+<span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::new</span>(<span class="ident">storage</span>);
+
+<span class="comment">// Create an ID to use for the username attribute</span>
+<span class="kw">let</span> <span class="ident">username</span> <span class="op">=</span> <span class="ident">ID::new</span>();
+<span class="comment">// Create an ID to use for the user&#39;s entity</span>
+<span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">ID::new</span>();
+
+<span class="comment">// Create a transaction setting the username attribute on the user</span>
+<span class="comment">// entity to &quot;pmc&quot;</span>
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tx</span> <span class="op">=</span> <span class="ident">Transaction::new</span>();
+<span class="ident">tx</span>.<span class="ident">add</span>(<span class="ident">user</span>.<span class="ident">into</span>(), <span class="ident">username</span>.<span class="ident">into</span>(), <span class="string">&quot;pmc&quot;</span>.<span class="ident">into</span>());
+<span class="comment">// Execute the transaction using the connection</span>
+<span class="ident">conn</span>.<span class="ident">transact</span>(<span class="ident">tx</span>)<span class="question-mark">?</span>;
+
+<span class="comment">// Get a view of the database in the current point in time</span>
+<span class="kw">let</span> <span class="ident">db</span> <span class="op">=</span> <span class="ident">conn</span>.<span class="ident">db</span>()<span class="question-mark">?</span>;
+<span class="comment">// Get the value of the username attribute on the user entity</span>
+<span class="kw">if</span> <span class="kw">let</span> <span class="ident">EntityResult::Value</span>(<span class="ident">Value::String</span>(<span class="ident">u</span>)) <span class="op">=</span> <span class="ident">db</span>.<span class="ident">entity</span>(<span class="ident">user</span>.<span class="ident">into</span>())<span class="question-mark">?</span>.<span class="ident">get</span>(<span class="ident">username</span>.<span class="ident">into</span>())<span class="question-mark">?</span> {
+    <span class="macro">println!</span>(<span class="string">&quot;The user&#39;s username is {}.&quot;</span>, <span class="ident">u</span>);
+}</code></pre></div>
+</div></details><h2 id="modules" class="small-section-header"><a href="#modules">Modules</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="mod" href="backends/index.html" title="datom::backends mod">backends</a></div><div class="item-right docblock-short"><p>Storage backends</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="mod" href="builtin_idents/index.html" title="datom::builtin_idents mod">builtin_idents</a></div><div class="item-right docblock-short"><p>IDs for the built-in attributes and other idents</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="mod" href="serial/index.html" title="datom::serial mod">serial</a></div><div class="item-right docblock-short"><p>Serialization/deserialization functions</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="mod" href="storage/index.html" title="datom::storage mod">storage</a></div><div class="item-right docblock-short"><p>API for storage backends</p>
+</div></div></div><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.AttributeIterator.html" title="datom::AttributeIterator struct">AttributeIterator</a></div><div class="item-right docblock-short"><p>An iterator over attributes in a sled-backed database</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.AttributeSchema.html" title="datom::AttributeSchema struct">AttributeSchema</a></div><div class="item-right docblock-short"><p>An imperative way to generate an attribute’s schema</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Connection.html" title="datom::Connection struct">Connection</a></div><div class="item-right docblock-short"><p>A persistent connection to a database</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Database.html" title="datom::Database struct">Database</a></div><div class="item-right docblock-short"><p>A view of a database at a specific point in time</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Datom.html" title="datom::Datom struct">Datom</a></div><div class="item-right docblock-short"><p>A <em>datom</em>, or a single fact at a single point in time. Short for
+<em>data atom</em>.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.DatomIterator.html" title="datom::DatomIterator struct">DatomIterator</a></div><div class="item-right docblock-short"><p>An iterator over <a href="struct.Datom.html" title="Datom">Datom</a>s</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Entity.html" title="datom::Entity struct">Entity</a></div><div class="item-right docblock-short"><p>An entity in a database</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.ID.html" title="datom::ID struct">ID</a></div><div class="item-right docblock-short"><p>An entity ID</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Transaction.html" title="datom::Transaction struct">Transaction</a></div><div class="item-right docblock-short"><p>A set of facts which can be transacted into a database connection</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.TransactionRecord.html" title="datom::TransactionRecord struct">TransactionRecord</a></div><div class="item-right docblock-short"><p>The record of a past transaction</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.TransactionResult.html" title="datom::TransactionResult struct">TransactionResult</a></div><div class="item-right docblock-short"><p>The result of running a <a href="struct.Transaction.html">Transaction</a> on a
+<a href="struct.Connection.html" title="Connection">Connection</a></p>
+</div></div></div><h2 id="enums" class="small-section-header"><a href="#enums">Enums</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.AttributeType.html" title="datom::AttributeType enum">AttributeType</a></div><div class="item-right docblock-short"><p>The type of an attribute’s values</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.ConnectionError.html" title="datom::ConnectionError enum">ConnectionError</a></div><div class="item-right docblock-short"><p>Network/disk errors</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.DatomType.html" title="datom::DatomType enum">DatomType</a></div><div class="item-right docblock-short"><p>Whether a <a href="struct.Datom.html">datom</a> is showing an addition or a retraction</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.EID.html" title="datom::EID enum">EID</a></div><div class="item-right docblock-short"><p>An un-resolved entity <a href="struct.ID.html" title="ID">ID</a>, which can be used to resolve entities by
+<a href="crate::builtin_idents::ident">ident</a> or
+<a href="crate::builtin_idents::unique">unique</a> attribute</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.EntityResult.html" title="datom::EntityResult enum">EntityResult</a></div><div class="item-right docblock-short"><p>The result of getting an attribute on an entity</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.Fact.html" title="datom::Fact enum">Fact</a></div><div class="item-right docblock-short"><p>A fact which hasn’t yet been converted to a <a href="struct.Datom.html" title="Datom">Datom</a> (or set of
+<a href="struct.Datom.html" title="Datom">Datom</a>s)</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.Index.html" title="datom::Index enum">Index</a></div><div class="item-right docblock-short"><p>The four indices used in the underlying data store. The names refer
+to the serialization order, and by extension the sort order.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.QueryError.html" title="datom::QueryError enum">QueryError</a></div><div class="item-right docblock-short"><p>Errors during a <a href="struct.Database.html">Database</a> query</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.StorageError.html" title="datom::StorageError enum">StorageError</a></div><div class="item-right docblock-short"><p>An error in the underlying storage backend</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.TransactionError.html" title="datom::TransactionError enum">TransactionError</a></div><div class="item-right docblock-short"><p>Errors during a <a href="struct.Transaction.html">Transaction</a></p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.Value.html" title="datom::Value enum">Value</a></div><div class="item-right docblock-short"><p>An attribute value.</p>
+</div></div></div><h2 id="traits" class="small-section-header"><a href="#traits">Traits</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Transactable.html" title="datom::Transactable trait">Transactable</a></div><div class="item-right docblock-short"><p>A type which can be appended to a transaction</p>
+</div></div></div><h2 id="functions" class="small-section-header"><a href="#functions">Functions</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.new_dynamic_connection.html" title="datom::new_dynamic_connection fn">new_dynamic_connection</a></div><div class="item-right docblock-short"><p>Create a new connection which uses a dynamically dispatched storage
+backend</p>
+</div></div></div><h2 id="types" class="small-section-header"><a href="#types">Type Definitions</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="type" href="type.DynamicConnection.html" title="datom::DynamicConnection type">DynamicConnection</a></div><div class="item-right docblock-short"><p>A connection which uses a dynamically dispatched storage backend</p>
+</div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="datom" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (62b272d25 2022-07-21)" ></div>
+</body></html>

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["RedBlackTreeSet","A persistent set with structural sharing.  This implementation uses a red-black tree."]],"type":[["Iter",""],["RangeIter",""],["RedBlackTreeSetSync",""]]};

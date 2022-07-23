@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["datom"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/alloc/string/trait.ToString.html\" title=\"trait alloc::string::ToString\">ToString</a> for <a class=\"struct\" href=\"datom/struct.ID.html\" title=\"struct datom::ID\">ID</a>","synthetic":false,"types":["datom::types::id::ID"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["len","Gets the length of a `napi_value` containing a JavaScript Array."],["new",""]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["argv","Returns the function arguments as a `SmallVec<[Local; 8]>`"],["data","Mutates the `out` argument provided to refer to the associated data value of the `napi_callback_info`."],["is_construct",""],["len","Gets the number of arguments passed to the function."],["this",""]],"struct":[["CCallback",""]]};

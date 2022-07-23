@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["jni"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/alloc/borrow/trait.ToOwned.html\" title=\"trait alloc::borrow::ToOwned\">ToOwned</a> for <a class=\"struct\" href=\"jni/strings/struct.JNIStr.html\" title=\"struct jni::strings::JNIStr\">JNIStr</a>","synthetic":false,"types":["jni::wrapper::strings::ffi_str::JNIStr"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

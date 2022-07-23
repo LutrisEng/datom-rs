@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["Vendor","Supported vendors enum"]],"struct":[["CiInfo","CI info"]]};

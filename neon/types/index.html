@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Representations of JavaScript’s core builtin types."><meta name="keywords" content="rust, rustlang, rust-lang, types"><title>neon::types - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../neon/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../neon/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"><a href="#">Module types</a></h2><div class="sidebar-elems"><section><div class="block"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Definitions</a></li></ul></div></section></div></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../neon/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1">
+                                <a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div>
+                        </div></form></nav></div><section id="main-content" class="content"><div class="main-heading">
+    <h1 class="fqn"><span class="in-band">Module <a href="../index.html">neon</a>::<wbr><a class="mod" href="#">types</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../../src/neon/types/mod.rs.html#1-776">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Representations of JavaScript’s core builtin types.</p>
+<h3 id="modeling-javascript-types"><a href="#modeling-javascript-types">Modeling JavaScript Types</a></h3>
+<p>All JavaScript values in Neon implement the abstract <a href="trait.Value.html" title="Value"><code>Value</code></a> trait, which
+is the most generic way to work with JavaScript values. Neon provides a
+number of types that implement this trait, each representing a particular
+type of JavaScript value.</p>
+<p>By convention, JavaScript types in Neon have the prefix <code>Js</code> in their name,
+such as <a href="struct.JsNumber.html"><code>JsNumber</code></a> (for the JavaScript <code>number</code>
+type) or <a href="struct.JsFunction.html"><code>JsFunction</code></a> (for the JavaScript
+<code>function</code> type).</p>
+<h4 id="handles-and-casts"><a href="#handles-and-casts">Handles and Casts</a></h4>
+<p>Access to JavaScript values in Neon works through <a href="../handle/index.html">handles</a>,
+which ensure the safe interoperation between Rust and the JavaScript garbage
+collector. This means, for example, a Rust variable that stores a JavaScript string
+will have the type <code>Handle&lt;JsString&gt;</code> rather than <a href="struct.JsString.html"><code>JsString</code></a>.</p>
+<p>Neon types model the JavaScript type hierarchy through the use of <em>casts</em>.
+The <a href="../handle/struct.Handle.html#method.upcast"><code>Handle::upcast()</code></a> method safely converts
+a handle to a JavaScript value of one type into a handle to a value of its
+supertype. For example, it’s safe to treat a <a href="struct.JsArray.html"><code>JsArray</code></a>
+as a <a href="struct.JsObject.html"><code>JsObject</code></a>, so you can do an “upcast” and it will
+never fail:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn</span> <span class="ident">as_object</span>(<span class="ident">array</span>: <span class="ident">Handle</span><span class="op">&lt;</span><span class="ident">JsArray</span><span class="op">&gt;</span>) -&gt; <span class="ident">Handle</span><span class="op">&lt;</span><span class="ident">JsObject</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">object</span>: <span class="ident">Handle</span><span class="op">&lt;</span><span class="ident">JsObject</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">array</span>.<span class="ident">upcast</span>();
+    <span class="ident">object</span>
+}</code></pre></div>
+<p>Unlike upcasts, the <a href="../handle/struct.Handle.html#method.downcast"><code>Handle::downcast()</code></a> method
+requires a runtime check to test a value’s type at runtime, so it can fail with
+a <a href="../handle/struct.DowncastError.html"><code>DowncastError</code></a>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn</span> <span class="ident">as_array</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(
+    <span class="ident">cx</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
+    <span class="ident">object</span>: <span class="ident">Handle</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">JsObject</span><span class="op">&gt;</span>
+) -&gt; <span class="ident">JsResult</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">JsArray</span><span class="op">&gt;</span> {
+    <span class="ident">object</span>.<span class="ident">downcast</span>(<span class="ident">cx</span>).<span class="ident">or_throw</span>(<span class="ident">cx</span>)
+}</code></pre></div>
+<h4 id="the-javascript-type-hierarchy"><a href="#the-javascript-type-hierarchy">The JavaScript Type Hierarchy</a></h4>
+<p><img src="https://raw.githubusercontent.com/neon-bindings/neon/main/doc/types.jpg" alt="The Neon type hierarchy, described in detail below." /></p>
+<p>The JavaScript type hierarchy includes:</p>
+<ul>
+<li><a href="struct.JsValue.html"><code>JsValue</code></a>: This is the top of the type hierarchy, and can refer to
+any JavaScript value. (For TypeScript programmers, this can be thought of as
+similar to TypeScript’s <a href="https://mariusschulz.com/blog/the-unknown-type-in-typescript#the-unknown-type"><code>unknown</code></a> type.)</li>
+<li><a href="struct.JsObject.html"><code>JsObject</code></a>: This is the top of the object type hierarchy. Object
+types all implement the <a href="../object/trait.Object.html"><code>Object</code></a> trait, which allows
+getting and setting properties.
+<ul>
+<li><strong>Standard object types:</strong> <a href="struct.JsFunction.html"><code>JsFunction</code></a>, <a href="struct.JsArray.html"><code>JsArray</code></a>,
+<a href="struct.JsDate.html"><code>JsDate</code></a>, and <a href="struct.JsError.html"><code>JsError</code></a>.</li>
+<li><strong>Typed arrays:</strong> <a href="struct.JsBuffer.html"><code>JsBuffer</code></a> and <a href="struct.JsArrayBuffer.html"><code>JsArrayBuffer</code></a>.</li>
+<li><strong>Custom types:</strong> <a href="struct.JsBox.html"><code>JsBox</code></a>, a special Neon type that allows the creation
+of custom objects that own Rust data structures.</li>
+</ul>
+</li>
+<li><strong>Primitive types:</strong> These are the built-in JavaScript datatypes that are not
+object types: <a href="struct.JsNumber.html"><code>JsNumber</code></a>, <a href="struct.JsBoolean.html"><code>JsBoolean</code></a>,
+<a href="struct.JsString.html"><code>JsString</code></a>, <a href="struct.JsNull.html"><code>JsNull</code></a>, and <a href="struct.JsUndefined.html"><code>JsUndefined</code></a>.</li>
+</ul>
+</div></details><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.BinaryData.html" title="neon::types::BinaryData struct">BinaryData</a></div><div class="item-right docblock-short"><p>A reference to the internal backing buffer data of a <code>Buffer</code> or <code>ArrayBuffer</code> object, which can be accessed via the <code>Borrow</code> and <code>BorrowMut</code> traits.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.DateError.html" title="neon::types::DateError struct">DateError</a></div><div class="item-right docblock-short"><p>The Error struct for a Date</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.JsArray.html" title="neon::types::JsArray struct">JsArray</a></div><div class="item-right docblock-short"><p>A JavaScript array object, i.e. a value for which <code>Array.isArray</code>
+would return <code>true</code>.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.JsArrayBuffer.html" title="neon::types::JsArrayBuffer struct">JsArrayBuffer</a></div><div class="item-right docblock-short"><p>The standard JS <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer"><code>ArrayBuffer</code></a> type.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.JsBoolean.html" title="neon::types::JsBoolean struct">JsBoolean</a></div><div class="item-right docblock-short"><p>A JavaScript boolean primitive value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.JsBox.html" title="neon::types::JsBox struct">JsBox</a></div><div class="item-right docblock-short"><p>A smart pointer for Rust data managed by the JavaScript engine.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.JsBuffer.html" title="neon::types::JsBuffer struct">JsBuffer</a></div><div class="item-right docblock-short"><p>The Node <a href="https://nodejs.org/api/buffer.html"><code>Buffer</code></a> type.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.JsDate.html" title="neon::types::JsDate struct">JsDate</a></div><div class="item-right docblock-short"><p>A JavaScript Date object</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.JsError.html" title="neon::types::JsError struct">JsError</a></div><div class="item-right docblock-short"><p>A JS <code>Error</code> object.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.JsFunction.html" title="neon::types::JsFunction struct">JsFunction</a></div><div class="item-right docblock-short"><p>A JavaScript function object.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.JsNull.html" title="neon::types::JsNull struct">JsNull</a></div><div class="item-right docblock-short"><p>The JavaScript <code>null</code> value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.JsNumber.html" title="neon::types::JsNumber struct">JsNumber</a></div><div class="item-right docblock-short"><p>A JavaScript number value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.JsObject.html" title="neon::types::JsObject struct">JsObject</a></div><div class="item-right docblock-short"><p>A JavaScript object.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.JsString.html" title="neon::types::JsString struct">JsString</a></div><div class="item-right docblock-short"><p>A JavaScript string primitive value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.JsUndefined.html" title="neon::types::JsUndefined struct">JsUndefined</a></div><div class="item-right docblock-short"><p>The JavaScript <code>undefined</code> value.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.JsValue.html" title="neon::types::JsValue struct">JsValue</a></div><div class="item-right docblock-short"><p>A JavaScript value of any type.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.StringOverflow.html" title="neon::types::StringOverflow struct">StringOverflow</a></div><div class="item-right docblock-short"><p>An error produced when constructing a string that exceeds the JS engine’s maximum string size.</p>
+</div></div></div><h2 id="enums" class="small-section-header"><a href="#enums">Enums</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.DateErrorKind.html" title="neon::types::DateErrorKind enum">DateErrorKind</a></div><div class="item-right docblock-short"><p>The error kinds corresponding to <code>DateError</code></p>
+</div></div></div><h2 id="traits" class="small-section-header"><a href="#traits">Traits</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.BinaryViewType.html" title="neon::types::BinaryViewType trait">BinaryViewType</a></div><div class="item-right docblock-short"><p>The trait for element types by which a buffer’s binary data can be indexed.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Finalize.html" title="neon::types::Finalize trait">Finalize</a></div><div class="item-right docblock-short"><p>Finalize is executed on the main JavaScript thread and executed immediately
+before garbage collection.
+Values contained by a <code>JsBox</code> must implement <code>Finalize</code>.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Value.html" title="neon::types::Value trait">Value</a></div><div class="item-right docblock-short"><p>The trait shared by all JavaScript values.</p>
+</div></div></div><h2 id="types" class="small-section-header"><a href="#types">Type Definitions</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="type" href="type.StringResult.html" title="neon::types::StringResult type">StringResult</a></div><div class="item-right docblock-short"><p>The result of constructing a new <code>JsString</code>.</p>
+</div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="neon" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (62b272d25 2022-07-21)" ></div>
+</body></html>

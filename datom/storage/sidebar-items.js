@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"trait":[["DurableStorage","A storage backend which persists its state. This may take the form of a file on disk, a remote database, or something else."],["Storage","A [std::collections::BTreeSet]-like storage backend"]],"type":[["Item","A serialized datom"],["ItemIterator","An iterator over a sorted set of datoms"]]};

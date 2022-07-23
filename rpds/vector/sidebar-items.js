@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["IterPtr",""],["Vector","A persistent vector with structural sharing."]],"type":[["Iter",""],["VectorSync",""]]};

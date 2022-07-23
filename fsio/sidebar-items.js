@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":[["directory","directory"],["error","error"],["file","file"],["path","path"],["types","types"]]};

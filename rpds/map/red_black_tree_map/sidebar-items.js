@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["IterPtr",""],["RangeIterPtr",""],["RedBlackTreeMap","A persistent map with structural sharing.  This implementation uses a red-black tree."]],"type":[["Iter",""],["IterKeys",""],["IterValues",""],["RangeIter",""],["RedBlackTreeMapSync",""]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"type":[["FsIOResult","Result aliasing for project-wide error type."]]};

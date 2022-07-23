@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["ArcK","Type constructors for `Arc` pointers."],["RcK","Type constructors for `Rc` pointers."]],"trait":[["SharedPointerKind","Trait for type constructors of reference-counting pointers."]]};

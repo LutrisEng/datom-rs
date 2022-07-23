@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["EnvmntError","Enumeration of possible errors emitted in this library"]]};

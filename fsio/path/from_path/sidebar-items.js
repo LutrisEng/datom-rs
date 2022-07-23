@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"trait":[["FromPath","Defines as path trait."]]};
