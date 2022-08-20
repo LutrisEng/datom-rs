@@ -9,15 +9,15 @@ use common::{
     schema::{schema_transacted_properly, with_connection},
 };
 use datom::{EntityResult, Transaction, TransactionError, EID};
-use miette::DiagnosticResult;
+use miette::Result;
 
 #[test]
-fn schema_only() -> DiagnosticResult<()> {
+fn schema_only() -> Result<()> {
     with_connection(|conn| schema_transacted_properly(&conn))
 }
 
 #[test]
-fn users() -> DiagnosticResult<()> {
+fn users() -> Result<()> {
     with_connection(|conn| {
         schema_transacted_properly(&conn)?;
         transact_users(&conn)?;
@@ -27,7 +27,7 @@ fn users() -> DiagnosticResult<()> {
 }
 
 #[test]
-fn retract_repeated_value() -> DiagnosticResult<()> {
+fn retract_repeated_value() -> Result<()> {
     with_connection(|conn| {
         schema_transacted_properly(&conn)?;
         transact_users(&conn)?;
@@ -37,7 +37,7 @@ fn retract_repeated_value() -> DiagnosticResult<()> {
         tx.retract_value(
             EID::unique("user/username".into(), "pmc".into()),
             "user/repeated-numbers".into(),
-            5678.into(),
+            5678i32.into(),
         );
         conn.transact(tx)?;
 
@@ -45,7 +45,7 @@ fn retract_repeated_value() -> DiagnosticResult<()> {
         let user = db.entity(EID::unique("user/username".into(), "pmc".into()))?;
         assert_eq!(
             user.get("user/repeated-numbers".into())?,
-            EntityResult::Repeated(vec![EntityResult::Value(1234.into())])
+            EntityResult::Repeated(vec![EntityResult::Value(1234i32.into())])
         );
 
         let mut tx = Transaction::new();
@@ -64,7 +64,7 @@ fn retract_repeated_value() -> DiagnosticResult<()> {
 }
 
 #[test]
-fn database_is_persistent() -> DiagnosticResult<()> {
+fn database_is_persistent() -> Result<()> {
     with_connection(|conn| {
         schema_transacted_properly(&conn)?;
         transact_users(&conn)?;

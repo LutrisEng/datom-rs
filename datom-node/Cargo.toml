@@ -24,6 +24,6 @@ crate-type = ["cdylib"]
 datom = { path = "../datom" }
 
 [dependencies.neon]
-version = "0.9"
+version = "0.10"
 default-features = false
 features = ["napi-6"]

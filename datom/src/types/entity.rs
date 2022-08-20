@@ -25,7 +25,7 @@ impl<'connection, S: Storage> PartialEq<Self> for Entity<'connection, S> {
 
 impl<'connection, S: Storage> Entity<'connection, S> {
     /// Get the ID of this entity
-    pub fn id(&self) -> &ID {
+    pub const fn id(&self) -> &ID {
         &self.id
     }
 
@@ -107,18 +107,13 @@ impl<'connection, S: Storage> Entity<'connection, S> {
                 })
                 .unwrap_or(Ok(EntityResult::NotFound))?
         };
-        if let EntityResult::NotFound = result {
+        if result == EntityResult::NotFound {
             let builtin = builtin_idents::BUILTIN_ENTITIES.get(&self.id);
-            if let Some(builtin) = builtin {
-                let val = builtin.get(&attribute);
-                if let Some(val) = val {
-                    Ok(val.to_owned().into())
-                } else {
-                    Ok(EntityResult::NotFound)
-                }
-            } else {
-                Ok(EntityResult::NotFound)
-            }
+            builtin
+                .and_then(|builtin| builtin.get(&attribute))
+                .map_or(Ok(EntityResult::NotFound), |val| {
+                    Ok(EntityResult::Value(val.to_owned()))
+                })
         } else {
             Ok(result)
         }

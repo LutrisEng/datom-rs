@@ -55,7 +55,7 @@ impl Index {
     }
 
     /// Map byte representation to an [Index]
-    pub fn from_byte(b: u8) -> Self {
+    pub const fn from_byte(b: u8) -> Self {
         match b {
             0 => Self::EAVT,
             1 => Self::AEVT,

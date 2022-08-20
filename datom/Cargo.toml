@@ -20,20 +20,20 @@ default = ["redblacktreeset", "sled"]
 redblacktreeset = ["rpds", "arc-swap", "archery"]
 
 [dependencies]
-uuid = { version = "0.8", features = ["v4"] }
+uuid = { version = "1", features = ["v4"] }
 num-bigint = "0.4"
 datom-bigdecimal = "0.3.0"
 chrono = "0.4"
 once_cell = "1"
 thiserror = "1"
-miette = "1"
+miette = "5"
 
 # sled storage backend
 sled = { version = "0.34", optional = true }
 
 # redblacktreeset storage backend
-rpds = { version = "0.10", optional = true }
-arc-swap = { version = "1.3", optional = true }
+rpds = { version = "0.12", optional = true }
+arc-swap = { version = "1", optional = true }
 archery = { version = "0.4", optional = true }
 
 [dev-dependencies.cargo-husky]

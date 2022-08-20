@@ -3,7 +3,7 @@
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
 #![deny(missing_docs)]
-#![warn(clippy::nursery, clippy::cargo)]
+#![warn(clippy::nursery)]
 #![doc(
     html_logo_url = "https://avatars.githubusercontent.com/u/85201395?s=200&v=4",
     html_favicon_url = "https://lutris.engineering/favicon-32x32.png"
