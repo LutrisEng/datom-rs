@@ -1,4 +1,4 @@
-<!-- SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc -->
+<!-- SPDX-FileCopyrightText: 2022 Lutris, Inc -->
 <!-- SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent -->
 <!-- SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering> -->
 
@@ -72,7 +72,7 @@ datom-rs is supported with `rustc` 1.54 and newer.
         <tr>
             <td>
                 <a href="https://lutris.engineering/?utm_source=lutrisengineering&utm_medium=github&utm_campaign=datom-rs"
-                    title="Lutris Engineering, Inc">
+                    title="Lutris, Inc">
                     <img alt="Lutris Engineering"
                         src="https://user-images.githubusercontent.com/1830959/129986000-d00e9309-a657-40a0-8cf4-518a5cd7dfae.png"
                         width="400" />

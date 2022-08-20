@@ -1,11 +1,11 @@
-# SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+# SPDX-FileCopyrightText: 2022 Lutris, Inc
 # SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 # SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
 [package]
 name = "datom-node"
 version = "0.1.1-pre4"
-authors = ["Lutris Engineering, Inc <contact@lutris.engineering>"]
+authors = ["Lutris, Inc <contact@lutris.engineering>"]
 edition = "2018"
 description = "Node.js bindings for an open-source database inspired by Datomic"
 readme = "../README.md"

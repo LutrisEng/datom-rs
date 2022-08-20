@@ -10,7 +10,7 @@
     "test": "cargo test",
     "jest": "jest"
   },
-  "author": "Lutris Engineering, Inc <contact@lutris.engineering>",
+  "author": "Lutris, Inc <contact@lutris.engineering>",
   "license": "BlueOak-1.0.0 OR BSD-2-Clause-Patent",
   "devDependencies": {
     "cargo-cp-artifact": "^0.1",

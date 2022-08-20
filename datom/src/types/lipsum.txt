@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+// SPDX-FileCopyrightText: 2022 Lutris, Inc
 // SPDX-FileType: GENERATED
 // SPDX-License-Identifier: CC0-1.0
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
