@@ -71,15 +71,14 @@ datom-rs is supported with `rustc` 1.54 and newer.
     <tbody>
         <tr>
             <td>
-                <a href="https://lutris.engineering/?utm_source=lutrisengineering&utm_medium=github&utm_campaign=datom-rs"
+                <a href="https://lutris.engineering/?utm_source=lutris&utm_medium=github&utm_campaign=datom-rs"
                     title="Lutris, Inc">
-                    <img alt="Lutris Engineering"
-                        src="https://user-images.githubusercontent.com/1830959/129986000-d00e9309-a657-40a0-8cf4-518a5cd7dfae.png"
+                    <img alt="Lutris"
+                        src="assets/lutris.svg"
                         width="400" />
                 </a>
             </td>
-            <td>Lutris Engineering runs the datom-rs project.</td>
+            <td>Lutris runs the datom-rs project.</td>
         </tr>
     </tbody>
 </table>
-
