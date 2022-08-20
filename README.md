@@ -74,7 +74,7 @@ datom-rs is supported with `rustc` 1.54 and newer.
                 <a href="https://lutris.engineering/?utm_source=lutris&utm_medium=github&utm_campaign=datom-rs"
                     title="Lutris, Inc">
                     <img alt="Lutris"
-                        src="assets/lutris.svg"
+                        src="website/assets/lutris.svg"
                         width="400" />
                 </a>
             </td>
