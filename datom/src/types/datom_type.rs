@@ -3,7 +3,7 @@
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
 /// Whether a [datom](crate::Datom) is showing an addition or a retraction
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum DatomType {
     /// Adding an attribute value to an entity
     Addition,

@@ -75,7 +75,7 @@ impl DoubleEndedIterator for RedBlackTreeSetRangeIter {
 
 impl Storage for RedBlackTreeSetStorage {
     fn range(&self, r: Range<&[u8]>) -> Result<ItemIterator<'_>, StorageError> {
-        let set = (&*self.set.load_full()).clone();
+        let set = (*self.set.load_full()).clone();
         Ok(Box::new(RedBlackTreeSetRangeIter {
             set,
             last_front: None,
@@ -86,7 +86,7 @@ impl Storage for RedBlackTreeSetStorage {
     }
 
     fn insert(&self, is: &[Item]) -> Result<(), StorageError> {
-        let set = (&*self.set.load_full()).clone();
+        let set = (*self.set.load_full()).clone();
         let set = is.iter().fold(set, |s, i| s.insert(i.to_owned()));
         self.set.swap(Arc::new(set));
         Ok(())
