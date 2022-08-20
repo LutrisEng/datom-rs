@@ -153,3 +153,24 @@ jobs:
           cache: "gradle"
       - uses: Swatinem/rust-cache@v1
       - run: cargo test --all --verbose -- --nocapture
+
+  deb:
+    name: Build Debian packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: "1.63"
+          profile: minimal
+          override: true
+      - uses: Swatinem/rust-cache@v1
+      - run: cargo install cargo-deb cbindgen
+      - run: cd datom-c && ./run_cbindgen.sh
+      - run: cargo deb -p datom-c --variant lib
+      - run: cargo deb -p datom-c --variant dev
+      - run: sudo apt-get install -y ./target/debian/*.deb
+      - uses: actions/upload-artifact@v3
+        with:
+          name: debian-packages
+          path: target/debian

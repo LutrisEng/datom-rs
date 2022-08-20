@@ -25,3 +25,20 @@ libc = "0.2"
 
 [build-dependencies]
 cbindgen = "0.24"
+
+[package.metadata.deb.variants.lib]
+name = "libdatom"
+extended-description = "C bindings for an open-source database inspired by Datomic"
+depends = "$auto"
+assets = [
+  ["target/release/libdatom_c.so", "usr/lib/libdatom.so", "644"],
+]
+
+[package.metadata.deb.variants.dev]
+name = "libdatom-dev"
+depends = "$auto, libdatom"
+extended-description = "Development files for C bindings for an open-source database inspired by Datomic"
+assets = [
+  ["target/release/libdatom_c.a", "usr/lib/libdatom.a", "644"],
+  ["datom.h", "usr/include/", "644"]
+]
