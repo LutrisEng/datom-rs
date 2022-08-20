@@ -1,12 +1,12 @@
-# SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+# SPDX-FileCopyrightText: 2022 Lutris, Inc
 # SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 # SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
 [package]
 name = "datom-c"
 version = "0.1.1-pre4"
-authors = ["Lutris Engineering, Inc <contact@lutris.engineering>"]
-edition = "2018"
+authors = ["Lutris, Inc <contact@lutris.engineering>"]
+edition = "2021"
 description = "C bindings for an open-source database inspired by Datomic"
 readme = "../README.md"
 homepage = "https://os.lutris.engineering/datom-rs/"
@@ -24,4 +24,21 @@ datom = { path = "../datom" }
 libc = "0.2"
 
 [build-dependencies]
-cbindgen = "0.20"
+cbindgen = "0.24"
+
+[package.metadata.deb.variants.lib]
+name = "libdatom"
+extended-description = "C bindings for an open-source database inspired by Datomic"
+depends = "$auto"
+assets = [
+  ["target/release/libdatom_c.so", "usr/lib/libdatom.so", "644"],
+]
+
+[package.metadata.deb.variants.dev]
+name = "libdatom-dev"
+depends = "$auto, libdatom"
+extended-description = "Development files for C bindings for an open-source database inspired by Datomic"
+assets = [
+  ["target/release/libdatom_c.a", "usr/lib/libdatom.a", "644"],
+  ["datom.h", "usr/include/", "644"]
+]

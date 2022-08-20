@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+// SPDX-FileCopyrightText: 2022 Lutris, Inc
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
@@ -8,7 +8,7 @@ use datom::{
     builtin_idents, storage::Storage, Connection, Database, DynamicConnection, EntityResult,
     Transactable, Transaction, Value, ID,
 };
-use miette::DiagnosticResult;
+use miette::Result;
 use num_bigint::BigInt;
 use once_cell::sync::Lazy;
 
@@ -56,7 +56,7 @@ static USERS: Lazy<Vec<User>> = Lazy::new(|| {
     .into()
 });
 
-pub fn transact_users(conn: &DynamicConnection) -> DiagnosticResult<()> {
+pub fn transact_users(conn: &DynamicConnection) -> Result<()> {
     let mut tx = Transaction::new();
     for user in USERS.iter() {
         tx.append(user);
@@ -65,7 +65,7 @@ pub fn transact_users(conn: &DynamicConnection) -> DiagnosticResult<()> {
     Ok(())
 }
 
-pub fn db_users_transacted_properly<S: Storage>(db: &Database<'_, S>) -> DiagnosticResult<()> {
+pub fn db_users_transacted_properly<S: Storage>(db: &Database<'_, S>) -> Result<()> {
     for user in USERS.iter() {
         let user_ent = db.entity(user.id.into())?;
         assert_eq!(user_ent.id(), &user.id);
@@ -120,7 +120,7 @@ pub fn db_users_transacted_properly<S: Storage>(db: &Database<'_, S>) -> Diagnos
     Ok(())
 }
 
-pub fn users_transacted_properly<S: Storage>(conn: &Connection<S>) -> DiagnosticResult<()> {
+pub fn users_transacted_properly<S: Storage>(conn: &Connection<S>) -> Result<()> {
     let db = conn.db()?;
     db_users_transacted_properly(&db)
 }

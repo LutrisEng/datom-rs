@@ -1,9 +1,9 @@
-// SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+// SPDX-FileCopyrightText: 2022 Lutris, Inc
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
 #![deny(missing_docs)]
-#![warn(clippy::nursery, clippy::cargo)]
+#![warn(clippy::nursery)]
 #![doc(
     html_logo_url = "https://avatars.githubusercontent.com/u/85201395?s=200&v=4",
     html_favicon_url = "https://lutris.engineering/favicon-32x32.png"
@@ -12,7 +12,7 @@
 //! An open-source database inspired by Datomic.
 //!
 //! ```
-//! // SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+//! // SPDX-FileCopyrightText: 2022 Lutris, Inc
 //! // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 //! // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 //! ```

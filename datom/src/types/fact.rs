@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+// SPDX-FileCopyrightText: 2022 Lutris, Inc
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
@@ -47,21 +47,21 @@ impl Fact {
         db: &Database<'_, S>,
     ) -> Result<Datom, TransactionError> {
         match self {
-            Fact::Add(entity, attribute, value) => Ok(Datom {
+            Self::Add(entity, attribute, value) => Ok(Datom {
                 entity: entity.resolve(db)?,
                 attribute: attribute.resolve(db)?,
                 value,
                 t,
                 datom_type: DatomType::Addition,
             }),
-            Fact::RetractValue(entity, attribute, value) => Ok(Datom {
+            Self::RetractValue(entity, attribute, value) => Ok(Datom {
                 entity: entity.resolve(db)?,
                 attribute: attribute.resolve(db)?,
                 value,
                 t,
                 datom_type: DatomType::Retraction,
             }),
-            Fact::Retract(entity, attribute) => {
+            Self::Retract(entity, attribute) => {
                 let entity = entity.resolve(db)?;
                 let attribute = attribute.resolve(db)?;
                 let value = db.entity(entity.into())?.get(attribute.into())?;

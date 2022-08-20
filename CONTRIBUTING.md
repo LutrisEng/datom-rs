@@ -1,10 +1,10 @@
-<!-- SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc -->
+<!-- SPDX-FileCopyrightText: 2022 Lutris, Inc -->
 <!-- SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent -->
 <!-- SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering> -->
 
-datom-rs is a project of Lutris Engineering, Inc.
+datom-rs is a project of Lutris, Inc.
 
-Before you contribute to a Lutris Engineering project, you must sign the
+Before you contribute to a Lutris project, you must sign the
 Contributor Certificate of Origin. The CCO simply certifies that you
 either own your contribution or have the rights to contribute it under
 the project's license.
@@ -38,7 +38,7 @@ you would add the following comment:
 // SPDX-FileContributor: John Doe <john@lutris.engineering>
 ```
 
-Contributions on behalf of Lutris Engineering are the only contributions
+Contributions on behalf of Lutris are the only contributions
 exempt from adding the company's name to the `SPDX-FileContributor`
 comment. The `lutris.engineering` email domain name is considered
-"well-known" to refer to Lutris Engineering, Inc.
+"well-known" to refer to Lutris, Inc.

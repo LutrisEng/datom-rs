@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+// SPDX-FileCopyrightText: 2022 Lutris, Inc
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
@@ -11,7 +11,7 @@ in [Datomic's documentation] in great detail.
 
 [Datomic's documentation]: https://docs.datomic.com/on-prem/query/indexes.html
 */
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[repr(C)]
 pub enum Index {
     /**
@@ -55,7 +55,7 @@ impl Index {
     }
 
     /// Map byte representation to an [Index]
-    pub fn from_byte(b: u8) -> Self {
+    pub const fn from_byte(b: u8) -> Self {
         match b {
             0 => Self::EAVT,
             1 => Self::AEVT,

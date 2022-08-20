@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+// SPDX-FileCopyrightText: 2022 Lutris, Inc
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
@@ -51,14 +51,14 @@ impl PartialOrd for StorageError {
 impl Ord for StorageError {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         let s = match *self {
-            StorageError::ConcurrencyError => 0,
-            StorageError::IOError(_) => 1,
-            StorageError::Miscellaneous(_) => 2,
+            Self::ConcurrencyError => 0,
+            Self::IOError(_) => 1,
+            Self::Miscellaneous(_) => 2,
         };
         let o = match *other {
-            StorageError::ConcurrencyError => 0,
-            StorageError::IOError(_) => 1,
-            StorageError::Miscellaneous(_) => 2,
+            Self::ConcurrencyError => 0,
+            Self::IOError(_) => 1,
+            Self::Miscellaneous(_) => 2,
         };
         s.cmp(&o)
     }

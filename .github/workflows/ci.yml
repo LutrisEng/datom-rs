@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+# SPDX-FileCopyrightText: 2022 Lutris, Inc
 # SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 # SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: "1.63"
           profile: minimal
           override: true
       - uses: Swatinem/rust-cache@v1
@@ -39,7 +39,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: "1.63"
           components: rustfmt, clippy
           profile: minimal
           override: true
@@ -53,15 +53,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --all
           name: Clippy
-
-  security_audit:
-    name: Security Audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions-rs/audit-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
   reuse:
     name: REUSE
@@ -108,13 +99,6 @@ jobs:
   coverage:
     name: Test with coverage
     runs-on: ubuntu-latest
-    needs:
-      - check
-      - fmt
-      - security_audit
-      - reuse
-      - validate_citation
-      - docs
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
@@ -140,20 +124,16 @@ jobs:
   test:
     name: Test on ${{ matrix.os }} with Rust ${{ matrix.rust }}
     runs-on: ${{ matrix.os }}
-    needs:
-      - coverage
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         rust:
-          # Ensure nightly doesn't break anything
-          - nightly
           # Ensure nothing breaks in the next Rust release
           - beta
           # Ensure nothing breaks in the current Rust release
           - stable
           # Ensure the MSRV doesn't break
-          - "1.54"
+          - "1.63"
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
@@ -173,3 +153,24 @@ jobs:
           cache: "gradle"
       - uses: Swatinem/rust-cache@v1
       - run: cargo test --all --verbose -- --nocapture
+
+  deb:
+    name: Build Debian packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: "1.63"
+          profile: minimal
+          override: true
+      - uses: Swatinem/rust-cache@v1
+      - run: cargo install cargo-deb cbindgen
+      - run: cd datom-c && ./run_cbindgen.sh
+      - run: cargo deb -p datom-c --variant lib
+      - run: cargo deb -p datom-c --variant dev
+      - run: sudo apt-get install -y ./target/debian/*.deb
+      - uses: actions/upload-artifact@v3
+        with:
+          name: debian-packages
+          path: target/debian

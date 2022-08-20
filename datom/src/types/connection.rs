@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+// SPDX-FileCopyrightText: 2022 Lutris, Inc
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
@@ -78,18 +78,14 @@ impl<S: Storage> Connection<S> {
     pub fn latest_t(&self) -> Result<u64, ConnectionError> {
         if let Some(res) = self.storage.range(vec_range_slice(&tr_range()))?.last() {
             let bytes = res?;
-            if let Some(tx) = deserialize_tr(&bytes) {
-                Ok(tx.t)
-            } else {
-                Err(ConnectionError::InvalidData)
-            }
+            deserialize_tr(&bytes).map_or(Err(ConnectionError::InvalidData), |tx| Ok(tx.t))
         } else {
             Ok(0)
         }
     }
 
     /// Fetch the t-value for the latest transaction
-    pub fn as_of(&self, t: u64) -> Result<Database<'_, S>, ConnectionError> {
+    pub const fn as_of(&self, t: u64) -> Result<Database<'_, S>, ConnectionError> {
         Ok(Database {
             connection: self,
             t,

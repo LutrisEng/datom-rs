@@ -1,9 +1,9 @@
-// SPDX-FileCopyrightText: 2021 Lutris Engineering, Inc
+// SPDX-FileCopyrightText: 2022 Lutris, Inc
 // SPDX-License-Identifier: BlueOak-1.0.0 OR BSD-2-Clause-Patent
 // SPDX-FileContributor: Piper McCorkle <piper@lutris.engineering>
 
 /// Whether a [datom](crate::Datom) is showing an addition or a retraction
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum DatomType {
     /// Adding an attribute value to an entity
     Addition,
@@ -21,7 +21,7 @@ impl DatomType {
     }
 
     /// Map byte representation to a [DatomType]
-    pub fn from_byte(b: u8) -> Self {
+    pub const fn from_byte(b: u8) -> Self {
         match b {
             0 => Self::Addition,
             1 => Self::Retraction,
