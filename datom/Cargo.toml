@@ -20,7 +20,7 @@ default = ["redblacktreeset", "sled"]
 redblacktreeset = ["rpds", "arc-swap", "archery"]
 
 [dependencies]
-uuid = { version = "0.8", features = ["v4"] }
+uuid = { version = "1.2", features = ["v4"] }
 num-bigint = "0.4"
 datom-bigdecimal = "0.3.0"
 chrono = "0.4"
