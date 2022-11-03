@@ -20,13 +20,13 @@ jobs:
     name: Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           profile: minimal
           override: true
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:
           command: check
@@ -36,14 +36,14 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           components: rustfmt, clippy
           profile: minimal
           override: true
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:
           command: fmt
@@ -58,7 +58,7 @@ jobs:
     name: Security Audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - uses: actions-rs/audit-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -67,8 +67,8 @@ jobs:
     name: REUSE
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
       - run: pip install reuse
       - run: reuse lint
 
@@ -76,20 +76,20 @@ jobs:
     name: Validate CITATION.cff
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: LutrisEng/validate-cff@v1.0.0
+      - uses: actions/checkout@v3
+      - uses: LutrisEng/validate-cff@v1
 
   docs:
     name: Build Docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           profile: minimal
           override: true
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:
           command: doc
@@ -116,13 +116,13 @@ jobs:
       - validate_citation
       - docs
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           profile: minimal
           override: true
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
         with:
           key: coverage
       - run: cargo test --verbose -p datom -- --nocapture
@@ -155,21 +155,21 @@ jobs:
           # Ensure the MSRV doesn't break
           - "1.65"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.rust }}
           profile: minimal
           override: true
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
-          node-version: "14"
+          node-version: "18"
           cache: "npm"
           cache-dependency-path: "datom-node/package-lock.json"
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: "adopt"
-          java-version: "11"
+          java-version: "17"
           cache: "gradle"
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - run: cargo test --all --verbose -- --nocapture
