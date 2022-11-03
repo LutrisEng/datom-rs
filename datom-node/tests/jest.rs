@@ -4,24 +4,28 @@
 
 use std::process::Command;
 
-#[test]
-fn jest() -> Result<(), Box<dyn std::error::Error>> {
+fn command_wrapper() -> Command {
     if cfg!(windows) {
-        let status = Command::new("powershell")
-            .arg("-Command")
-            .arg("npm ci")
-            .status()?;
-        assert!(status.success());
-        let status = Command::new("powershell")
-            .arg("-Command")
-            .arg("npm run jest")
-            .status()?;
-        assert!(status.success());
+        let mut command = Command::new("powershell");
+        command.arg("-Command");
+        command
     } else {
-        let status = Command::new("npm").arg("ci").status()?;
-        assert!(status.success());
-        let status = Command::new("npm").arg("run").arg("jest").status()?;
-        assert!(status.success());
+        let mut command = Command::new("sh");
+        command.arg("-c");
+        command
     }
-    Ok(())
+}
+
+fn run_command(command: &str) {
+    assert!(
+        command_wrapper().arg(command).status().unwrap().success(),
+        "Command {:#?} failed",
+        command
+    );
+}
+
+#[test]
+fn jest() {
+    run_command("npm ci");
+    run_command("npm run jest");
 }

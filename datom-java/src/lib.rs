@@ -23,5 +23,5 @@ pub extern "system" fn Java_engineering_lutris_datom_HelloWorld_hello(
         .new_string(format!("Hello, {}!", input))
         .expect("Couldn't create java string!");
 
-    output.into_inner()
+    output.into_raw()
 }

@@ -11,7 +11,7 @@ in [Datomic's documentation] in great detail.
 
 [Datomic's documentation]: https://docs.datomic.com/on-prem/query/indexes.html
 */
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[repr(C)]
 pub enum Index {
     /**

@@ -8,7 +8,7 @@ use crate::{DatomType, Value, ID};
 A _datom_, or a single fact at a single point in time. Short for
 _data atom_.
 */
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Datom {
     /// The entity this [Datom] is attached to
     pub entity: ID,

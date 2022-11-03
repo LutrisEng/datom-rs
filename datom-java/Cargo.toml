@@ -6,7 +6,8 @@
 name = "datom-java"
 version = "0.1.1-pre4"
 authors = ["Lutris, Inc <contact@lutris.engineering>"]
-edition = "2018"
+edition = "2021"
+rust-version = "1.65"
 description = "Java bindings for an open-source database inspired by Datomic"
 readme = "../README.md"
 homepage = "https://os.lutris.engineering/datom-rs/"
@@ -21,4 +22,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 datom = { path = "../datom" }
-jni = "0.19"
+jni = "0.20"

@@ -32,40 +32,39 @@ impl Value {
     /// Serialize the [Value] to a [Vec<u8>]
     pub fn bytes(&self) -> Vec<u8> {
         match self {
-            Value::String(str) => {
+            Self::String(str) => {
                 let str_bytes = str.as_bytes();
                 let mut v = vec![0; 1 + str_bytes.len()];
                 v[0] = 0;
-                (&mut v[1..str_bytes.len() + 1]).copy_from_slice(str_bytes);
+                v[1..str_bytes.len() + 1].copy_from_slice(str_bytes);
                 v
             }
-            Value::Integer(int) => {
+            Self::Integer(int) => {
                 let int_bytes = int.to_signed_bytes_be();
                 let mut v = vec![0; 1 + int_bytes.len()];
                 v[0] = 1;
-                (&mut v[1..int_bytes.len() + 1]).copy_from_slice(&int_bytes);
+                v[1..int_bytes.len() + 1].copy_from_slice(&int_bytes);
                 v
             }
-            Value::Decimal(dec) => {
+            Self::Decimal(dec) => {
                 let (i, e) = dec.as_bigint_and_exponent();
                 let e_bytes = e.to_be_bytes();
                 let i_bytes = i.to_signed_bytes_be();
                 let mut v = vec![0; 1 + e_bytes.len() + i_bytes.len()];
                 v[0] = 2;
-                (&mut v[1..e_bytes.len() + 1]).copy_from_slice(&e_bytes);
-                (&mut v[e_bytes.len() + 1..e_bytes.len() + i_bytes.len() + 1])
-                    .copy_from_slice(&i_bytes);
+                v[1..e_bytes.len() + 1].copy_from_slice(&e_bytes);
+                v[e_bytes.len() + 1..e_bytes.len() + i_bytes.len() + 1].copy_from_slice(&i_bytes);
                 v
             }
-            Value::ID(id) => {
+            Self::ID(id) => {
                 let id_bytes: [u8; 16] = id.into();
                 let mut v = vec![0; 1 + id_bytes.len()];
                 v[0] = 3;
-                (&mut v[1..id_bytes.len() + 1]).copy_from_slice(&id_bytes);
+                v[1..id_bytes.len() + 1].copy_from_slice(&id_bytes);
                 v
             }
-            Value::Boolean(b) => {
-                let byte = if *b { 1 } else { 0 };
+            Self::Boolean(b) => {
+                let byte = u8::from(*b);
                 vec![4, byte]
             }
         }
