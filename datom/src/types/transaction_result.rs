@@ -14,10 +14,10 @@ pub struct TransactionResult<'connection, S: Storage> {
     on
     */
     pub connection: &'connection Connection<S>,
-    /// The [database](crate::database::Database) before the transaction
+    /// The [Database] before the transaction
     pub before: Database<'connection, S>,
-    /// The [database](crate::database::Database) after the transaction
+    /// The [Database] after the transaction
     pub after: Database<'connection, S>,
-    /// The [datoms](crate::Datom) added to the database in the transaction
+    /// The [Datom]s added to the database in the transaction
     pub data: Vec<Datom>,
 }

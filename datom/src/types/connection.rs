@@ -92,7 +92,7 @@ impl<S: Storage> Connection<S> {
         })
     }
 
-    /// Get a [database](crate::database::Database) for the current
+    /// Get a [database](crate::Database) for the current
     /// point in time
     pub fn db(&self) -> Result<Database<'_, S>, ConnectionError> {
         self.as_of(self.latest_t()?)

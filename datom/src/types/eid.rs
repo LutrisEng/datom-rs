@@ -8,22 +8,22 @@ use crate::{builtin_idents, storage::Storage, Database, Datom, QueryError, Value
 
 /**
 An un-resolved entity [ID], which can be used to resolve entities by
-[ident](crate::builtin_idents::ident) or
-[unique](crate::builtin_idents::unique) attribute
+[ident](crate::builtin_idents::IDENT) or
+[unique](crate::builtin_idents::UNIQUE) attribute
 */
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum EID {
     /// A resolved entity [ID]
     Resolved(ID),
-    /// Resolve an entity by its [ident](crate::builtin_idents::ident)
+    /// Resolve an entity by its [ident](crate::builtin_idents::IDENT)
     Ident(String),
     /// Resolve an entity by a static
-    /// [ident](crate::builtin_idents::ident)
+    /// [ident](crate::builtin_idents::IDENT)
     InternedIdent(&'static str),
-    /// Resolve an entity by a [unique](crate::builtin_idents::unique)
+    /// Resolve an entity by a [unique](crate::builtin_idents::UNIQUE)
     /// attribute
     Unique(
-        /// [unique](crate::builtin_idents::unique) attribute
+        /// [unique](crate::builtin_idents::UNIQUE) attribute
         Box<Self>,
         /// Value
         Value,
@@ -37,7 +37,7 @@ fn by_t(a: &Datom, b: &Datom) -> Ordering {
 impl EID {
     /**
     Create an [EID] to resolve an entity by a
-    [unique](crate::builtin_idents::unique) attribute
+    [unique](crate::builtin_idents::UNIQUE) attribute
     */
     pub fn unique(eid: Self, val: Value) -> Self {
         Self::Unique(eid.into(), val)

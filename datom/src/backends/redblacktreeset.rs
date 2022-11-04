@@ -12,7 +12,7 @@ use crate::{
     StorageError, ID,
 };
 
-/// A storage backend backed by a [RedBlackTreeSet]
+/// A storage backend backed by a [RedBlackTreeSetSync]
 pub struct RedBlackTreeSetStorage {
     set: ArcSwap<RedBlackTreeSetSync<Item>>,
     id: ID,

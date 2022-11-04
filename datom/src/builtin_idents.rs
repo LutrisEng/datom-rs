@@ -28,7 +28,7 @@ pub const DOC: TID = TID::from_u128(303289866496710859530474533904741988829u128)
 /// Whether there can only be one entity per value for this attribute
 pub const UNIQUE: TID = TID::from_u128(307615836394596470679724073561969695989);
 
-/// Whether the entity referred to in this [type_ref](self::type_ref) attribute is a
+/// Whether the entity referred to in this [TYPE_REF] attribute is a
 /// sub-component. When you retract an entity, all sub-components will
 /// also be retracted.
 pub const IS_COMPONENT: TID = TID::from_u128(308724514559417715856375983930347810391u128);
