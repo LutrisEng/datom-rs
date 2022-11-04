@@ -18,7 +18,7 @@ categories = ["database-implementations", "database"]
 
 [features]
 default = ["redblacktreeset", "sled"]
-redblacktreeset = ["rpds", "arc-swap", "archery"]
+redblacktreeset = ["rpds", "arc-swap"]
 
 [dependencies]
 uuid = { version = "1", features = ["v4"] }
@@ -35,7 +35,6 @@ sled = { version = "0.34", optional = true }
 # redblacktreeset storage backend
 rpds = { version = "0.12", optional = true }
 arc-swap = { version = "1", optional = true }
-archery = { version = "0.4", optional = true }
 
 [dev-dependencies.cargo-husky]
 version = "1"
