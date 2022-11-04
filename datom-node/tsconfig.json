@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "types": ["@types/node", "@types/jest"],
+        "outDir": "dist",
+        "declaration": true,
+        "target": "ES2022",
+        "moduleResolution": "node",
+        "strict": true,
+        "module": "commonjs"
+    },
+    "include": [
+        "src/**/*.ts"
+    ]
+}

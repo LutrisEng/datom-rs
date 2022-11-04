@@ -11,12 +11,12 @@ repositories {
 }
 
 tasks.register('cargo-build', Exec) {
-    commandLine 'cargo', 'build'
+    commandLine 'cargo', 'build', '--release'
 }
 
 tasks.register('cargo', Copy) {
     dependsOn tasks.named('cargo-build')
-    from('../../target/debug') {
+    from('../../target/release') {
         include '*datom_java.so'
         include '*datom_java.dylib'
         include '*datom_java.dll'

@@ -4,16 +4,14 @@
 
 package engineering.lutris.datom;
 
-public class HelloWorld {
+public class Datom {
     private static class JNI {
         static {
             DatomJNI.ensureLoaded();
         }
 
-        private static native String hello(String world);
+        private static native String version();
     }
 
-    public static String hello(String world) {
-        return JNI.hello(world);
-    }
+    public static String VERSION = JNI.version();
 }

@@ -75,3 +75,8 @@ pub mod storage;
 
 /// Storage backends
 pub mod backends;
+
+/// Get the version of this datom build
+pub const fn version() -> &'static str {
+    env!("CARGO_PKG_VERSION")
+}

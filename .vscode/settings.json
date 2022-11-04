@@ -4,5 +4,7 @@
 {
     "rust-analyzer.checkOnSave.command": "clippy",
     "files.insertFinalNewline": true,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "java.configuration.updateBuildConfiguration": "automatic"
 }
