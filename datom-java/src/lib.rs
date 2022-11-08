@@ -4,8 +4,5 @@
 
 pub mod connection;
 pub mod datom;
+pub mod fact;
 pub mod hello_world;
-
-pub use crate::connection::*;
-pub use crate::datom::*;
-pub use crate::hello_world::*;

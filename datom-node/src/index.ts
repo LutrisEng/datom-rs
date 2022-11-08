@@ -16,6 +16,22 @@ export class Connection {
     }
 }
 
+export class Fact {
+    #impl: datom.FactImpl
+
+    private constructor(impl: datom.FactImpl) {
+        this.#impl = impl;
+    }
+
+    static fromEdn(edn: string): Fact {
+        return new Fact(datom.fact_from_edn(edn));
+    }
+
+    toEdn(): string {
+        return datom.fact_to_edn(this.#impl);
+    }
+}
+
 export function hello(): string {
     return datom.hello();
 }

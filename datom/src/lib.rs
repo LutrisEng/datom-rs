@@ -60,6 +60,9 @@
 //! [Datomic's excellent documentation]: https://docs.datomic.com/on-prem/overview/architecture.html
 
 mod types;
+use std::str::FromStr;
+
+use edn_rs::Edn;
 pub use types::*;
 
 /// Serialization/deserialization functions
@@ -79,4 +82,9 @@ pub mod backends;
 /// Get the version of this datom build
 pub const fn version() -> &'static str {
     env!("CARGO_PKG_VERSION")
+}
+
+/// Parse an EDN string to an [Edn] object
+pub fn parse_edn(edn: &str) -> Option<Edn> {
+    Edn::from_str(edn).ok()
 }

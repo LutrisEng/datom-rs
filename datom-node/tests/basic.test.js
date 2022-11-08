@@ -20,3 +20,9 @@ test('can create a connection', () => {
     const connection = new datom.Connection();
     expect(connection.latestT()).toBe(0);
 });
+
+test('can roundtrip a fact', () => {
+    const edn = '[:entity, :attribute, "value", ]';
+    const fact = datom.Fact.fromEdn(edn);
+    expect(fact.toEdn()).toBe(edn);
+})

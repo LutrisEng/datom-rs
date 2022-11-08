@@ -171,5 +171,7 @@ jobs:
           distribution: "adopt"
           java-version: "17"
           cache: "gradle"
+      - uses: goto-bus-stop/setup-zig@v2
       - uses: Swatinem/rust-cache@v2
+      - run: cargo install cargo-zigbuild
       - run: cargo test --all --verbose -- --nocapture

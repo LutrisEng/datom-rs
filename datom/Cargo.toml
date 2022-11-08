@@ -28,6 +28,7 @@ chrono = "0.4"
 once_cell = "1"
 thiserror = "1"
 miette = "5"
+edn-rs = "0.17"
 
 # sled storage backend
 sled = { version = "0.34", optional = true }

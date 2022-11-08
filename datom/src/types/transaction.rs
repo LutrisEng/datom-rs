@@ -4,6 +4,8 @@
 
 use std::collections::HashMap;
 
+use edn_rs::Edn;
+
 use crate::{storage::Storage, Database, Datom, Fact, TransactionError, Value, EID};
 
 /// A type which can be appended to a transaction
@@ -66,6 +68,19 @@ impl Transaction {
             .iter()
             .map(|f| f.to_owned().datom(t, db))
             .collect()
+    }
+
+    /// Create a transaction from an EDN list of facts
+    pub fn from_edn(edn: Edn) -> Result<Self, Box<dyn std::error::Error>> {
+        let Edn::Vector(facts) = edn else {
+            todo!("error");
+        };
+        let facts = facts
+            .to_vec()
+            .into_iter()
+            .map(Fact::from_edn)
+            .collect::<Result<Vec<Fact>, _>>()?;
+        Ok(Self { facts })
     }
 }
 

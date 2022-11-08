@@ -6,10 +6,10 @@
   "types": "./dist/index.d.ts",
   "readme": "../README.md",
   "scripts": {
-    "build": "cargo-cp-artifact -ac datom-node index.node -- cargo build --message-format=json-render-diagnostics && tsc",
+    "build": "cargo-cp-artifact -ac datom-node index.node -- cargo build --release --message-format=json-render-diagnostics && tsc",
     "install": "npm run build",
     "test": "cargo test",
-    "jest": "npm run build && jest"
+    "jest": "jest"
   },
   "author": "Lutris, Inc <contact@lutris.engineering>",
   "license": "BlueOak-1.0.0 OR BSD-2-Clause-Patent",

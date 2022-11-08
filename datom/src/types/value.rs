@@ -8,7 +8,8 @@ use std::{
     str::FromStr,
 };
 
-use datom_bigdecimal::{BigDecimal, ParseBigDecimalError};
+use datom_bigdecimal::{BigDecimal, ParseBigDecimalError, ToPrimitive};
+use edn_rs::Edn;
 use num_bigint::BigInt;
 
 use crate::ID;
@@ -109,6 +110,19 @@ impl Value {
                 }
             }?)),
             _ => None,
+        }
+    }
+
+    /// Get the edn representation for this value
+    pub fn into_edn(self) -> Edn {
+        match self {
+            Self::String(s) => Edn::Str(s),
+            Self::Integer(i) => Edn::Int(i.to_isize().expect("int too big")),
+            Self::Decimal(d) => Edn::Double(edn_rs::Double::from(
+                d.to_f64().expect("decimal doesn't fit"),
+            )),
+            Self::ID(_) => todo!(),
+            Self::Boolean(b) => Edn::Bool(b),
         }
     }
 }

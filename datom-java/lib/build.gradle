@@ -10,36 +10,111 @@ repositories {
     mavenCentral()
 }
 
-tasks.register('cargo-build', Exec) {
+// tasks.register('cargo-cross-build-x86_64-pc-windows-gnu', Exec) {
+//     commandLine 'cargo', 'zigbuild', '--release', '--target', 'x86_64-pc-windows-gnu'
+//     workingDir rootDir
+// }
+
+// tasks.register('cargo-cross-build-x86_64-pc-windows-gnu-copy', Copy) {
+//     dependsOn tasks.named('cargo-cross-build-x86_64-pc-windows-gnu')
+//     from("${rootDir}/../target/x86_64-pc-windows-gnu/release") {
+//         include 'datom_java.dll'
+//     }
+//     into "${buildDir}/native/engineering/lutris/datom/natives/windows/amd64"
+// }
+
+tasks.register('cargo-cross-build-x86_64-unknown-linux-gnu', Exec) {
+    commandLine 'cargo', 'zigbuild', '--release', '--target', 'x86_64-unknown-linux-gnu'
+    workingDir rootDir
+}
+
+tasks.register('cargo-cross-build-x86_64-unknown-linux-gnu-copy', Copy) {
+    dependsOn tasks.named('cargo-cross-build-x86_64-unknown-linux-gnu')
+    from("${rootDir}/../target/x86_64-unknown-linux-gnu/release") {
+        include 'libdatom_java.so'
+    }
+    into "${buildDir}/native/engineering/lutris/datom/natives/linux/amd64"
+}
+
+tasks.register('cargo-cross-build-aarch64-unknown-linux-gnu', Exec) {
+    commandLine 'cargo', 'zigbuild', '--release', '--target', 'aarch64-unknown-linux-gnu'
+    workingDir rootDir
+}
+
+tasks.register('cargo-cross-build-aarch64-unknown-linux-gnu-copy', Copy) {
+    dependsOn tasks.named('cargo-cross-build-aarch64-unknown-linux-gnu')
+    from("${rootDir}/../target/aarch64-unknown-linux-gnu/release") {
+        include 'libdatom_java.so'
+    }
+    into "${buildDir}/native/engineering/lutris/datom/natives/linux/aarch64"
+}
+
+tasks.register('cargo-cross-build-x86_64-apple-darwin', Exec) {
+    commandLine 'cargo', 'zigbuild', '--release', '--target', 'x86_64-apple-darwin'
+    workingDir rootDir
+}
+
+tasks.register('cargo-cross-build-x86_64-apple-darwin-copy', Copy) {
+    dependsOn tasks.named('cargo-cross-build-x86_64-apple-darwin')
+    from("${rootDir}/../target/x86_64-apple-darwin/release") {
+        include 'libdatom_java.dylib'
+    }
+    into "${buildDir}/native/engineering/lutris/datom/natives/macos/amd64"
+}
+
+tasks.register('cargo-cross-build-aarch64-apple-darwin', Exec) {
+    commandLine 'cargo', 'zigbuild', '--release', '--target', 'aarch64-apple-darwin'
+    workingDir rootDir
+}
+
+tasks.register('cargo-cross-build-aarch64-apple-darwin-copy', Copy) {
+    dependsOn tasks.named('cargo-cross-build-aarch64-apple-darwin')
+    from("${rootDir}/../target/aarch64-apple-darwin/release") {
+        include 'libdatom_java.dylib'
+    }
+    into "${buildDir}/native/engineering/lutris/datom/natives/macos/aarch64"
+}
+
+tasks.register('cargo-native-build', Exec) {
     commandLine 'cargo', 'build', '--release'
 }
 
-tasks.register('cargo', Copy) {
-    dependsOn tasks.named('cargo-build')
+tasks.register('cargo-native-build-copy', Copy) {
+    dependsOn tasks.named('cargo-native-build')
     from('../../target/release') {
         include '*datom_java.so'
         include '*datom_java.dylib'
         include '*datom_java.dll'
     }
-    into "${buildDir}/native"
+    into "${buildDir}/native/engineering/lutris/datom/natives/native"
 }
 
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
-
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
-    // api 'org.apache.commons:commons-math3:3.6.1'
-
-    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-    // implementation 'com.google.guava:guava:30.1.1-jre'
+sourceSets {
+    main {
+        resources.srcDirs += "${buildDir}/native"
+    }
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-    dependsOn tasks.named('cargo')
-    systemProperty "java.library.path", file("${buildDir}/native").absolutePath
+processResources {
+    // dependsOn tasks.named('cargo-cross-build-x86_64-pc-windows-gnu-copy')
+    dependsOn tasks.named('cargo-cross-build-x86_64-unknown-linux-gnu-copy')
+    dependsOn tasks.named('cargo-cross-build-aarch64-unknown-linux-gnu-copy')
+    dependsOn tasks.named('cargo-cross-build-x86_64-apple-darwin-copy')
+    dependsOn tasks.named('cargo-cross-build-aarch64-apple-darwin-copy')
+    dependsOn tasks.named('cargo-native-build-copy')
 }
 
 compileJava {
     options.compilerArgs += ["-h", file("${buildDir}/headers")]
+}
+
+dependencies {
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
+}
+
+test {
+    useJUnitPlatform()
+    systemProperty 'engineering.lutris.datom.nativeResourcePath', 'natives/native'
 }
