@@ -22,4 +22,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 datom = { path = "../datom" }
-jni = "0.20"
+jni = "0.21"
