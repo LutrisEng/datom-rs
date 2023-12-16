@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["TypedArrayType"],"fn":["setup"],"mod":["array","arraybuffer","async_work","buffer","call","convert","date","error","external","fun","lifecycle","mem","no_panic","object","primitive","promise","raw","reference","scope","string","tag","tsfn","typedarray"],"type":["Deferred"]};

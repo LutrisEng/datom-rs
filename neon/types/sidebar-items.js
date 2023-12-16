@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["DateErrorKind"],"mod":["buffer","function"],"struct":["DateError","JsArray","JsArrayBuffer","JsBoolean","JsBox","JsBuffer","JsDate","JsError","JsFunction","JsNull","JsNumber","JsObject","JsString","JsTypedArray","JsUndefined","JsValue","StringOverflow"],"trait":["Finalize","Value"],"type":["StringResult"]};

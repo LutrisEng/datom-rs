@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DEFAULT_LOCAL_FRAME_CAPACITY"],"enum":["JNIVersion"],"mod":["descriptors","errors","objects","signature","strings","sys"],"struct":["AttachGuard","Executor","JNIEnv","JavaVM","MonitorGuard","NativeMethod"]};

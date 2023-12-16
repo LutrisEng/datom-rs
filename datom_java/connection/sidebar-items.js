@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["Java_engineering_lutris_datom_Connection_00024JNI_create","Java_engineering_lutris_datom_Connection_00024JNI_destroy","Java_engineering_lutris_datom_Connection_00024JNI_latestT"]};

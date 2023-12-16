@@ -1,0 +1,64 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Archery"><title>archery - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-e883e87179a81222.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="archery" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (de686cbc6 2023-12-14)" data-channel="nightly" data-search-js="search-874d56868bf05518.js" data-settings-js="settings-fe03fdc259827cd2.js" ><script src="../static.files/storage-bc37acceda91d44a.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-77dede896d6ac08e.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../archery/index.html">archery</a><span class="version">0.4.0</span></h2></div><div class="sidebar-elems"><ul class="block">
+            <li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">archery</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../src/archery/lib.rs.html#6-133">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="archery"><a href="#archery">Archery</a></h2>
+<p>Archery is a rust library that offers a way to abstraction over
+<a href="https://doc.rust-lang.org/std/rc/struct.Rc.html"><code>Rc</code></a> and
+<a href="https://doc.rust-lang.org/std/sync/struct.Arc.html"><code>Arc</code></a> smart pointers.
+This allows you to create data structures where the pointer type is parameterizable, so you can
+<a href="https://doc.rust-lang.org/std/sync/struct.Arc.html#thread-safety">avoid the overhead of <code>Arc</code></a>
+when you don’t need to share data across threads.</p>
+<p>In languages that supports
+<a href="https://en.wikipedia.org/wiki/Type_class#Higher-kinded_polymorphism">higher-kinded polymorphism</a>
+this would be simple to achieve without any library, but
+<a href="https://github.com/rust-lang/rfcs/issues/324">rust does not support that yet</a>.
+To mimic higher-kinded polymorphism Archery implements the approach suggested by
+Joshua Liebow-Feeser in
+“<a href="https://joshlf.com/post/2018/10/18/rust-higher-kinded-types-already/">Rust has higher kinded types already… sort of</a>”.
+While <a href="#alternative-approaches">other approaches</a> exist, they seem to always offer poor
+ergonomics for the user.</p>
+<h3 id="setup"><a href="#setup">Setup</a></h3>
+<p>To use Archery add the following to your <code>Cargo.toml</code>:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+archery = &quot;&lt;version&gt;&quot;
+</code></pre></div><h3 id="using-archery"><a href="#using-archery">Using Archery</a></h3>
+<p>Archery defines a <a href="./shared_pointer/struct.SharedPointer.html"><code>SharedPointer</code></a>
+that receives the <a href="./shared_pointer/kind/trait.SharedPointerKind.html">kind of pointer</a>
+as a type parameter.  This gives you a convenient and ergonomic way to abstract the pointer
+type away.</p>
+<h4 id="example"><a href="#example">Example</a></h4>
+<p>Declare a data structure with the pointer kind as a type parameter bounded by
+<code>SharedPointerKind</code>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>archery::<span class="kw-2">*</span>;
+
+<span class="kw">struct </span>KeyValuePair&lt;K, V, P: SharedPointerKind&gt; {
+    <span class="kw">pub </span>key: SharedPointer&lt;K, P&gt;,
+    <span class="kw">pub </span>value: SharedPointer&lt;V, P&gt;,
+}
+
+<span class="kw">impl</span>&lt;K, V, P: SharedPointerKind&gt; KeyValuePair&lt;K, V, P&gt; {
+    <span class="kw">fn </span>new(key: K, value: V) -&gt; KeyValuePair&lt;K, V, P&gt; {
+        KeyValuePair {
+            key: SharedPointer::new(key),
+            value: SharedPointer::new(value),
+        }
+    }
+}</code></pre></div>
+<p>To use it just plug-in the kind of pointer you want:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span>pair: KeyValuePair&lt;<span class="kw">_</span>, <span class="kw">_</span>, RcK&gt; =
+    KeyValuePair::new(<span class="string">"António Variações"</span>, <span class="number">1944</span>);
+
+<span class="macro">assert_eq!</span>(<span class="kw-2">*</span>pair.value, <span class="number">1944</span>);</code></pre></div>
+<h3 id="limitations"><a href="#limitations">Limitations</a></h3>
+<p>Currently it is not possible to have unsized types inside a <code>SharedPointer</code>.  As a workaround
+you can put the unsized type inside a
+<a href="https://doc.rust-lang.org/std/boxed/struct.Box.html"><code>Box</code></a>.</p>
+<h2 id="alternative-approaches"><a href="#alternative-approaches">Alternative approaches</a></h2>
+<p>An alternative to the approach taken by Archery is to use traits with associated types to encode
+type-level functions.  This has been suggested
+<a href="https://github.com/orium/rpds/issues/7#issuecomment-362635901">multiple</a>
+<a href="https://joshlf.com/post/2018/10/18/rust-higher-kinded-types-already/#comment-4160863400">times</a>,
+but offers ugly ergonomics (see
+<a href="https://github.com/Marwes/rpds/blob/e482d5abbaa6c876d7c624e497affe7299bbeece/src/sequence/vector/mod.rs#L153">here</a>
+and <a href="https://github.com/Marwes/rpds/blob/e482d5abbaa6c876d7c624e497affe7299bbeece/src/sequence/vector/mod.rs#L249">here</a>).</p>
+</div></details><h2 id="reexports" class="section-header"><a href="#reexports">Re-exports</a></h2><ul class="item-table"><li><div class="item-name" id="reexport.SharedPointer"><code>pub use shared_pointer::<a class="struct" href="shared_pointer/struct.SharedPointer.html" title="struct archery::shared_pointer::SharedPointer">SharedPointer</a>;</code></div></li><li><div class="item-name" id="reexport.SharedPointerKind"><code>pub use shared_pointer::kind::<a class="trait" href="shared_pointer/kind/trait.SharedPointerKind.html" title="trait archery::shared_pointer::kind::SharedPointerKind">SharedPointerKind</a>;</code></div></li><li><div class="item-name" id="reexport.ArcK"><code>pub use shared_pointer::kind::<a class="struct" href="shared_pointer/kind/struct.ArcK.html" title="struct archery::shared_pointer::kind::ArcK">ArcK</a>;</code></div></li><li><div class="item-name" id="reexport.RcK"><code>pub use shared_pointer::kind::<a class="struct" href="shared_pointer/kind/struct.RcK.html" title="struct archery::shared_pointer::kind::RcK">RcK</a>;</code></div></li></ul><h2 id="modules" class="section-header"><a href="#modules">Modules</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="shared_pointer/index.html" title="mod archery::shared_pointer">shared_pointer</a></div></li></ul></section></div></main></body></html>

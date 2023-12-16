@@ -1,0 +1,53 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="A function that may be configured on a particular shared `Tree` that will be applied as a kind of read-modify-write operator to any values that are written using the `Tree::merge` method."><title>MergeOperator in sled - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-e883e87179a81222.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="sled" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (de686cbc6 2023-12-14)" data-channel="nightly" data-search-js="search-874d56868bf05518.js" data-settings-js="settings-fe03fdc259827cd2.js" ><script src="../static.files/storage-bc37acceda91d44a.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-77dede896d6ac08e.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc trait"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../sled/index.html"><img src="https://raw.githubusercontent.com/spacejam/sled/master/art/tree_face_anti-transphobia.png" alt=""></a></nav><nav class="sidebar"><div class="sidebar-crate"><a class="logo-container" href="../sled/index.html"><img src="https://raw.githubusercontent.com/spacejam/sled/master/art/tree_face_anti-transphobia.png" alt="logo"></a><h2><a href="../sled/index.html">sled</a><span class="version">0.34.7</span></h2></div><h2 class="location"><a href="#">MergeOperator</a></h2><div class="sidebar-elems"><section><h3><a href="#implementors">Implementors</a></h3></section><h2><a href="index.html">In crate sled</a></h2></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Trait <a href="index.html">sled</a>::<wbr><a class="trait" href="#">MergeOperator</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../src/sled/lib.rs.html#496-499">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><code>pub trait MergeOperator: <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/function/trait.Fn.html" title="trait core::ops::function::Fn">Fn</a>(&amp;[<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>], <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;[<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>]&gt;, &amp;[<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>]) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;&gt; { }</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>A function that may be configured on a particular shared <code>Tree</code>
+that will be applied as a kind of read-modify-write operator
+to any values that are written using the <code>Tree::merge</code> method.</p>
+<p>The first argument is the key. The second argument is the
+optional existing value that was in place before the
+merged value being applied. The Third argument is the
+data being merged into the item.</p>
+<p>You may return <code>None</code> to delete the value completely.</p>
+<p>Merge operators are shared by all instances of a particular
+<code>Tree</code>. Different merge operators may be set on different
+<code>Tree</code>s.</p>
+<h2 id="examples"><a href="#examples">Examples</a></h2>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>sled::{Config, IVec};
+
+<span class="kw">fn </span>concatenate_merge(
+  _key: <span class="kw-2">&amp;</span>[u8],               <span class="comment">// the key being merged
+  </span>old_value: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>[u8]&gt;,  <span class="comment">// the previous value, if one existed
+  </span>merged_bytes: <span class="kw-2">&amp;</span>[u8]        <span class="comment">// the new bytes being merged in
+</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt; {       <span class="comment">// set the new value, return None to delete
+  </span><span class="kw">let </span><span class="kw-2">mut </span>ret = old_value
+    .map(|ov| ov.to_vec())
+    .unwrap_or_else(|| <span class="macro">vec!</span>[]);
+
+  ret.extend_from_slice(merged_bytes);
+
+  <span class="prelude-val">Some</span>(ret)
+}
+
+<span class="kw">let </span>config = Config::new()
+  .temporary(<span class="bool-val">true</span>);
+
+<span class="kw">let </span>tree = config.open()<span class="question-mark">?</span>;
+tree.set_merge_operator(concatenate_merge);
+
+<span class="kw">let </span>k = <span class="string">b"k1"</span>;
+
+tree.insert(k, <span class="macro">vec!</span>[<span class="number">0</span>]);
+tree.merge(k, <span class="macro">vec!</span>[<span class="number">1</span>]);
+tree.merge(k, <span class="macro">vec!</span>[<span class="number">2</span>]);
+<span class="macro">assert_eq!</span>(tree.get(k), <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(IVec::from(<span class="macro">vec!</span>[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>]))));
+
+<span class="comment">// Replace previously merged data. The merge function will not be called.
+</span>tree.insert(k, <span class="macro">vec!</span>[<span class="number">3</span>]);
+<span class="macro">assert_eq!</span>(tree.get(k), <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(IVec::from(<span class="macro">vec!</span>[<span class="number">3</span>]))));
+
+<span class="comment">// Merges on non-present values will cause the merge function to be called
+// with `old_value == None`. If the merge function returns something (which it
+// does, in this case) a new value will be inserted.
+</span>tree.remove(k);
+tree.merge(k, <span class="macro">vec!</span>[<span class="number">4</span>]);
+<span class="macro">assert_eq!</span>(tree.get(k), <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(IVec::from(<span class="macro">vec!</span>[<span class="number">4</span>]))));</code></pre></div>
+</div></details><h2 id="implementors" class="section-header">Implementors<a href="#implementors" class="anchor">§</a></h2><div id="implementors-list"><section id="impl-MergeOperator-for-F" class="impl"><a class="src rightside" href="../src/sled/lib.rs.html#500-503">source</a><a href="#impl-MergeOperator-for-F" class="anchor">§</a><h3 class="code-header">impl&lt;F&gt; <a class="trait" href="trait.MergeOperator.html" title="trait sled::MergeOperator">MergeOperator</a> for F<div class="where">where
+    F: <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/function/trait.Fn.html" title="trait core::ops::function::Fn">Fn</a>(&amp;[<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>], <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;[<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>]&gt;, &amp;[<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>]) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;&gt;,</div></h3></section></div><script src="../trait.impl/sled/trait.MergeOperator.js" async></script></section></div></main></body></html>

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["BUILD_PROFILE","MAJOR","MINOR","PATCH","VERSION"],"fn":["version"]};

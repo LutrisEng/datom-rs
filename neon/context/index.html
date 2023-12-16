@@ -1,0 +1,106 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Provides runtime access to the JavaScript engine."><title>neon::context - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e883e87179a81222.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="neon" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (de686cbc6 2023-12-14)" data-channel="nightly" data-search-js="search-874d56868bf05518.js" data-settings-js="settings-fe03fdc259827cd2.js" ><script src="../../static.files/storage-bc37acceda91d44a.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-77dede896d6ac08e.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../neon/index.html">neon</a><span class="version">0.10.1</span></h2></div><h2 class="location"><a href="#">Module context</a></h2><div class="sidebar-elems"><section><ul class="block"><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Aliases</a></li></ul></section><h2><a href="../index.html">In crate neon</a></h2></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../index.html">neon</a>::<wbr><a class="mod" href="#">context</a><button id="copy-path" title="Copy item path to clipboard"><img src="../../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../../src/neon/context/mod.rs.html#1-975">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Provides runtime access to the JavaScript engine.</p>
+<p>An <em>execution context</em> represents the current state of a thread of execution in the
+JavaScript engine. Internally, it tracks things like the set of pending function calls,
+whether the engine is currently throwing an exception or not, and whether the engine is
+in the process of shutting down. The context uses this internal state to manage what
+operations are safely available and when.</p>
+<p>The <a href="trait.Context.html" title="trait neon::context::Context"><code>Context</code></a> trait provides an abstract interface to the JavaScript
+execution context. All interaction with the JavaScript engine in Neon code is mediated
+through instances of this trait.</p>
+<p>One particularly useful context type is <a href="struct.CallContext.html" title="struct neon::context::CallContext"><code>CallContext</code></a>, which is passed
+to all Neon functions as their initial execution context (or <a href="type.FunctionContext.html" title="type neon::context::FunctionContext"><code>FunctionContext</code></a>,
+a convenient shorthand for <code>CallContext&lt;JsObject&gt;</code>):</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn </span>hello(<span class="kw-2">mut </span>cx: FunctionContext) -&gt; JsResult&lt;JsString&gt; {
+    <span class="prelude-val">Ok</span>(cx.string(<span class="string">"hello Neon"</span>))
+}</code></pre></div>
+<p>Another important context type is <a href="struct.ModuleContext.html" title="struct neon::context::ModuleContext"><code>ModuleContext</code></a>, which is provided
+to a Neon module’s <a href="../attr.main.html" title="attr neon::main"><code>main</code></a> function to enable sharing Neon functions back
+with JavaScript:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attr">#[neon::main]
+</span><span class="kw">fn </span>main(<span class="kw-2">mut </span>cx: ModuleContext) -&gt; NeonResult&lt;()&gt; {
+    cx.export_function(<span class="string">"hello"</span>, hello)<span class="question-mark">?</span>;
+    <span class="prelude-val">Ok</span>(())
+}</code></pre></div>
+<h3 id="memory-management"><a href="#memory-management">Memory Management</a></h3>
+<p>Because contexts represent the engine at a point in time, they are associated with a
+<a href="https://doc.rust-lang.org/book/ch10-00-generics.html"><em>lifetime</em></a>, which limits how long Rust code is allowed to access them. This
+is also used to determine the lifetime of <a href="../handle/struct.Handle.html" title="struct neon::handle::Handle"><code>Handle</code></a>s, which
+provide safe references to JavaScript memory managed by the engine’s garbage collector.</p>
+<p>For example, we can
+write a simple string scanner that counts whitespace in a JavaScript string and
+returns a <a href="../types/struct.JsNumber.html" title="struct neon::types::JsNumber"><code>JsNumber</code></a>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn </span>count_whitespace(<span class="kw-2">mut </span>cx: FunctionContext) -&gt; JsResult&lt;JsNumber&gt; {
+    <span class="kw">let </span>s: Handle&lt;JsString&gt; = cx.argument(<span class="number">0</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span>contents = s.value(<span class="kw-2">&amp;mut </span>cx);
+    <span class="kw">let </span>count = contents
+        .chars()                       <span class="comment">// iterate over the characters
+        </span>.filter(|c| c.is_whitespace()) <span class="comment">// select the whitespace chars
+        </span>.count();                      <span class="comment">// count the resulting chars
+    </span><span class="prelude-val">Ok</span>(cx.number(count <span class="kw">as </span>f64))
+}</code></pre></div>
+<p>In this example, <code>s</code> is assigned a handle to a string, which ensures that the string
+is <em>kept alive</em> (i.e., prevented from having its storage reclaimed by the JavaScript
+engine’s garbage collector) for the duration of the <code>count_whitespace</code> function. This
+is how Neon takes advantage of Rust’s type system to allow your Rust code to safely
+interact with JavaScript values.</p>
+<h4 id="temporary-scopes"><a href="#temporary-scopes">Temporary Scopes</a></h4>
+<p>Sometimes it can be useful to limit the scope of a handle’s lifetime, to allow the
+engine to reclaim memory sooner. This can be important when, for example, an expensive inner loop generates
+temporary JavaScript values that are only needed inside the loop. In these cases,
+the <a href="trait.Context.html#method.execute_scoped" title="method neon::context::Context::execute_scoped"><code>execute_scoped</code></a> and <a href="trait.Context.html#method.compute_scoped" title="method neon::context::Context::compute_scoped"><code>compute_scoped</code></a>
+methods allow you to create temporary contexts in order to allocate temporary
+handles.</p>
+<p>For example, to extract the elements of a JavaScript <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators">iterator</a> from Rust,
+a Neon function has to work with several temporary handles on each pass through
+the loop:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code>    <span class="kw">let </span>iterator = cx.argument::&lt;JsObject&gt;(<span class="number">0</span>)<span class="question-mark">?</span>;         <span class="comment">// iterator object
+    </span><span class="kw">let </span>next: Handle&lt;JsFunction&gt; =                      <span class="comment">// iterator's `next` method
+        </span>iterator.get(<span class="kw-2">&amp;mut </span>cx, <span class="string">"next"</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>numbers = <span class="macro">vec!</span>[];                           <span class="comment">// results vector
+    </span><span class="kw">let </span><span class="kw-2">mut </span>done = <span class="bool-val">false</span>;                               <span class="comment">// loop controller
+
+    </span><span class="kw">while </span>!done {
+        done = cx.execute_scoped(|<span class="kw-2">mut </span>cx| {                   <span class="comment">// temporary scope
+            </span><span class="kw">let </span>obj: Handle&lt;JsObject&gt; = next                  <span class="comment">// temporary object
+                </span>.call_with(<span class="kw-2">&amp;</span>cx)
+                .this(iterator)
+                .apply(<span class="kw-2">&amp;mut </span>cx)<span class="question-mark">?</span>;
+            <span class="kw">let </span>number: Handle&lt;JsNumber&gt; =                    <span class="comment">// temporary number
+                </span>obj.get(<span class="kw-2">&amp;mut </span>cx, <span class="string">"value"</span>)<span class="question-mark">?</span>;
+            numbers.push(number.value(<span class="kw-2">&amp;mut </span>cx));
+            <span class="kw">let </span>done: Handle&lt;JsBoolean&gt; =                     <span class="comment">// temporary boolean
+                </span>obj.get(<span class="kw-2">&amp;mut </span>cx, <span class="string">"done"</span>)<span class="question-mark">?</span>;
+            <span class="prelude-val">Ok</span>(done.value(<span class="kw-2">&amp;mut </span>cx))
+        })<span class="question-mark">?</span>;
+    }</code></pre></div>
+<p>The temporary scope ensures that the temporary values are only kept alive
+during a single pass through the loop, since the temporary context is
+discarded (and all of its handles released) on the inside of the loop.</p>
+<h3 id="throwing-exceptions"><a href="#throwing-exceptions">Throwing Exceptions</a></h3>
+<p>When a Neon API causes a JavaScript exception to be thrown, it returns an
+<a href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Err" title="variant core::result::Result::Err"><code>Err</code></a> result, indicating that the thread associated
+with the context is now throwing. This allows Rust code to perform any
+cleanup before returning, but with an important restriction:</p>
+<blockquote>
+<p><strong>While a JavaScript thread is throwing, its context cannot be used.</strong></p>
+</blockquote>
+<p>Unless otherwise documented, any Neon API that uses a context (as <code>self</code> or as
+a parameter) immediately panics if called while the context’s thread is throwing.</p>
+<p>Typically, Neon code can manage JavaScript exceptions correctly and conveniently
+by using Rust’s <a href="https://doc.rust-lang.org/edition-guide/rust-2018/error-handling-and-panics/the-question-mark-operator-for-easier-error-handling.html">question mark (<code>?</code>)</a> operator. This ensures that
+Rust code “short-circuits” when an exception is thrown and returns back to
+JavaScript without calling any throwing APIs.</p>
+<p>Alternatively, to invoke a Neon API and catch any JavaScript exceptions, use the
+<a href="Context::try_catch"><code>Context::try_catch</code></a> method, which catches any thrown
+exception and restores the context to non-throwing state.</p>
+<h3 id="see-also"><a href="#see-also">See also</a></h3>
+<ol>
+<li>Ecma International. <a href="https://tc39.es/ecma262/#sec-execution-contexts">Execution contexts</a>, <em>ECMAScript Language Specification</em>.</li>
+<li>Madhavan Nagarajan. <a href="https://medium.com/@itIsMadhavan/what-is-the-execution-context-stack-in-javascript-e169812e851a">What is the Execution Context and Stack in JavaScript?</a></li>
+<li>Rupesh Mishra. <a href="https://medium.com/@happymishra66/execution-context-in-javascript-319dd72e8e2c">Execution context, Scope chain and JavaScript internals</a>.</li>
+</ol>
+</div></details><h2 id="structs" class="section-header"><a href="#structs">Structs</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.CallContext.html" title="struct neon::context::CallContext">CallContext</a></div><div class="desc docblock-short">An execution context of a function call.</div></li><li><div class="item-name"><a class="struct" href="struct.ComputeContext.html" title="struct neon::context::ComputeContext">ComputeContext</a></div><div class="desc docblock-short">An execution context of a scope created by <a href="trait.Context.html#method.compute_scoped" title="method neon::context::Context::compute_scoped"><code>Context::compute_scoped()</code></a>.</div></li><li><div class="item-name"><a class="struct" href="struct.ExecuteContext.html" title="struct neon::context::ExecuteContext">ExecuteContext</a></div><div class="desc docblock-short">An execution context of a scope created by <a href="trait.Context.html#method.execute_scoped" title="method neon::context::Context::execute_scoped"><code>Context::execute_scoped()</code></a>.</div></li><li><div class="item-name"><a class="struct" href="struct.Lock.html" title="struct neon::context::Lock">Lock</a></div><div class="desc docblock-short">A temporary lock of an execution context.</div></li><li><div class="item-name"><a class="struct" href="struct.ModuleContext.html" title="struct neon::context::ModuleContext">ModuleContext</a></div><div class="desc docblock-short">An execution context of module initialization.</div></li><li><div class="item-name"><a class="struct" href="struct.TaskContext.html" title="struct neon::context::TaskContext">TaskContext</a></div><div class="desc docblock-short">An execution context of a task completion callback.</div></li></ul><h2 id="enums" class="section-header"><a href="#enums">Enums</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.CallKind.html" title="enum neon::context::CallKind">CallKind</a></div><div class="desc docblock-short">Indicates whether a function was called with <code>new</code>.</div></li></ul><h2 id="traits" class="section-header"><a href="#traits">Traits</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.Context.html" title="trait neon::context::Context">Context</a></div><div class="desc docblock-short">An <em>execution context</em>, which represents the current state of a thread of execution in the JavaScript engine.</div></li></ul><h2 id="types" class="section-header"><a href="#types">Type Aliases</a></h2><ul class="item-table"><li><div class="item-name"><a class="type" href="type.FunctionContext.html" title="type neon::context::FunctionContext">FunctionContext</a></div><div class="desc docblock-short">A shorthand for a <a href="struct.CallContext.html" title="struct neon::context::CallContext"><code>CallContext</code></a> with <code>this</code>-type <a href="../types/struct.JsObject.html" title="struct neon::types::JsObject"><code>JsObject</code></a>.</div></li><li><div class="item-name"><a class="type" href="type.MethodContext.html" title="type neon::context::MethodContext">MethodContext</a></div><div class="desc docblock-short">An alias for <a href="struct.CallContext.html" title="struct neon::context::CallContext"><code>CallContext</code></a>, useful for indicating that the function is a method of a class.</div></li></ul></section></div></main></body></html>

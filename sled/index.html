@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="`sled` is a high-performance embedded database with an API that is similar to a `BTreeMap&lt;[u8], [u8]&gt;`, but with several additional capabilities for assisting creators of stateful systems."><title>sled - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-e883e87179a81222.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="sled" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (de686cbc6 2023-12-14)" data-channel="nightly" data-search-js="search-874d56868bf05518.js" data-settings-js="settings-fe03fdc259827cd2.js" ><script src="../static.files/storage-bc37acceda91d44a.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-77dede896d6ac08e.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../sled/index.html"><img src="https://raw.githubusercontent.com/spacejam/sled/master/art/tree_face_anti-transphobia.png" alt=""></a></nav><nav class="sidebar"><div class="sidebar-crate"><a class="logo-container" href="../sled/index.html"><img src="https://raw.githubusercontent.com/spacejam/sled/master/art/tree_face_anti-transphobia.png" alt="logo"></a><h2><a href="../sled/index.html">sled</a><span class="version">0.34.7</span></h2></div><div class="sidebar-elems"><ul class="block">
+            <li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Aliases</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">sled</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../src/sled/lib.rs.html#1-527">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p><code>sled</code> is a high-performance embedded database with
+an API that is similar to a <code>BTreeMap&lt;[u8], [u8]&gt;</code>,
+but with several additional capabilities for
+assisting creators of stateful systems.</p>
+<p>It is fully thread-safe, and all operations are
+atomic. Multiple <code>Tree</code>s with isolated keyspaces
+are supported with the
+<a href="struct.Db.html#method.open_tree"><code>Db::open_tree</code></a> method.</p>
+<p>ACID transactions involving reads and writes to
+multiple items are supported with the
+<a href="struct.Tree.html#method.transaction"><code>Tree::transaction</code></a>
+method. Transactions may also operate over
+multiple <code>Tree</code>s (see
+<a href="struct.Tree.html#method.transaction"><code>Tree::transaction</code></a>
+docs for more info).</p>
+<p>Users may also subscribe to updates on individual
+<code>Tree</code>s by using the
+<a href="struct.Tree.html#method.watch_prefix"><code>Tree::watch_prefix</code></a>
+method, which returns a blocking <code>Iterator</code> over
+updates to keys that begin with the provided
+prefix. You may supply an empty prefix to subscribe
+to everything.</p>
+<p><a href="https://github.com/spacejam/sled/wiki/merge-operators">Merge operators</a>
+(aka read-modify-write operators) are supported. A
+merge operator is a function that specifies
+how new data can be merged into an existing value
+without requiring both a read and a write.
+Using the
+<a href="struct.Tree.html#method.merge"><code>Tree::merge</code></a>
+method, you may “push” data to a <code>Tree</code> value
+and have the provided merge operator combine
+it with the existing value, if there was one.
+They are set on a per-<code>Tree</code> basis, and essentially
+allow any sort of data structure to be built
+using merges as an atomic high-level operation.</p>
+<p><code>sled</code> is built by experienced database engineers
+who think users should spend less time tuning and
+working against high-friction APIs. Expect
+significant ergonomic and performance improvements
+over time. Most surprises are bugs, so please
+<a href="mailto:t@jujit.su?subject=sled%20sucks!!!">let us know</a> if something
+is high friction.</p>
+<h2 id="examples"><a href="#examples">Examples</a></h2>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span>db: sled::Db = sled::open(<span class="string">"my_db"</span>).unwrap();
+
+<span class="comment">// insert and get
+</span>db.insert(<span class="string">b"yo!"</span>, <span class="string">b"v1"</span>);
+<span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>db.get(<span class="string">b"yo!"</span>).unwrap().unwrap(), <span class="string">b"v1"</span>);
+
+<span class="comment">// Atomic compare-and-swap.
+</span>db.compare_and_swap(
+    <span class="string">b"yo!"</span>,      <span class="comment">// key
+    </span><span class="prelude-val">Some</span>(<span class="string">b"v1"</span>), <span class="comment">// old value, None for not present
+    </span><span class="prelude-val">Some</span>(<span class="string">b"v2"</span>), <span class="comment">// new value, None for delete
+</span>)
+.unwrap();
+
+<span class="comment">// Iterates over key-value pairs, starting at the given key.
+</span><span class="kw">let </span>scan_key: <span class="kw-2">&amp;</span>[u8] = <span class="string">b"a non-present key before yo!"</span>;
+<span class="kw">let </span><span class="kw-2">mut </span>iter = db.range(scan_key..);
+<span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>iter.next().unwrap().unwrap().<span class="number">0</span>, <span class="string">b"yo!"</span>);
+<span class="macro">assert_eq!</span>(iter.next(), <span class="prelude-val">None</span>);
+
+db.remove(<span class="string">b"yo!"</span>);
+<span class="macro">assert_eq!</span>(db.get(<span class="string">b"yo!"</span>), <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>));
+
+<span class="kw">let </span>other_tree: sled::Tree = db.open_tree(<span class="string">b"cool db facts"</span>).unwrap();
+other_tree.insert(
+    <span class="string">b"k1"</span>,
+    <span class="kw-2">&amp;</span><span class="string">b"a Db acts like a Tree due to implementing Deref&lt;Target = Tree&gt;"</span>[..]
+).unwrap();</code></pre></div>
+</div></details><h2 id="reexports" class="section-header"><a href="#reexports">Re-exports</a></h2><ul class="item-table"><li><div class="item-name" id="reexport.Transactional"><code>pub use self::transaction::<a class="trait" href="transaction/trait.Transactional.html" title="trait sled::transaction::Transactional">Transactional</a>;</code></div></li></ul><h2 id="modules" class="section-header"><a href="#modules">Modules</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="transaction/index.html" title="mod sled::transaction">transaction</a></div><div class="desc docblock-short">Fully serializable (ACID) multi-<code>Tree</code> transactions</div></li></ul><h2 id="structs" class="section-header"><a href="#structs">Structs</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.Batch.html" title="struct sled::Batch">Batch</a></div><div class="desc docblock-short">A batch of updates that will
+be applied atomically to the
+Tree.</div></li><li><div class="item-name"><a class="struct" href="struct.CompareAndSwapError.html" title="struct sled::CompareAndSwapError">CompareAndSwapError</a></div><div class="desc docblock-short">Compare and swap error.</div></li><li><div class="item-name"><a class="struct" href="struct.Config.html" title="struct sled::Config">Config</a></div><div class="desc docblock-short">Top-level configuration for the system.</div></li><li><div class="item-name"><a class="struct" href="struct.Db.html" title="struct sled::Db">Db</a></div><div class="desc docblock-short">The <code>sled</code> embedded database! Implements
+<code>Deref&lt;Target = sled::Tree&gt;</code> to refer to
+a default keyspace / namespace / bucket.</div></li><li><div class="item-name"><a class="struct" href="struct.IVec.html" title="struct sled::IVec">IVec</a></div><div class="desc docblock-short">A buffer that may either be inline or remote and protected
+by an Arc</div></li><li><div class="item-name"><a class="struct" href="struct.Iter.html" title="struct sled::Iter">Iter</a></div><div class="desc docblock-short">An iterator over keys and values in a <code>Tree</code>.</div></li><li><div class="item-name"><a class="struct" href="struct.Subscriber.html" title="struct sled::Subscriber">Subscriber</a></div><div class="desc docblock-short">A subscriber listening on a specified prefix</div></li><li><div class="item-name"><a class="struct" href="struct.Tree.html" title="struct sled::Tree">Tree</a></div><div class="desc docblock-short">A flash-sympathetic persistent lock-free B+ tree.</div></li></ul><h2 id="enums" class="section-header"><a href="#enums">Enums</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.Error.html" title="enum sled::Error">Error</a></div><div class="desc docblock-short">An Error type encapsulating various issues that may come up
+in the operation of a <code>Db</code>.</div></li><li><div class="item-name"><a class="enum" href="enum.Event.html" title="enum sled::Event">Event</a></div><div class="desc docblock-short">An event that happened to a key that a subscriber is interested in.</div></li><li><div class="item-name"><a class="enum" href="enum.Mode.html" title="enum sled::Mode">Mode</a></div><div class="desc docblock-short">The high-level database mode, according to
+the trade-offs of the RUM conjecture.</div></li></ul><h2 id="traits" class="section-header"><a href="#traits">Traits</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.MergeOperator.html" title="trait sled::MergeOperator">MergeOperator</a></div><div class="desc docblock-short">A function that may be configured on a particular shared <code>Tree</code>
+that will be applied as a kind of read-modify-write operator
+to any values that are written using the <code>Tree::merge</code> method.</div></li></ul><h2 id="functions" class="section-header"><a href="#functions">Functions</a></h2><ul class="item-table"><li><div class="item-name"><a class="fn" href="fn.open.html" title="fn sled::open">open</a></div><div class="desc docblock-short">Opens a <code>Db</code> with a default configuration at the
+specified path. This will create a new storage
+directory at the specified path if it does
+not already exist. You can use the <code>Db::was_recovered</code>
+method to determine if your database was recovered
+from a previous instance. You can use <code>Config::create_new</code>
+if you want to increase the chances that the database
+will be freshly created.</div></li></ul><h2 id="types" class="section-header"><a href="#types">Type Aliases</a></h2><ul class="item-table"><li><div class="item-name"><a class="type" href="type.Result.html" title="type sled::Result">Result</a></div><div class="desc docblock-short">The top-level result type for dealing with
+fallible operations. The errors tend to
+be fail-stop, and nested results are used
+in cases where the outer fail-stop error can
+have try <code>?</code> used on it, exposing the inner
+operation that is expected to fail under
+normal operation. The philosophy behind this
+is detailed <a href="https://sled.rs/errors">on the sled blog</a>.</div></li></ul></section></div></main></body></html>

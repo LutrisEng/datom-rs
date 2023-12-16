@@ -1,0 +1,73 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="A simple library implementing the CESU-8 compatibility encoding scheme.  This is a non-standard variant of UTF-8 that is used internally by some systems that need to represent UTF-16 data as 8-bit characters.  Yes, this is ugly."><title>cesu8 - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-e883e87179a81222.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="cesu8" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (de686cbc6 2023-12-14)" data-channel="nightly" data-search-js="search-874d56868bf05518.js" data-settings-js="settings-fe03fdc259827cd2.js" ><script src="../static.files/storage-bc37acceda91d44a.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-77dede896d6ac08e.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../cesu8/index.html">cesu8</a><span class="version">1.1.0</span></h2></div><div class="sidebar-elems"><ul class="block">
+            <li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#structs">Structs</a></li><li><a href="#functions">Functions</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">cesu8</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../src/cesu8/lib.rs.html#11-453">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>A simple library implementing the <a href="http://www.unicode.org/reports/tr26/tr26-2.html">CESU-8 compatibility encoding
+scheme</a>.  This is a
+non-standard variant of UTF-8 that is used internally by some systems
+that need to represent UTF-16 data as 8-bit characters.  Yes, this is
+ugly.</p>
+<p>Use of this encoding is discouraged by the Unicode Consortium.  It’s OK
+for working with existing internal APIs, but it should not be used for
+transmitting or storing data.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>std::borrow::Cow;
+<span class="kw">use </span>cesu8::{from_cesu8, to_cesu8};
+
+<span class="comment">// 16-bit Unicode characters are the same in UTF-8 and CESU-8.
+</span><span class="macro">assert_eq!</span>(Cow::Borrowed(<span class="string">"aé日"</span>.as_bytes()),
+           to_cesu8(<span class="string">"aé日"</span>));
+<span class="macro">assert_eq!</span>(Cow::Borrowed(<span class="string">"aé日"</span>),
+           from_cesu8(<span class="string">"aé日"</span>.as_bytes()).unwrap());
+
+<span class="comment">// This string is CESU-8 data containing a 6-byte surrogate pair,
+// which decodes to a 4-byte UTF-8 string.
+</span><span class="kw">let </span>data = <span class="kw-2">&amp;</span>[<span class="number">0xED</span>, <span class="number">0xA0</span>, <span class="number">0x81</span>, <span class="number">0xED</span>, <span class="number">0xB0</span>, <span class="number">0x81</span>];
+<span class="macro">assert_eq!</span>(Cow::Borrowed(<span class="string">"\u{10401}"</span>),
+           from_cesu8(data).unwrap());</code></pre></div>
+<h4 id="a-note-about-security"><a href="#a-note-about-security">A note about security</a></h4>
+<p>As a general rule, this library is intended to fail on malformed or
+unexpected input.  CESU-8 is supposed to be an internal-only format,
+and if we’re seeing malformed data, we assume that it’s either a bug in
+somebody’s code, or an attacker is trying to improperly encode data to
+evade security checks.</p>
+<p>If you have a use case for lossy conversion to UTF-8, or conversion
+from mixed UTF-8/CESU-8 data, please feel free to submit a pull request
+for <code>from_cesu8_lossy_permissive</code> with appropriate behavior.</p>
+<h4 id="java-and-u0000-and-other-variants"><a href="#java-and-u0000-and-other-variants">Java and U+0000, and other variants</a></h4>
+<p>Java uses the CESU-8 encoding as described above, but with one
+difference: The null character U+0000 is represented as an overlong
+UTF-8 sequence <code>C0 80</code>. This is supported by the <code>from_java_cesu8</code> and
+<code>to_java_cesu8</code> methods.</p>
+<h4 id="surrogate-pairs-and-utf-8"><a href="#surrogate-pairs-and-utf-8">Surrogate pairs and UTF-8</a></h4>
+<p>The UTF-16 encoding uses “surrogate pairs” to represent Unicode code
+points in the range from U+10000 to U+10FFFF.  These are 16-bit numbers
+in the range 0xD800 to 0xDFFF.</p>
+<ul>
+<li>
+<p>0xD800 to 0xDBFF: First half of surrogate pair.  When encoded as
+CESU-8, these become <strong>1110</strong>1101 <strong>10</strong>100000 <strong>10</strong>000000 to
+<strong>1110</strong>1101 <strong>10</strong>101111 <strong>10</strong>111111.</p>
+</li>
+<li>
+<p>0xDC00 to 0xDFFF: Second half of surrogate pair.  These become
+<strong>1110</strong>1101 <strong>10</strong>110000 <strong>10</strong>000000 to
+<strong>1110</strong>1101 <strong>10</strong>111111 <strong>10</strong>111111.</p>
+</li>
+</ul>
+<p>Wikipedia <a href="http://en.wikipedia.org/wiki/UTF-16">explains</a> the
+code point to UTF-16 conversion process:</p>
+<blockquote>
+<p>Consider the encoding of U+10437 (𐐷):</p>
+<ul>
+<li>Subtract 0x10000 from 0x10437. The result is 0x00437, 0000 0000 0100
+0011 0111.</li>
+<li>Split this into the high 10-bit value and the low 10-bit value:
+0000000001 and 0000110111.</li>
+<li>Add 0xD800 to the high value to form the high surrogate: 0xD800 +
+0x0001 = 0xD801.</li>
+<li>Add 0xDC00 to the low value to form the low surrogate: 0xDC00 +
+0x0037 = 0xDC37.</li>
+</ul>
+</blockquote>
+</div></details><h2 id="structs" class="section-header"><a href="#structs">Structs</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.Cesu8DecodingError.html" title="struct cesu8::Cesu8DecodingError">Cesu8DecodingError</a></div><div class="desc docblock-short">The CESU-8 data could not be decoded as valid UTF-8 data.</div></li></ul><h2 id="functions" class="section-header"><a href="#functions">Functions</a></h2><ul class="item-table"><li><div class="item-name"><a class="fn" href="fn.from_cesu8.html" title="fn cesu8::from_cesu8">from_cesu8</a></div><div class="desc docblock-short">Convert CESU-8 data to a Rust string, re-encoding only if necessary.
+Returns an error if the data cannot be represented as valid UTF-8.</div></li><li><div class="item-name"><a class="fn" href="fn.from_java_cesu8.html" title="fn cesu8::from_java_cesu8">from_java_cesu8</a></div><div class="desc docblock-short">Convert Java’s modified UTF-8 data to a Rust string, re-encoding only if
+necessary. Returns an error if the data cannot be represented as valid
+UTF-8.</div></li><li><div class="item-name"><a class="fn" href="fn.is_valid_cesu8.html" title="fn cesu8::is_valid_cesu8">is_valid_cesu8</a></div><div class="desc docblock-short">Check whether a Rust string contains valid CESU-8 data.</div></li><li><div class="item-name"><a class="fn" href="fn.is_valid_java_cesu8.html" title="fn cesu8::is_valid_java_cesu8">is_valid_java_cesu8</a></div><div class="desc docblock-short">Check whether a Rust string contains valid Java’s modified UTF-8 data.</div></li><li><div class="item-name"><a class="fn" href="fn.to_cesu8.html" title="fn cesu8::to_cesu8">to_cesu8</a></div><div class="desc docblock-short">Convert a Rust <code>&amp;str</code> to CESU-8 bytes.</div></li><li><div class="item-name"><a class="fn" href="fn.to_java_cesu8.html" title="fn cesu8::to_java_cesu8">to_java_cesu8</a></div><div class="desc docblock-short">Convert a Rust <code>&amp;str</code> to Java’s modified UTF-8 bytes.</div></li></ul></section></div></main></body></html>

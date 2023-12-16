@@ -1,0 +1,245 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Rust Persistent Data Structures"><title>rpds - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-e883e87179a81222.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="rpds" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (de686cbc6 2023-12-14)" data-channel="nightly" data-search-js="search-874d56868bf05518.js" data-settings-js="settings-fe03fdc259827cd2.js" ><script src="../static.files/storage-bc37acceda91d44a.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-77dede896d6ac08e.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../rpds/index.html">rpds</a><span class="version">0.12.0</span></h2></div><div class="sidebar-elems"><ul class="block">
+            <li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#macros">Macros</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">rpds</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../src/rpds/lib.rs.html#6-392">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="rust-persistent-data-structures"><a href="#rust-persistent-data-structures">Rust Persistent Data Structures</a></h2>
+<p>Rust Persistent Data Structures provides <a href="https://en.wikipedia.org/wiki/Persistent_data_structure">fully persistent data structures</a>
+with structural sharing.</p>
+<h3 id="setup"><a href="#setup">Setup</a></h3>
+<p>To use rpds add the following to your <code>Cargo.toml</code>:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+rpds = &quot;&lt;version&gt;&quot;
+</code></pre></div><h3 id="data-structures"><a href="#data-structures">Data structures</a></h3>
+<p>This crate offers the following data structures:</p>
+<ol>
+<li><a href="#list"><code>List</code></a></li>
+<li><a href="#vector"><code>Vector</code></a></li>
+<li><a href="#stack"><code>Stack</code></a></li>
+<li><a href="#queue"><code>Queue</code></a></li>
+<li><a href="#hashtriemap"><code>HashTrieMap</code></a></li>
+<li><a href="#hashtrieset"><code>HashTrieSet</code></a></li>
+<li><a href="#redblacktreemap"><code>RedBlackTreeMap</code></a></li>
+<li><a href="#redblacktreeset"><code>RedBlackTreeSet</code></a></li>
+</ol>
+<h4 id="list"><a href="#list"><code>List</code></a></h4>
+<p><a href="list/struct.List.html" title="struct rpds::list::List"><img src="https://img.shields.io/badge/doc-List-303070.svg" alt="List documentation" /></a></p>
+<p>Your classic functional list.</p>
+<h5 id="example"><a href="#example">Example</a></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rpds::List;
+
+<span class="kw">let </span>list = List::new().push_front(<span class="string">"list"</span>);
+
+<span class="macro">assert_eq!</span>(list.first(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">"list"</span>));
+
+<span class="kw">let </span>a_list = list.push_front(<span class="string">"a"</span>);
+
+<span class="macro">assert_eq!</span>(a_list.first(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">"a"</span>));
+
+<span class="kw">let </span>list_dropped = a_list.drop_first().unwrap();
+
+<span class="macro">assert_eq!</span>(list_dropped, list);</code></pre></div>
+<h4 id="vector"><a href="#vector"><code>Vector</code></a></h4>
+<p><a href="vector/struct.Vector.html" title="struct rpds::vector::Vector"><img src="https://img.shields.io/badge/doc-Vector-303070.svg" alt="Vector documentation" /></a></p>
+<p>A sequence that can be indexed.  The implementation is described in
+<a href="http://hypirion.com/musings/understanding-persistent-vector-pt-1">Understanding Persistent Vector Part 1</a>
+and <a href="http://hypirion.com/musings/understanding-persistent-vector-pt-2">Understanding Persistent Vector Part 2</a>.</p>
+<h5 id="example-1"><a href="#example-1">Example</a></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rpds::Vector;
+
+<span class="kw">let </span>vector = Vector::new()
+    .push_back(<span class="string">"I’m"</span>)
+    .push_back(<span class="string">"a"</span>)
+    .push_back(<span class="string">"vector"</span>);
+
+<span class="macro">assert_eq!</span>(vector[<span class="number">1</span>], <span class="string">"a"</span>);
+
+<span class="kw">let </span>screaming_vector = vector
+    .drop_last().unwrap()
+    .push_back(<span class="string">"VECTOR!!!"</span>);
+
+<span class="macro">assert_eq!</span>(screaming_vector[<span class="number">2</span>], <span class="string">"VECTOR!!!"</span>);</code></pre></div>
+<h4 id="stack"><a href="#stack"><code>Stack</code></a></h4>
+<p><a href="stack/struct.Stack.html" title="struct rpds::stack::Stack"><img src="https://img.shields.io/badge/doc-Stack-303070.svg" alt="Stack documentation" /></a></p>
+<p>A LIFO (last in, first out) data structure.  This is just a <a href="#list"><code>List</code></a> in disguise.</p>
+<h5 id="example-2"><a href="#example-2">Example</a></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rpds::Stack;
+
+<span class="kw">let </span>stack = Stack::new().push(<span class="string">"stack"</span>);
+
+<span class="macro">assert_eq!</span>(stack.peek(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">"stack"</span>));
+
+<span class="kw">let </span>a_stack = stack.push(<span class="string">"a"</span>);
+
+<span class="macro">assert_eq!</span>(a_stack.peek(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">"a"</span>));
+
+<span class="kw">let </span>stack_popped = a_stack.pop().unwrap();
+
+<span class="macro">assert_eq!</span>(stack_popped, stack);</code></pre></div>
+<h4 id="queue"><a href="#queue"><code>Queue</code></a></h4>
+<p><a href="queue/struct.Queue.html" title="struct rpds::queue::Queue"><img src="https://img.shields.io/badge/doc-Queue-303070.svg" alt="Queue documentation" /></a></p>
+<p>A FIFO (first in, first out) data structure.</p>
+<h5 id="example-3"><a href="#example-3">Example</a></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rpds::Queue;
+
+<span class="kw">let </span>queue = Queue::new()
+    .enqueue(<span class="string">"um"</span>)
+    .enqueue(<span class="string">"dois"</span>)
+    .enqueue(<span class="string">"tres"</span>);
+
+<span class="macro">assert_eq!</span>(queue.peek(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">"um"</span>));
+
+<span class="kw">let </span>queue_dequeued = queue.dequeue().unwrap();
+
+<span class="macro">assert_eq!</span>(queue_dequeued.peek(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">"dois"</span>));</code></pre></div>
+<h4 id="hashtriemap"><a href="#hashtriemap"><code>HashTrieMap</code></a></h4>
+<p><a href="map/hash_trie_map/struct.HashTrieMap.html" title="struct rpds::map::hash_trie_map::HashTrieMap"><img src="https://img.shields.io/badge/doc-HashTrieMap-303070.svg" alt="HashTrieMap documentation" /></a></p>
+<p>A map implemented with a <a href="https://en.wikipedia.org/wiki/Hash_array_mapped_trie">hash array mapped trie</a>.
+See <a href="https://infoscience.epfl.ch/record/64398/files/idealhashtrees.pdf">Ideal Hash Trees</a> for
+details.</p>
+<h5 id="example-4"><a href="#example-4">Example</a></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rpds::HashTrieMap;
+
+<span class="kw">let </span>map_en = HashTrieMap::new()
+    .insert(<span class="number">0</span>, <span class="string">"zero"</span>)
+    .insert(<span class="number">1</span>, <span class="string">"one"</span>);
+
+<span class="macro">assert_eq!</span>(map_en.get(<span class="kw-2">&amp;</span><span class="number">1</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">"one"</span>));
+
+<span class="kw">let </span>map_pt = map_en
+    .insert(<span class="number">1</span>, <span class="string">"um"</span>)
+    .insert(<span class="number">2</span>, <span class="string">"dois"</span>);
+
+<span class="macro">assert_eq!</span>(map_pt.get(<span class="kw-2">&amp;</span><span class="number">2</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">"dois"</span>));
+
+<span class="kw">let </span>map_pt_binary = map_pt.remove(<span class="kw-2">&amp;</span><span class="number">2</span>);
+
+<span class="macro">assert_eq!</span>(map_pt_binary.get(<span class="kw-2">&amp;</span><span class="number">2</span>), <span class="prelude-val">None</span>);</code></pre></div>
+<h4 id="hashtrieset"><a href="#hashtrieset"><code>HashTrieSet</code></a></h4>
+<p><a href="set/hash_trie_set/struct.HashTrieSet.html" title="struct rpds::set::hash_trie_set::HashTrieSet"><img src="https://img.shields.io/badge/doc-HashTrieSet-303070.svg" alt="HashTrieSet documentation" /></a></p>
+<p>A set implemented with a <a href="#hashtriemap"><code>HashTrieMap</code></a>.</p>
+<h5 id="example-5"><a href="#example-5">Example</a></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rpds::HashTrieSet;
+
+<span class="kw">let </span>set = HashTrieSet::new()
+    .insert(<span class="string">"zero"</span>)
+    .insert(<span class="string">"one"</span>);
+
+<span class="macro">assert!</span>(set.contains(<span class="kw-2">&amp;</span><span class="string">"one"</span>));
+
+<span class="kw">let </span>set_extended = set.insert(<span class="string">"two"</span>);
+
+<span class="macro">assert!</span>(set_extended.contains(<span class="kw-2">&amp;</span><span class="string">"two"</span>));
+
+<span class="kw">let </span>set_positive = set_extended.remove(<span class="kw-2">&amp;</span><span class="string">"zero"</span>);
+
+<span class="macro">assert!</span>(!set_positive.contains(<span class="kw-2">&amp;</span><span class="string">"zero"</span>));</code></pre></div>
+<h4 id="redblacktreemap"><a href="#redblacktreemap"><code>RedBlackTreeMap</code></a></h4>
+<p><a href="map/red_black_tree_map/struct.RedBlackTreeMap.html" title="struct rpds::map::red_black_tree_map::RedBlackTreeMap"><img src="https://img.shields.io/badge/doc-RedBlackTreeMap-303070.svg" alt="RedBlackTreeMap documentation" /></a></p>
+<p>A map implemented with a <a href="https://en.wikipedia.org/wiki/Red-Black_tree">red-black tree</a>.</p>
+<h5 id="example-6"><a href="#example-6">Example</a></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rpds::RedBlackTreeMap;
+
+<span class="kw">let </span>map_en = RedBlackTreeMap::new()
+    .insert(<span class="number">0</span>, <span class="string">"zero"</span>)
+    .insert(<span class="number">1</span>, <span class="string">"one"</span>);
+
+<span class="macro">assert_eq!</span>(map_en.get(<span class="kw-2">&amp;</span><span class="number">1</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">"one"</span>));
+
+<span class="kw">let </span>map_pt = map_en
+    .insert(<span class="number">1</span>, <span class="string">"um"</span>)
+    .insert(<span class="number">2</span>, <span class="string">"dois"</span>);
+
+<span class="macro">assert_eq!</span>(map_pt.get(<span class="kw-2">&amp;</span><span class="number">2</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">"dois"</span>));
+
+<span class="kw">let </span>map_pt_binary = map_pt.remove(<span class="kw-2">&amp;</span><span class="number">2</span>);
+
+<span class="macro">assert_eq!</span>(map_pt_binary.get(<span class="kw-2">&amp;</span><span class="number">2</span>), <span class="prelude-val">None</span>);
+
+<span class="macro">assert_eq!</span>(map_pt_binary.first(), <span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span><span class="number">0</span>, <span class="kw-2">&amp;</span><span class="string">"zero"</span>)));</code></pre></div>
+<h4 id="redblacktreeset"><a href="#redblacktreeset"><code>RedBlackTreeSet</code></a></h4>
+<p><a href="set/red_black_tree_set/struct.RedBlackTreeSet.html" title="struct rpds::set::red_black_tree_set::RedBlackTreeSet"><img src="https://img.shields.io/badge/doc-RedBlackTreeSet-303070.svg" alt="RedBlackTreeSet documentation" /></a></p>
+<p>A set implemented with a <a href="#redblacktreemap"><code>RedBlackTreeMap</code></a>.</p>
+<h5 id="example-7"><a href="#example-7">Example</a></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rpds::RedBlackTreeSet;
+
+<span class="kw">let </span>set = RedBlackTreeSet::new()
+    .insert(<span class="string">"zero"</span>)
+    .insert(<span class="string">"one"</span>);
+
+<span class="macro">assert!</span>(set.contains(<span class="kw-2">&amp;</span><span class="string">"one"</span>));
+
+<span class="kw">let </span>set_extended = set.insert(<span class="string">"two"</span>);
+
+<span class="macro">assert!</span>(set_extended.contains(<span class="kw-2">&amp;</span><span class="string">"two"</span>));
+
+<span class="kw">let </span>set_positive = set_extended.remove(<span class="kw-2">&amp;</span><span class="string">"zero"</span>);
+
+<span class="macro">assert!</span>(!set_positive.contains(<span class="kw-2">&amp;</span><span class="string">"zero"</span>));
+
+<span class="macro">assert_eq!</span>(set_positive.first(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">"one"</span>));</code></pre></div>
+<h3 id="other-features"><a href="#other-features">Other features</a></h3><h4 id="mutable-methods"><a href="#mutable-methods">Mutable methods</a></h4>
+<p>When you change a data structure you often do not need its previous versions.  For those cases
+rpds offers you mutable methods which are generally faster:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rpds::HashTrieSet;
+
+<span class="kw">let </span><span class="kw-2">mut </span>set = HashTrieSet::new();
+
+set.insert_mut(<span class="string">"zero"</span>);
+set.insert_mut(<span class="string">"one"</span>);
+
+<span class="kw">let </span>set_0_1 = set.clone();
+<span class="kw">let </span>set_0_1_2 = set.insert(<span class="string">"two"</span>);</code></pre></div>
+<h4 id="initialization-macros"><a href="#initialization-macros">Initialization macros</a></h4>
+<p>There are convenient initialization macros for all data structures:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rpds::<span class="kw-2">*</span>;
+
+<span class="kw">let </span>vector = <span class="macro">vector!</span>[<span class="number">3</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">5</span>];
+<span class="kw">let </span>map = <span class="macro">ht_map!</span>[<span class="string">"orange" </span>=&gt; <span class="string">"orange"</span>, <span class="string">"banana" </span>=&gt; <span class="string">"yellow"</span>];</code></pre></div>
+<p>Check the documentation for initialization macros of other data structures.</p>
+<h4 id="thread-safety"><a href="#thread-safety">Thread safety</a></h4>
+<p>All data structures in this crate can be shared between threads, but that is an opt-in ability.
+This is because there is a performance cost to make data structures thread safe.  That cost
+is worth avoiding when you are not actually sharing them between threads.</p>
+<p>Of course if you try to share a rpds data structure across different threads you can count on
+the rust compiler to ensure that it is safe to do so.  If you are using the version of the data
+structure that is not thread safe you will get a compile-time error.</p>
+<p>To create a thread-safe version of any data structure use <code>new_sync()</code>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span>vec = Vector::new_sync()
+    .push_back(<span class="number">42</span>);</code></pre></div>
+<p>Or use the <code>_sync</code> variant of the initialization macro:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span>vec = <span class="macro">vector_sync!</span>(<span class="number">42</span>);</code></pre></div>
+<h4 id="no_std-support"><a href="#no_std-support"><code>no_std</code> support</a></h4>
+<p>This crate supports <code>no_std</code>.  To enable that you need to disable the default feature <code>std</code>:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+rpds = { version = &quot;&lt;version&gt;&quot;, default-features = false }
+</code></pre></div><h5 id="further-details"><a href="#further-details">Further details</a></h5>
+<p>Internally the data structures in this crate maintain a lot of reference-counting pointers.
+These pointers are used both for links between the internal nodes of the data structure as well
+as for the values it stores.</p>
+<p>There are two implementations of reference-counting pointers in the standard library:
+<a href="https://doc.rust-lang.org/nightly/alloc/rc/struct.Rc.html" title="struct alloc::rc::Rc"><code>Rc</code></a> and
+<a href="https://doc.rust-lang.org/nightly/alloc/sync/struct.Arc.html" title="struct alloc::sync::Arc"><code>Arc</code></a>.  They behave the same way, but
+<code>Arc</code> allows you to share the data it points to across multiple threads.  The downside is that
+it is significantly slower to clone and drop than <code>Rc</code>, and persistent data structures do a
+lot of those operations. In some microbenchmarks with rpds data structure we can see that
+using <code>Rc</code> instead of  <code>Arc</code> can make some operations twice as fast!  You can see this for
+yourself by running <code>cargo bench</code>.</p>
+<p>To implement this we parameterize the type of reference-counting pointer (<code>Rc</code> or <code>Arc</code>) as a
+type argument of the data structure.  We use the <a href="https://github.com/orium/archery/">archery</a>
+crate to do this in a convenient way.</p>
+<p>The pointer type can be parameterized like this:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span>vec: Vector&lt;u32, archery::ArcK&gt; = Vector::new_with_ptr_kind();
+<span class="comment">//                              ↖
+//                                This will use `Arc` pointers.
+//                                Change it to `archery::RcK` to use a `Rc` pointer.</span></code></pre></div>
+<h4 id="serialization"><a href="#serialization">Serialization</a></h4>
+<p>We support serialization through <a href="https://crates.io/crates/serde">serde</a>.  To use it
+enable the <code>serde</code> feature.  To do so change the rpds dependency in your <code>Cargo.toml</code> to</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+rpds = { version = &quot;&lt;version&gt;&quot;, features = [&quot;serde&quot;] }
+</code></pre></div></div></details><h2 id="reexports" class="section-header"><a href="#reexports">Re-exports</a></h2><ul class="item-table"><li><div class="item-name" id="reexport.List"><code>pub use crate::list::<a class="struct" href="list/struct.List.html" title="struct rpds::list::List">List</a>;</code></div></li><li><div class="item-name" id="reexport.ListSync"><code>pub use crate::list::<a class="type" href="list/type.ListSync.html" title="type rpds::list::ListSync">ListSync</a>;</code></div></li><li><div class="item-name" id="reexport.HashTrieMap"><code>pub use crate::map::hash_trie_map::<a class="struct" href="map/hash_trie_map/struct.HashTrieMap.html" title="struct rpds::map::hash_trie_map::HashTrieMap">HashTrieMap</a>;</code></div></li><li><div class="item-name" id="reexport.HashTrieMapSync"><code>pub use crate::map::hash_trie_map::<a class="type" href="map/hash_trie_map/type.HashTrieMapSync.html" title="type rpds::map::hash_trie_map::HashTrieMapSync">HashTrieMapSync</a>;</code></div></li><li><div class="item-name" id="reexport.RedBlackTreeMap"><code>pub use crate::map::red_black_tree_map::<a class="struct" href="map/red_black_tree_map/struct.RedBlackTreeMap.html" title="struct rpds::map::red_black_tree_map::RedBlackTreeMap">RedBlackTreeMap</a>;</code></div></li><li><div class="item-name" id="reexport.RedBlackTreeMapSync"><code>pub use crate::map::red_black_tree_map::<a class="type" href="map/red_black_tree_map/type.RedBlackTreeMapSync.html" title="type rpds::map::red_black_tree_map::RedBlackTreeMapSync">RedBlackTreeMapSync</a>;</code></div></li><li><div class="item-name" id="reexport.Queue"><code>pub use crate::queue::<a class="struct" href="queue/struct.Queue.html" title="struct rpds::queue::Queue">Queue</a>;</code></div></li><li><div class="item-name" id="reexport.QueueSync"><code>pub use crate::queue::<a class="type" href="queue/type.QueueSync.html" title="type rpds::queue::QueueSync">QueueSync</a>;</code></div></li><li><div class="item-name" id="reexport.HashTrieSet"><code>pub use crate::set::hash_trie_set::<a class="struct" href="set/hash_trie_set/struct.HashTrieSet.html" title="struct rpds::set::hash_trie_set::HashTrieSet">HashTrieSet</a>;</code></div></li><li><div class="item-name" id="reexport.HashTrieSetSync"><code>pub use crate::set::hash_trie_set::<a class="type" href="set/hash_trie_set/type.HashTrieSetSync.html" title="type rpds::set::hash_trie_set::HashTrieSetSync">HashTrieSetSync</a>;</code></div></li><li><div class="item-name" id="reexport.RedBlackTreeSet"><code>pub use crate::set::red_black_tree_set::<a class="struct" href="set/red_black_tree_set/struct.RedBlackTreeSet.html" title="struct rpds::set::red_black_tree_set::RedBlackTreeSet">RedBlackTreeSet</a>;</code></div></li><li><div class="item-name" id="reexport.RedBlackTreeSetSync"><code>pub use crate::set::red_black_tree_set::<a class="type" href="set/red_black_tree_set/type.RedBlackTreeSetSync.html" title="type rpds::set::red_black_tree_set::RedBlackTreeSetSync">RedBlackTreeSetSync</a>;</code></div></li><li><div class="item-name" id="reexport.Stack"><code>pub use crate::stack::<a class="struct" href="stack/struct.Stack.html" title="struct rpds::stack::Stack">Stack</a>;</code></div></li><li><div class="item-name" id="reexport.StackSync"><code>pub use crate::stack::<a class="type" href="stack/type.StackSync.html" title="type rpds::stack::StackSync">StackSync</a>;</code></div></li><li><div class="item-name" id="reexport.Vector"><code>pub use crate::vector::<a class="struct" href="vector/struct.Vector.html" title="struct rpds::vector::Vector">Vector</a>;</code></div></li><li><div class="item-name" id="reexport.VectorSync"><code>pub use crate::vector::<a class="type" href="vector/type.VectorSync.html" title="type rpds::vector::VectorSync">VectorSync</a>;</code></div></li></ul><h2 id="modules" class="section-header"><a href="#modules">Modules</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="list/index.html" title="mod rpds::list">list</a></div></li><li><div class="item-name"><a class="mod" href="map/index.html" title="mod rpds::map">map</a></div></li><li><div class="item-name"><a class="mod" href="queue/index.html" title="mod rpds::queue">queue</a></div></li><li><div class="item-name"><a class="mod" href="set/index.html" title="mod rpds::set">set</a></div></li><li><div class="item-name"><a class="mod" href="stack/index.html" title="mod rpds::stack">stack</a></div></li><li><div class="item-name"><a class="mod" href="vector/index.html" title="mod rpds::vector">vector</a></div></li></ul><h2 id="macros" class="section-header"><a href="#macros">Macros</a></h2><ul class="item-table"><li><div class="item-name"><a class="macro" href="macro.ht_map.html" title="macro rpds::ht_map">ht_map</a></div><div class="desc docblock-short">Creates a <a href="map/hash_trie_map/struct.HashTrieMap.html" title="struct rpds::map::hash_trie_map::HashTrieMap"><code>HashTrieMap</code></a> containing the given arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.ht_map_sync.html" title="macro rpds::ht_map_sync">ht_map_sync</a></div><div class="desc docblock-short">Creates a <a href="map/hash_trie_map/struct.HashTrieMap.html" title="struct rpds::map::hash_trie_map::HashTrieMap"><code>HashTrieMap</code></a> that implements <code>Sync</code>, containing the given
+arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.ht_set.html" title="macro rpds::ht_set">ht_set</a></div><div class="desc docblock-short">Creates a <a href="set/hash_trie_set/struct.HashTrieSet.html" title="struct rpds::set::hash_trie_set::HashTrieSet"><code>HashTrieSet</code></a> containing the given arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.ht_set_sync.html" title="macro rpds::ht_set_sync">ht_set_sync</a></div><div class="desc docblock-short">Creates a <a href="set/hash_trie_set/struct.HashTrieSet.html" title="struct rpds::set::hash_trie_set::HashTrieSet"><code>HashTrieSet</code></a> that implements <code>Sync</code>, containing the given
+arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.list.html" title="macro rpds::list">list</a></div><div class="desc docblock-short">Creates a <a href="list/struct.List.html" title="struct rpds::list::List"><code>List</code></a> containing the given arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.list_sync.html" title="macro rpds::list_sync">list_sync</a></div><div class="desc docblock-short">Creates a <a href="list/struct.List.html" title="struct rpds::list::List"><code>List</code></a> that implements <code>Sync</code>, containing the given arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.queue.html" title="macro rpds::queue">queue</a></div><div class="desc docblock-short">Creates a <a href="queue/struct.Queue.html" title="struct rpds::queue::Queue"><code>Queue</code></a> containing the given arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.queue_sync.html" title="macro rpds::queue_sync">queue_sync</a></div><div class="desc docblock-short">Creates a <a href="queue/struct.Queue.html" title="struct rpds::queue::Queue"><code>Queue</code></a> that implements <code>Sync</code>, containing the given arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.rbt_map.html" title="macro rpds::rbt_map">rbt_map</a></div><div class="desc docblock-short">Creates a <a href="map/red_black_tree_map/struct.RedBlackTreeMap.html" title="struct rpds::map::red_black_tree_map::RedBlackTreeMap"><code>RedBlackTreeMap</code></a> containing the given arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.rbt_map_sync.html" title="macro rpds::rbt_map_sync">rbt_map_sync</a></div><div class="desc docblock-short">Creates a <a href="map/red_black_tree_map/struct.RedBlackTreeMap.html" title="struct rpds::map::red_black_tree_map::RedBlackTreeMap"><code>RedBlackTreeMap</code></a> that implements <code>Sync</code>, containing the
+given arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.rbt_set.html" title="macro rpds::rbt_set">rbt_set</a></div><div class="desc docblock-short">Creates a <a href="set/red_black_tree_set/struct.RedBlackTreeSet.html" title="struct rpds::set::red_black_tree_set::RedBlackTreeSet"><code>RedBlackTreeSet</code></a> containing the given arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.rbt_set_sync.html" title="macro rpds::rbt_set_sync">rbt_set_sync</a></div><div class="desc docblock-short">Creates a <a href="set/red_black_tree_set/struct.RedBlackTreeSet.html" title="struct rpds::set::red_black_tree_set::RedBlackTreeSet"><code>RedBlackTreeSet</code></a> containing the given arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.stack.html" title="macro rpds::stack">stack</a></div><div class="desc docblock-short">Creates a <a href="stack/struct.Stack.html" title="struct rpds::stack::Stack"><code>Stack</code></a> containing the given arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.stack_sync.html" title="macro rpds::stack_sync">stack_sync</a></div><div class="desc docblock-short">Creates a <a href="stack/struct.Stack.html" title="struct rpds::stack::Stack"><code>Stack</code></a> that implements <code>Sync</code>, containing the given arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.vector.html" title="macro rpds::vector">vector</a></div><div class="desc docblock-short">Creates a <a href="vector/struct.Vector.html" title="struct rpds::vector::Vector"><code>Vector</code></a> containing the given arguments:</div></li><li><div class="item-name"><a class="macro" href="macro.vector_sync.html" title="macro rpds::vector_sync">vector_sync</a></div><div class="desc docblock-short">Creates a <a href="vector/struct.Vector.html" title="struct rpds::vector::Vector"><code>Vector</code></a> that implements <code>Sync</code>, containing the given arguments:</div></li></ul></section></div></main></body></html>

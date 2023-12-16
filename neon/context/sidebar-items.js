@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CallKind"],"struct":["CallContext","ComputeContext","ExecuteContext","Lock","ModuleContext","TaskContext"],"trait":["Context"],"type":["FunctionContext","MethodContext"]};

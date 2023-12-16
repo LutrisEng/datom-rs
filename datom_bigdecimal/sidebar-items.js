@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ParseBigDecimalError"],"struct":["BigDecimal"],"trait":["FromPrimitive","Num","One","Signed","ToPrimitive","Zero"]};

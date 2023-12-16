@@ -1,0 +1,69 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Fully serializable (ACID) multi-`Tree` transactions"><title>sled::transaction - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e883e87179a81222.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sled" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (de686cbc6 2023-12-14)" data-channel="nightly" data-search-js="search-874d56868bf05518.js" data-settings-js="settings-fe03fdc259827cd2.js" ><script src="../../static.files/storage-bc37acceda91d44a.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-77dede896d6ac08e.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../../sled/index.html"><img src="https://raw.githubusercontent.com/spacejam/sled/master/art/tree_face_anti-transphobia.png" alt=""></a></nav><nav class="sidebar"><div class="sidebar-crate"><a class="logo-container" href="../../sled/index.html"><img src="https://raw.githubusercontent.com/spacejam/sled/master/art/tree_face_anti-transphobia.png" alt="logo"></a><h2><a href="../../sled/index.html">sled</a><span class="version">0.34.7</span></h2></div><h2 class="location"><a href="#">Module transaction</a></h2><div class="sidebar-elems"><section><ul class="block"><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Aliases</a></li></ul></section><h2><a href="../index.html">In crate sled</a></h2></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../index.html">sled</a>::<wbr><a class="mod" href="#">transaction</a><button id="copy-path" title="Copy item path to clipboard"><img src="../../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../../src/sled/transaction.rs.html#1-664">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Fully serializable (ACID) multi-<code>Tree</code> transactions</p>
+<h2 id="examples"><a href="#examples">Examples</a></h2>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code>
+<span class="kw">let </span>config = Config::new().temporary(<span class="bool-val">true</span>);
+<span class="kw">let </span>db1 = config.open().unwrap();
+<span class="kw">let </span>db = db1.open_tree(<span class="string">b"a"</span>).unwrap();
+
+<span class="comment">// Use write-only transactions as a writebatch:
+</span>db.transaction(|db| {
+    db.insert(<span class="string">b"k1"</span>, <span class="string">b"cats"</span>)<span class="question-mark">?</span>;
+    db.insert(<span class="string">b"k2"</span>, <span class="string">b"dogs"</span>)<span class="question-mark">?</span>;
+    <span class="prelude-val">Ok</span>(())
+})<span class="question-mark">?</span>;
+
+<span class="comment">// Atomically swap two items:
+</span>db.transaction(|db| {
+    <span class="kw">let </span>v1_option = db.remove(<span class="string">b"k1"</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span>v1 = v1_option.unwrap();
+    <span class="kw">let </span>v2_option = db.remove(<span class="string">b"k2"</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span>v2 = v2_option.unwrap();
+
+    db.insert(<span class="string">b"k1"</span>, v2)<span class="question-mark">?</span>;
+    db.insert(<span class="string">b"k2"</span>, v1)<span class="question-mark">?</span>;
+
+    <span class="prelude-val">Ok</span>(())
+})<span class="question-mark">?</span>;
+
+<span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>db.get(<span class="string">b"k1"</span>)<span class="question-mark">?</span>.unwrap(), <span class="string">b"dogs"</span>);
+<span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>db.get(<span class="string">b"k2"</span>)<span class="question-mark">?</span>.unwrap(), <span class="string">b"cats"</span>);</code></pre></div>
+<p>Transactions also work on tuples of <code>Tree</code>s,
+preserving serializable ACID semantics!
+In this example, we treat two trees like a
+work queue, atomically apply updates to
+data and move them from the unprocessed <code>Tree</code>
+to the processed <code>Tree</code>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code>
+<span class="kw">let </span>config = Config::new().temporary(<span class="bool-val">true</span>);
+<span class="kw">let </span>db = config.open().unwrap();
+
+<span class="kw">let </span>unprocessed = db.open_tree(<span class="string">b"unprocessed items"</span>).unwrap();
+<span class="kw">let </span>processed = db.open_tree(<span class="string">b"processed items"</span>).unwrap();
+
+<span class="comment">// An update somehow gets into the tree, which we
+// later trigger the atomic processing of.
+</span>unprocessed.insert(<span class="string">b"k3"</span>, <span class="string">b"ligers"</span>).unwrap();
+
+<span class="comment">// Atomically process the new item and move it
+// between `Tree`s.
+</span>(<span class="kw-2">&amp;</span>unprocessed, <span class="kw-2">&amp;</span>processed)
+    .transaction(|(unprocessed, processed)| {
+        <span class="kw">let </span>unprocessed_item = unprocessed.remove(<span class="string">b"k3"</span>)<span class="question-mark">?</span>.unwrap();
+        <span class="kw">let </span><span class="kw-2">mut </span>processed_item = <span class="string">b"yappin' "</span>.to_vec();
+        processed_item.extend_from_slice(<span class="kw-2">&amp;</span>unprocessed_item);
+        processed.insert(<span class="string">b"k3"</span>, processed_item)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(())
+    })<span class="question-mark">?</span>;
+
+<span class="macro">assert_eq!</span>(unprocessed.get(<span class="string">b"k3"</span>).unwrap(), <span class="prelude-val">None</span>);
+<span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>processed.get(<span class="string">b"k3"</span>).unwrap().unwrap(), <span class="string">b"yappin' ligers"</span>);</code></pre></div>
+</div></details><h2 id="structs" class="section-header"><a href="#structs">Structs</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.TransactionalTree.html" title="struct sled::transaction::TransactionalTree">TransactionalTree</a></div><div class="desc docblock-short">A transaction that will
+be applied atomically to the
+Tree.</div></li><li><div class="item-name"><a class="struct" href="struct.TransactionalTrees.html" title="struct sled::transaction::TransactionalTrees">TransactionalTrees</a></div><div class="desc docblock-short">A type which allows for pluggable transactional capabilities</div></li></ul><h2 id="enums" class="section-header"><a href="#enums">Enums</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.ConflictableTransactionError.html" title="enum sled::transaction::ConflictableTransactionError">ConflictableTransactionError</a></div><div class="desc docblock-short">An error type that is returned from the closure
+passed to the <code>transaction</code> method.</div></li><li><div class="item-name"><a class="enum" href="enum.TransactionError.html" title="enum sled::transaction::TransactionError">TransactionError</a></div><div class="desc docblock-short">An error type that is returned from the closure
+passed to the <code>transaction</code> method.</div></li><li><div class="item-name"><a class="enum" href="enum.UnabortableTransactionError.html" title="enum sled::transaction::UnabortableTransactionError">UnabortableTransactionError</a></div><div class="desc docblock-short">An error type that is returned from the closure
+passed to the <code>transaction</code> method.</div></li></ul><h2 id="traits" class="section-header"><a href="#traits">Traits</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.Transactional.html" title="trait sled::transaction::Transactional">Transactional</a></div><div class="desc docblock-short">A type that may be transacted on in sled transactions.</div></li></ul><h2 id="functions" class="section-header"><a href="#functions">Functions</a></h2><ul class="item-table"><li><div class="item-name"><a class="fn" href="fn.abort.html" title="fn sled::transaction::abort">abort</a></div><div class="desc docblock-short">A simple constructor for <code>Err(TransactionError::Abort(_))</code></div></li></ul><h2 id="types" class="section-header"><a href="#types">Type Aliases</a></h2><ul class="item-table"><li><div class="item-name"><a class="type" href="type.ConflictableTransactionResult.html" title="type sled::transaction::ConflictableTransactionResult">ConflictableTransactionResult</a></div><div class="desc docblock-short">A transaction-related <code>Result</code> which is used for transparently handling
+concurrency-related conflicts when running transaction closures.</div></li><li><div class="item-name"><a class="type" href="type.TransactionResult.html" title="type sled::transaction::TransactionResult">TransactionResult</a></div><div class="desc docblock-short">A transaction-related <code>Result</code> which is used for returning the
+final result of a transaction after potentially running the provided
+closure several times due to underlying conflicts.</div></li></ul></section></div></main></body></html>

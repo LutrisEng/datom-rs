@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["JValue","ReleaseMode"],"struct":["AutoArray","AutoLocal","AutoPrimitiveArray","GlobalRef","JByteBuffer","JClass","JFieldID","JList","JListIter","JMap","JMapIter","JMethodID","JObject","JStaticFieldID","JStaticMethodID","JString","JThrowable"],"trait":["TypeArray"]};
